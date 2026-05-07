@@ -1,0 +1,69 @@
+@startuml
+left to right direction
+skinparam defaultFontName "Malgun Gothic"
+skinparam packageStyle rectangle
+
+actor Admin
+actor PL
+actor Developer
+actor Tester
+
+rectangle "이슈관리 시스템" {
+  usecase "로그인" as UC01
+  usecase "계정 추가" as UC02
+  usecase "프로젝트 추가" as UC03
+  usecase "이슈 등록" as UC04
+  usecase "이슈 검색" as UC05
+  usecase "이슈 상세 조회" as UC06
+  usecase "코멘트 추가" as UC07
+  usecase "담당자 배정" as UC08
+  usecase "이슈 상태 변경" as UC09
+  usecase "이슈 통계 조회" as UC10
+  usecase "Assignee 추천 확인" as UC11
+}
+
+' 로그인 (전원)
+Admin --> UC01
+PL --> UC01
+Developer --> UC01
+Tester --> UC01
+
+' Admin 전용
+Admin --> UC02
+Admin --> UC03
+
+' 이슈 등록 (PL/Dev/Tester)
+PL --> UC04
+Developer --> UC04
+Tester --> UC04
+
+' 검색/조회 (전원)
+Admin --> UC05
+PL --> UC05
+Developer --> UC05
+Tester --> UC05
+Admin --> UC06
+PL --> UC06
+Developer --> UC06
+Tester --> UC06
+
+' 코멘트 (PL/Dev/Tester)
+PL --> UC07
+Developer --> UC07
+Tester --> UC07
+
+' PL 전용
+PL --> UC08
+PL --> UC11
+
+' 상태 변경 (PL/Dev/Tester)
+PL --> UC09
+Developer --> UC09
+Tester --> UC09
+
+' 통계 (Admin/PL)
+Admin --> UC10
+PL --> UC10
+
+' include/extend는 5/11 회의에서 함께 결정
+@enduml
