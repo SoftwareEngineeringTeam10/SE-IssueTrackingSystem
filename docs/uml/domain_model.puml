@@ -1,0 +1,83 @@
+@startuml
+skinparam defaultFontName "Malgun Gothic"
+skinparam classAttributeIconSize 0
+skinparam nodesep 80
+skinparam ranksep 80
+hide methods
+hide circle
+
+' ===== Enumerations =====
+
+package "Enumerations" {
+  enum Role {
+    ADMIN
+    PL
+    DEV
+    TESTER
+  }
+
+  enum Priority {
+    BLOCKER
+    CRITICAL
+    MAJOR
+    MINOR
+    TRIVIAL
+  }
+
+  enum Status {
+    NEW
+    ASSIGNED
+    FIXED
+    RESOLVED
+    CLOSED
+    REOPENED
+  }
+}
+
+' ===== Domain Classes =====
+
+class User {
+  userId : String
+  password : String
+  name : String
+  role : Role
+}
+
+class Project {
+  projectId : String
+  name : String
+  createdDate : DateTime
+}
+
+class Issue {
+  issueId : String
+  title : String
+  description : String
+  reportedDate : DateTime
+  priority : Priority
+  status : Status
+}
+
+class Comment {
+  commentId : String
+  content : String
+  createdDate : DateTime
+}
+
+' ===== Relationships =====
+
+' Project - Issue
+Project "1 " -- "0..* " Issue : contains >
+
+' Issue - Comment (composition)
+Issue "1   " *-- "0..*" Comment : has >
+
+' User - Comment
+User "1" -- "0..*  " Comment : writes >
+
+' User - Issue (3개 관계 — 양옆으로 분산)
+User "1" -left- "0..*" Issue : reports >
+User "0..1" -down- "0..*" Issue : "  assigned to  "
+User "0..1" -right- "0..*" Issue : fixes
+
+@enduml
