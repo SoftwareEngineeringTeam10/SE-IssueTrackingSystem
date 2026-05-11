@@ -1,0 +1,20 @@
+@startuml SSD_UC04_RegisterIssue
+title SSD: UC04 이슈 등록
+
+actor Tester as t
+participant ":IssueTrackingSystem" as sys
+
+t -> sys : selectProject(projectId)
+sys --> t : projectInfo
+
+t -> sys : createIssue(title, description, priority)
+note right of sys
+  시스템 내부 처리:
+  · issueId 생성
+  · reporter = currentUser
+  · reportedDate = now()
+  · status = NEW
+end note
+sys --> t : issueId
+
+@enduml
