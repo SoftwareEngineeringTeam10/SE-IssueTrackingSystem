@@ -73,7 +73,6 @@ Priority 5단계: `BLOCKER` / `CRITICAL` / `MAJOR` / `MINOR` / `TRIVIAL`
 | 오퍼레이션 | OC 작성 대상 | 비고 |
 |---|---|---|
 | selectProject(projectId) | X | 단순 조회 |
-| requestIssueRegistrationForm() | X | 폼 메타데이터 요청 |
 | createIssue(title, description, priority) | ⭐ OC #1 | 객체 생성형 핵심 오퍼레이션 |
 ## 변경 이력
 

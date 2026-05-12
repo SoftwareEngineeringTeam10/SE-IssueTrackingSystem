@@ -7,7 +7,7 @@
 ## Cross References
 
 - **Use Case**: UC04 이슈 등록
-- **SSD**: `../ssd/ssd_uc04_register_issue.puml` (3번째 시스템 오퍼레이션)
+- **SSD**: `../ssd/ssd_uc04_register_issue.puml` (2번째 시스템 오퍼레이션)
 - **가정사항**: `../assumptions.md`
 
 ## Preconditions
