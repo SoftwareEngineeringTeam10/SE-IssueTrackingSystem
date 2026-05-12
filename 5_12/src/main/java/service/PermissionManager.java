@@ -1,3 +1,8 @@
+package service;
+
+import model.Role;
+import model.User;
+
 public class PermissionManager {
 
     // Tester만 이슈 생성 가능

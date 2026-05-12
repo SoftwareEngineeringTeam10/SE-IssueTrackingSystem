@@ -1,3 +1,10 @@
+import model.Role;
+import model.User;
+import model.Issue;
+import service.IssueService;
+import service.AccountManager;
+import service.PermissionManager;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -44,6 +51,22 @@ public class Main {
                 "Can Create Issue : "
                         + PermissionManager
                         .canCreateIssue(current)
+        );
+        IssueService issueService =
+                new IssueService();
+
+        Issue testIssue =
+                new Issue();
+
+        testIssue.title =
+                "Login Error";
+
+        testIssue.description =
+                "Login button not working";
+
+        issueService.createIssue(
+                testIssue,
+                current
         );
     }
 }

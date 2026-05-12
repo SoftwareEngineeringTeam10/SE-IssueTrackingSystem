@@ -1,4 +1,7 @@
+package service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.User;
 
 import java.io.File;
 import java.util.ArrayList;
