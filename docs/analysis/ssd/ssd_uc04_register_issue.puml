@@ -14,6 +14,7 @@ note right of sys
   · reporter = currentUser
   · reportedDate = now()
   · status = NEW
+  · priority 미지정 시 MAJOR
 end note
 sys --> t : issueId
 

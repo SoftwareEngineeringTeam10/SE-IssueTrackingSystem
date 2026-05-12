@@ -16,9 +16,13 @@
 - 출처: 5/7 회의 합의
 - 명세서에 필드 명세는 5단계, 시나리오는 6단계로 차이가 있어서 시나리오 쪽을 따름 (FIXED 추가)
 
+> 명세 2.2절 시나리오: new → assigned → fixed → resolved → closed/reopened (6단계)
+> 명세 2.3절 필드 명세: new/assigned/resolved/closed/reopened (5단계, fixed 누락)
+> 5/7 회의 합의: 명세 자체 모순을 시나리오 기준 6단계로 해결.
+
 ## 가정 2. 이슈 필드 구성
 
-5/4 회의 발제 기반.
+명세서 2.3절 (이슈 필드 정의)
 
 | 필드 | 설정 방식 | 비고 |
 |---|---|---|
@@ -37,7 +41,7 @@ Priority 5단계: `BLOCKER` / `CRITICAL` / `MAJOR` / `MINOR` / `TRIVIAL`
 > 출처: 명세서 2.3절 "이슈 필드 및 assignee 추천 관련" 직접 인용.
 > 명세서가 "최소이며, 필요에 따라 필드를 추가할 수 있고, 프로젝트 문서에서
 > 설명할 것"이라고 박은 *최소 필드 셋*.
-> 
+
 ## 가정 3. include / extend 관계
 
 5/7 회의 합의 기준.
@@ -56,9 +60,6 @@ Priority 5단계: `BLOCKER` / `CRITICAL` / `MAJOR` / `MINOR` / `TRIVIAL`
 | UC11 추천 확인 | UC08 담당자 배정 | 선택 기능, 조건부 |
 | UC07 코멘트 추가 | UC06 이슈 상세 조회 | 상세 조회 중 조건부 코멘트 |
 
-> 명세 2.2절 시나리오: new → assigned → fixed → resolved → closed/reopened (6단계)
-> 명세 2.3절 필드 명세: new/assigned/resolved/closed/reopened (5단계, fixed 누락)
-> 5/7 회의 합의: 명세 자체 모순을 시나리오 기준 6단계로 해결.
 
 ## 가정 4. 시스템 오퍼레이션 명명
 
@@ -82,6 +83,7 @@ Priority 5단계: `BLOCKER` / `CRITICAL` / `MAJOR` / `MINOR` / `TRIVIAL`
 |---|---|---|
 | selectProject(projectId) | X | 단순 조회 |
 | createIssue(title, description, priority) | ⭐ OC #1 | 객체 생성형 핵심 오퍼레이션 |
+
 ## 변경 이력
 
 - 2026-05-10: 초안 작성 (김태영)
