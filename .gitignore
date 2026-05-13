@@ -22,3 +22,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# 명세서 (저작권 보호, 로컬에만 보관)
+SE_Term_Project_2026-1.pdf
+
+# IDE 설정
+.idea/
