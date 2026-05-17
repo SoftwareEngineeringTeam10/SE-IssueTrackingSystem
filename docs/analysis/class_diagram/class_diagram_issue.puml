@@ -3,7 +3,7 @@ skinparam classAttributeIconSize 0
 skinparam monochrome true
 skinparam shadowing false
 
-title ITS Class Diagram(초안)
+title ITS Class Diagram
 
 ' --- Enums ---
 enum Role {
@@ -19,7 +19,14 @@ enum Status {
     FIXED
     RESOLVED
     CLOSED
-    RESOLVED
+    REOPENED
+}
+
+enum Priority {
+    BLOCKER
+    CRITICAL
+    MAJOR
+    MINOR
 }
 
 ' --- Entities ---
@@ -33,11 +40,11 @@ class Issue {
     + id: int
     + title: String
     + description: String
-    + reporter: String
-    + fixer: String
-    + assignee: String
-    + priority: String
-    + status: String
+    + reporterId: String
+    + fixerId: String
+    + assigneeId: String
+    + priority: Priority
+    + status: Status
     + comments: List<Comment>
     --
     + addComment()
@@ -46,7 +53,7 @@ class Issue {
 class Comment {
     + authorId: String
     + content: String
-    + date: String
+    + createdDate: String
 }
 
 class User {
@@ -87,36 +94,55 @@ class IssueService {
     + addComment()
 }
 
+' --- 🛠️ Repository 계층 분리 완료 ---
+class UserRepository {
+    --
+    + findById()
+    + save()
+}
+
+class ProjectRepository {
+    --
+    + findById()
+    + findAll()
+    + save()
+}
+
 class IssueRepository {
     --
+    + findById()
     + findAll()
     + saveAll()
 }
 
 ' --- Relationships ---
 
-' 1. Project가 Issue를 포함 (1 : *) - 최상위 계층
-Project "1" *-- "*" Issue
+' 1. Project가 Issue를 포함
+Project "1" *-- "*" Issue : contains
 
-' 2. Issue가 Comment를 포함 (1 : *) - Composition
+' 2. Issue가 Comment를 포함 (Composition)
 Issue "1" *-- "*" Comment
 
-' 3. User와 Issue의 관계 (다중도 반영)
+' 3. User와 Issue의 관계
 User "1" -- "*" Issue : reports
 User "0..1" -- "*" Issue : assigned to
 User "0..1" -- "*" Issue : fixes
 
 ' 4. User와 Comment의 관계
 User "1" -- "*" Comment : writes
+
 ' 5. User와 Project와의 관계
 User "*" -- "*" Project
 
-' 6. 시스템 로직 연관 관계
+' 6. 시스템 로직 및 저장소(Repository) 연관 관계
 IssueService ..> PermissionManager : calls
 IssueService --> Issue : manages
-IssueService ..> IssueRepository : uses
 AccountManager --> User : manages
 PermissionManager ..> User : checks
 
+' 각 서비스와 매니저가 필요한 저장소를 각각 의존하도록 수정
+IssueService ..> IssueRepository : uses
+IssueService ..> ProjectRepository : uses
+AccountManager ..> UserRepository : uses
 
 @enduml

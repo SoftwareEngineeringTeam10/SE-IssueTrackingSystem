@@ -1,4 +1,4 @@
-![img.png](img.png)
+
 
 - getIssueDetail(issueId) : 사용자가 특정 이슈의 상세 정보를 시스템이 요청한다.
 - displayIssueDetail(issueData, currentStatus) : 시스템이 해당 이슈의 현재 상태(currentStatus)와 기존 데이터들을 화면에 보여준다.

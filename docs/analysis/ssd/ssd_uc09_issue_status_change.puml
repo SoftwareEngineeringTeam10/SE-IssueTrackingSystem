@@ -24,7 +24,6 @@ activate System
 ' alt 박스를 사용하여 성공과 실패 시나리오를 한꺼번에 표현
 alt [newStatus != currentStatus AND hasPermission]
     ' 성공 케이스
-    System -> System : updateStatusAndCreateComment()
     System --> User : notifySuccessWithUpdatedIssue(updatedIssueInfo)
 
 else [newStatus == currentStatus]
