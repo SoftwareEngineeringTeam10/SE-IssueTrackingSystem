@@ -10,8 +10,7 @@
 ## 작성 규칙
 
 - SSD는 PUML 원본과 PNG export를 함께 commit
-- 작성 전에 `assumptions.md` 먼저 확인
-- 노션 메인 뷰 링크: TBD (회의 후 추가 예정)
+- 작성 전에 노션 Living Doc 먼저 확인 — SSD/OC 전제 사항 및 회의 결정 사항 (링크: TBD)
 
 ## 담당자
 
