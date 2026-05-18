@@ -8,14 +8,6 @@ t -> sys : selectProject(projectId)
 sys --> t : projectInfo
 
 t -> sys : createIssue(title, description, priority)
-note right of sys
-  시스템 내부 처리:
-  · issueId 생성
-  · reporter = currentUser
-  · reportedDate = now()
-  · status = NEW
-  · priority 미지정 시 MAJOR
-end note
 sys --> t : issueId
 
 @enduml
