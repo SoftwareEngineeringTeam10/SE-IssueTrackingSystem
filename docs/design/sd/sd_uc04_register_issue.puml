@@ -8,6 +8,11 @@ participant ":AccountManager" as acc
 participant "newIssue:Issue" as iss
 participant ":IssueRepository" as repo
 
+note over svc
+  전제: currentUser, currentProject는
+  세션 컨텍스트에서 이미 설정됨
+end note
+
 t -> svc : createIssue(title, description, priority)
 activate svc
 
@@ -22,21 +27,12 @@ acc --> svc : currentUser
 deactivate acc
 
 create iss
-svc -> iss : <<create>>(title, description, priority)
+svc -> iss : <<create>>(currentUser.id, currentProject.projectId, title, description, priority)
 activate iss
-note right of iss
-  자동 설정:
-  - id (시스템 발급)
-  - reporter := currentUser.id
-  - reportedDate := now()
-  - status := NEW
-  - priority := MAJOR (미지정 시)
-  - comments := []
-end note
 iss --> svc : newIssue
 deactivate iss
 
-svc -> repo : saveAll()
+svc -> repo : save(newIssue)
 activate repo
 repo --> svc : ok
 deactivate repo
