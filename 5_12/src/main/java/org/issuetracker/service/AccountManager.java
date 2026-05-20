@@ -1,7 +1,7 @@
-package service;
+package org.issuetracker.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.User;
+import org.issuetracker.model.User;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class AccountManager {
     public void addUser(User user) {
 
         if(isDuplicateId(user.getId())) {
-            System.out.println("Duplicated ID");
+            System.out.println("중복된 아이디입니다");
             return;
         }
 
@@ -35,7 +35,7 @@ public class AccountManager {
 
         System.out.println(
                 user.getName()
-                        + " Account Created Successfully"
+                        + " 계정이 생성되었습니다"
         );
     }
 
@@ -64,14 +64,14 @@ public class AccountManager {
 
                 System.out.println(
                         user.getName()
-                                + " Login Success"
+                                + " 로그인 성공"
                 );
 
                 return true;
             }
         }
 
-        System.out.println("Login Failed");
+        System.out.println("로그인 실패");
 
         return false;
     }

@@ -1,4 +1,4 @@
-package model;
+package org.issuetracker.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,8 @@ public class Issue {
     public String reportedDate;
     public String fixer;
     public String assignee;
-    public String priority = "major";
-    public String status = "new";
-    public List<Comment> comments = new ArrayList<>();
+    public Priority priority = Priority.MAJOR;
+    public IssueStatus status = IssueStatus.NEW;    public List<Comment> comments = new ArrayList<>();
 
     public Issue() {}
 

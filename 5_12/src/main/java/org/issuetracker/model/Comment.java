@@ -1,4 +1,4 @@
-package model;
+package org.issuetracker.model;
 
 import java.time.LocalDateTime;
 

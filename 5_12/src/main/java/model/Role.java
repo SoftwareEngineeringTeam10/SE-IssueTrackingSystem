@@ -1,5 +1,0 @@
-package model;
-
-public enum Role {
-    ADMIN, PL, DEV, TESTER
-}

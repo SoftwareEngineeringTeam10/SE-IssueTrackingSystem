@@ -1,12 +1,157 @@
 [ {
   "id" : 1,
   "title" : "Login Error",
-  "description" : "Login button not working",
-  "reporter" : "tester",
-  "reportedDate" : "2026-05-13T01:51:30.843450",
+  "description" : "로그인 버튼이 작동하지 않음",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:21:35.956509600",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "CRITICAL",
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "tester01",
+    "content" : "이슈 재현 확인했습니다.",
+    "date" : "2026-05-20T13:21:35.985588300"
+  }, {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-20T13:21:36.100893400"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-20T13:21:36.104904"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-20T13:21:36.107914600"
+  }, {
+    "authorId" : "tester01",
+    "content" : "이슈 재현 확인했습니다.",
+    "date" : "2026-05-20T13:30:41.720731300"
+  }, {
+    "authorId" : "tester01",
+    "content" : "이슈 재현 확인했습니다.",
+    "date" : "2026-05-20T13:47:03.275190300"
+  } ]
+}, {
+  "id" : 2,
+  "title" : "UI 정렬 깨짐",
+  "description" : "메인 화면 버튼 위치 이상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:21:36.110920",
   "fixer" : null,
   "assignee" : null,
-  "priority" : "major",
-  "status" : "new",
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 3,
+  "title" : "로그인 오류",
+  "description" : "로그인 버튼 간헐적 먹통",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:21:36.114931800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 4,
+  "title" : "UI 정렬 깨짐",
+  "description" : "사이드바 텍스트 겹침 현상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:21:36.117939500",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 5,
+  "title" : "Login Error",
+  "description" : "로그인 버튼이 작동하지 않음",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:30:41.666227300",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 6,
+  "title" : "UI 정렬 깨짐",
+  "description" : "메인 화면 버튼 위치 이상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:30:41.745639500",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 7,
+  "title" : "로그인 오류",
+  "description" : "로그인 버튼 간헐적 먹통",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:30:41.752657800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 8,
+  "title" : "UI 정렬 깨짐",
+  "description" : "사이드바 텍스트 겹침 현상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:30:41.759676200",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 9,
+  "title" : "Login Error",
+  "description" : "로그인 버튼이 작동하지 않음",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:47:03.225092900",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 10,
+  "title" : "UI 정렬 깨짐",
+  "description" : "메인 화면 버튼 위치 이상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:47:03.293236",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 11,
+  "title" : "로그인 오류",
+  "description" : "로그인 버튼 간헐적 먹통",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:47:03.297246100",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 12,
+  "title" : "UI 정렬 깨짐",
+  "description" : "사이드바 텍스트 겹침 현상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-20T13:47:03.302260300",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
   "comments" : [ ]
 } ]

@@ -1,7 +1,7 @@
-package repository;
+package org.issuetracker.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.Issue;
+import org.issuetracker.model.Issue;
 
 import java.io.File;
 import java.io.IOException;
