@@ -20,7 +20,6 @@ public class IssueRepository {
         }
 
         try {
-
             return mapper.readValue(
                     file,
                     mapper.getTypeFactory()
@@ -38,10 +37,8 @@ public class IssueRepository {
     public void saveAll(List<Issue> issues) {
 
         try {
-
             mapper.writerWithDefaultPrettyPrinter()
                     .writeValue(file, issues);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

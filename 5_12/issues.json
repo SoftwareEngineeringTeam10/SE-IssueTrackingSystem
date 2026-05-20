@@ -3,7 +3,7 @@
   "title" : "Login Error",
   "description" : "로그인 버튼이 작동하지 않음",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:21:35.956509600",
+  "reportedDate" : "2026-05-21T01:55:09.887035900",
   "fixer" : "dev01",
   "assignee" : "dev01",
   "priority" : "CRITICAL",
@@ -11,34 +11,30 @@
   "comments" : [ {
     "authorId" : "tester01",
     "content" : "이슈 재현 확인했습니다.",
-    "date" : "2026-05-20T13:21:35.985588300"
+    "date" : "2026-05-21T01:55:09.910598700"
   }, {
     "authorId" : "dev01",
     "content" : "상태가 FIXED으로 변경되었습니다.",
-    "date" : "2026-05-20T13:21:36.100893400"
+    "date" : "2026-05-21T01:55:10.012369300"
   }, {
     "authorId" : "tester01",
     "content" : "상태가 RESOLVED으로 변경되었습니다.",
-    "date" : "2026-05-20T13:21:36.104904"
+    "date" : "2026-05-21T01:55:10.016881700"
   }, {
     "authorId" : "pl01",
     "content" : "상태가 CLOSED으로 변경되었습니다.",
-    "date" : "2026-05-20T13:21:36.107914600"
+    "date" : "2026-05-21T01:55:10.021895300"
   }, {
     "authorId" : "tester01",
     "content" : "이슈 재현 확인했습니다.",
-    "date" : "2026-05-20T13:30:41.720731300"
-  }, {
-    "authorId" : "tester01",
-    "content" : "이슈 재현 확인했습니다.",
-    "date" : "2026-05-20T13:47:03.275190300"
+    "date" : "2026-05-21T01:56:05.844615700"
   } ]
 }, {
   "id" : 2,
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:21:36.110920",
+  "reportedDate" : "2026-05-21T01:55:10.026409500",
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",
@@ -49,7 +45,7 @@
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:21:36.114931800",
+  "reportedDate" : "2026-05-21T01:55:10.031421400",
   "fixer" : null,
   "assignee" : null,
   "priority" : "CRITICAL",
@@ -60,7 +56,7 @@
   "title" : "UI 정렬 깨짐",
   "description" : "사이드바 텍스트 겹침 현상",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:21:36.117939500",
+  "reportedDate" : "2026-05-21T01:55:10.037436200",
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",
@@ -71,7 +67,7 @@
   "title" : "Login Error",
   "description" : "로그인 버튼이 작동하지 않음",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:30:41.666227300",
+  "reportedDate" : "2026-05-21T01:56:05.804509700",
   "fixer" : null,
   "assignee" : null,
   "priority" : "CRITICAL",
@@ -82,7 +78,7 @@
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:30:41.745639500",
+  "reportedDate" : "2026-05-21T01:56:05.861160600",
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",
@@ -93,7 +89,7 @@
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:30:41.752657800",
+  "reportedDate" : "2026-05-21T01:56:05.866173700",
   "fixer" : null,
   "assignee" : null,
   "priority" : "CRITICAL",
@@ -104,51 +100,7 @@
   "title" : "UI 정렬 깨짐",
   "description" : "사이드바 텍스트 겹침 현상",
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:30:41.759676200",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "MINOR",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 9,
-  "title" : "Login Error",
-  "description" : "로그인 버튼이 작동하지 않음",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:47:03.225092900",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 10,
-  "title" : "UI 정렬 깨짐",
-  "description" : "메인 화면 버튼 위치 이상",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:47:03.293236",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "MINOR",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 11,
-  "title" : "로그인 오류",
-  "description" : "로그인 버튼 간헐적 먹통",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:47:03.297246100",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 12,
-  "title" : "UI 정렬 깨짐",
-  "description" : "사이드바 텍스트 겹침 현상",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-20T13:47:03.302260300",
+  "reportedDate" : "2026-05-21T01:56:05.869682600",
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",

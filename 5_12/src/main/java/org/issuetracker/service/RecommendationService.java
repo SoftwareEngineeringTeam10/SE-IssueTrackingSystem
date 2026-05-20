@@ -5,6 +5,5 @@ import org.issuetracker.model.RecommendationResult;
 import java.util.List;
 
 public interface RecommendationService {
-
     List<RecommendationResult> recommend(Issue targetIssue, List<Issue> historicalIssues);
 }

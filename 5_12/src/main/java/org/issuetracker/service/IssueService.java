@@ -197,7 +197,7 @@ public class IssueService {
             return;
         }
 
-        System.out.println("=== Issue Detail ===");
+        System.out.println("\n=== Issue Detail ===");
         System.out.println("ID       : " + issue.id);
         System.out.println("Title    : " + issue.title);
         System.out.println("Desc     : " + issue.description);
@@ -207,7 +207,7 @@ public class IssueService {
         System.out.println("Fixer    : " + issue.fixer);
         System.out.println("Priority : " + issue.priority);
         System.out.println("Status   : " + issue.status);
-        System.out.println("=== Comments ===");
+        System.out.println("\n=== Comments ===");
         for (Comment c : issue.comments) {
             System.out.println("[" + c.date + "] " + c.authorId + " : " + c.content);
         }
@@ -215,7 +215,7 @@ public class IssueService {
 
     // 담당자 자동 추천 기능
     public List<RecommendationResult> getAssigneeRecommendations(int issueId) {
-        // 1. 현재 추천을 받고자 하는 타겟 이슈를 가져옵니다.
+        // 1. 현재 추천을 받고자 하는 타겟 이슈를 가져옴
         Issue target = getIssueById(issueId);
         if (target == null) return new ArrayList<>();
 

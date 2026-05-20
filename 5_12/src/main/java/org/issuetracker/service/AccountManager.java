@@ -23,56 +23,40 @@ public class AccountManager {
 
     // 계정 추가
     public void addUser(User user) {
-
         if(isDuplicateId(user.getId())) {
             System.out.println("중복된 아이디입니다");
             return;
         }
-
         users.add(user);
-
         saveUsers();
-
         System.out.println(
-                user.getName()
-                        + " 계정이 생성되었습니다"
+                user.getName() + " 계정이 생성되었습니다"
         );
     }
 
     // 중복 ID 검사
     private boolean isDuplicateId(String id) {
-
         for(User user : users) {
-
             if(user.getId().equals(id)) {
                 return true;
             }
         }
-
         return false;
     }
 
     // 로그인
     public boolean login(String id, String password) {
-
         for(User user : users) {
-
             if(user.getId().equals(id)
                     && user.getPassword().equals(password)) {
-
                 currentUser = user;
-
                 System.out.println(
-                        user.getName()
-                                + " 로그인 성공"
+                        user.getName() + " 로그인 성공"
                 );
-
                 return true;
             }
         }
-
         System.out.println("로그인 실패");
-
         return false;
     }
 
@@ -88,14 +72,11 @@ public class AccountManager {
 
     // JSON 저장
     private void saveUsers() {
-
         try {
-
             objectMapper.writeValue(
                     new File(FILE_PATH),
                     users
             );
-
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -103,13 +84,9 @@ public class AccountManager {
 
     // JSON 불러오기
     private void loadUsers() {
-
         try {
-
             File file = new File(FILE_PATH);
-
             if(file.exists()) {
-
                 users = objectMapper.readValue(
                         file,
                         objectMapper.getTypeFactory()
@@ -119,7 +96,6 @@ public class AccountManager {
                                 )
                 );
             }
-
         } catch(Exception e) {
             e.printStackTrace();
         }

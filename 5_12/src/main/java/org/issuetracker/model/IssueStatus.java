@@ -8,8 +8,9 @@ public enum IssueStatus {
     RESOLVED,
     CLOSED;
 
+    //대문자로
     @Override
     public String toString() {
-        return this.name().toUpperCase(); // 대문자로
+        return this.name().toUpperCase();
     }
 }

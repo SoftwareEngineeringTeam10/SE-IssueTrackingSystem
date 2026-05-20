@@ -79,7 +79,7 @@ public class StatisticsService {
             System.out.println("로그인이 필요합니다");
             return;
         }
-        System.out.println("\n========== 이슈 통계 분석 ==========");
+        System.out.println("\n=== 이슈 통계 분석 ===");
 
         // 일별
         System.out.println("\n[일별 이슈 등록 수]");
