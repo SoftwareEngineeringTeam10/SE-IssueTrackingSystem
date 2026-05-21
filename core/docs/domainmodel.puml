@@ -1,0 +1,72 @@
+@startuml
+title Domain Model - Issue Management System
+
+class User {
+    id: String
+    password: String
+    name: String
+    role: Role
+}
+
+class Project {
+    id: int
+    name: String
+    description: String
+}
+
+class Issue {
+    id: int
+    title: String
+    description: String
+    reporter: String
+    reportedDate: String
+    assignee: String
+    fixer: String
+    priority: Priority
+    status: IssueStatus
+}
+
+class Comment {
+    authorId: String
+    content: String
+    date: String
+}
+
+class RecommendationResult {
+    fixerId: String
+    score: double
+    matchedIssueIds: List
+}
+
+enum Role {
+    ADMIN
+    PL
+    DEV
+    TESTER
+}
+
+enum IssueStatus {
+    NEW
+    ASSIGNED
+    FIXED
+    REOPENED
+    RESOLVED
+    CLOSED
+}
+
+enum Priority {
+    BLOCKER
+    CRITICAL
+    MAJOR
+    MINOR
+    TRIVIAL
+}
+
+Project -- Issue : contains
+Issue -- Comment : has
+Issue -- RecommendationResult : recommends
+User -- Role
+Issue -- IssueStatus
+Issue -- Priority
+
+@enduml

@@ -1,0 +1,122 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+title ITS Class Diagram(초안)
+
+' --- Enums ---
+enum Role {
+    ADMIN
+    PL
+    DEV
+    TESTER
+}
+
+enum Status {
+    NEW
+    ASSIGNED
+    FIXED
+    RESOLVED
+    CLOSED
+    RESOLVED
+}
+
+' --- Entities ---
+class Project {
+    - projectId : String
+    - name : String
+    - createdDate : String
+}
+
+class Issue {
+    + id: int
+    + title: String
+    + description: String
+    + reporter: String
+    + fixer: String
+    + assignee: String
+    + priority: String
+    + status: String
+    + comments: List<Comment>
+    --
+    + addComment()
+}
+
+class Comment {
+    + authorId: String
+    + content: String
+    + date: String
+}
+
+class User {
+    - id: String
+    - password: String
+    - name: String
+    - role: Role
+    --
+    + getId()
+    + getPassword()
+    + getName()
+    + getRole()
+}
+
+' --- Managers & Logic ---
+class AccountManager {
+    - users: List<User>
+    - currentUser: User
+    --
+    + addUser()
+    + login()
+    + logout()
+    + getCurrentUser()
+}
+
+class PermissionManager {
+    --
+    + canCreateIssue()
+    + canAssignIssue()
+    + canManageUsers()
+}
+
+class IssueService {
+    --
+    + getAllIssues()
+    + createIssue()
+    + getIssueById()
+    + addComment()
+}
+
+class IssueRepository {
+    --
+    + findAll()
+    + saveAll()
+}
+
+' --- Relationships ---
+
+' 1. Project가 Issue를 포함 (1 : *) - 최상위 계층
+Project "1" *-- "*" Issue
+
+' 2. Issue가 Comment를 포함 (1 : *) - Composition
+Issue "1" *-- "*" Comment
+
+' 3. User와 Issue의 관계 (다중도 반영)
+User "1" -- "*" Issue : reports
+User "0..1" -- "*" Issue : assigned to
+User "0..1" -- "*" Issue : fixes
+
+' 4. User와 Comment의 관계
+User "1" -- "*" Comment : writes
+' 5. User와 Project와의 관계
+User "*" -- "*" Project
+
+' 6. 시스템 로직 연관 관계
+IssueService ..> PermissionManager : calls
+IssueService --> Issue : manages
+IssueService ..> IssueRepository : uses
+AccountManager --> User : manages
+PermissionManager ..> User : checks
+
+
+@enduml
