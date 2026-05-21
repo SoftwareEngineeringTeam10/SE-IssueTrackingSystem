@@ -24,7 +24,16 @@ hs_err_pid*
 replay_pid*
 
 # 명세서 (저작권 보호, 로컬에만 보관)
-SE_Term_Project_2026-1.pdf
+SE_Term_Project_2026*.pdf
 
 # IDE 설정
 .idea/
+
+# Gradle local cache
+.gradle/
+
+# Gradle build output
+build/
+
+# Gradle wrapper (allow gradle-wrapper.jar exception to *.jar)
+!gradle/wrapper/gradle-wrapper.jar
