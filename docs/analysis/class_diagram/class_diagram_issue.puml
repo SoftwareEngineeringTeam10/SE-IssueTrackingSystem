@@ -1,11 +1,6 @@
 @startuml
 skinparam classAttributeIconSize 0
-skinparam monochrome true
-skinparam shadowing false
 
-title ITS Class Diagram(초안)
-
-' --- Enums ---
 enum Role {
     ADMIN
     PL
@@ -19,10 +14,28 @@ enum Status {
     FIXED
     RESOLVED
     CLOSED
-    RESOLVED
+    REOPENED
 }
 
-' --- Entities ---
+enum Priority {
+    BLOCKER
+    CRITICAL
+    MAJOR
+    MINOR
+    TRIVIAL
+}
+
+class User {
+    - id : String
+    - password : String
+    - name : String
+    - role : Role
+    + getId() : String
+    + getPassword() : String
+    + getName() : String
+    + getRole() : Role
+}
+
 class Project {
     - projectId : String
     - name : String
@@ -30,93 +43,88 @@ class Project {
 }
 
 class Issue {
-    + id: int
-    + title: String
-    + description: String
-    + reporter: String
-    + fixer: String
-    + assignee: String
-    + priority: String
-    + status: String
-    + comments: List<Comment>
-    --
-    + addComment()
+    - id : int
+    - title : String
+    - description : String
+    - reporterId : String
+    - fixerId : String
+    - assigneeId : String
+    - priority : Priority
+    - status : Status
+    - reportedDate : String
+    - comments : List<Comment>
+    + addComment(comment : Comment) : void
 }
 
 class Comment {
-    + authorId: String
-    + content: String
-    + date: String
+    - authorId : String
+    - content : String
+    - createdDate : String
 }
 
-class User {
-    - id: String
-    - password: String
-    - name: String
-    - role: Role
-    --
-    + getId()
-    + getPassword()
-    + getName()
-    + getRole()
+class PermissionManager {
+    + canCreateIssue()
+    + canAssignIssue()
+    + canManageUsers()
 }
 
-' --- Managers & Logic ---
 class AccountManager {
-    - users: List<User>
-    - currentUser: User
-    --
+    - users : List<User>
+    - currentUser : User
     + addUser()
     + login()
     + logout()
     + getCurrentUser()
 }
 
-class PermissionManager {
-    --
-    + canCreateIssue()
-    + canAssignIssue()
-    + canManageUsers()
-}
-
 class IssueService {
-    --
     + getAllIssues()
     + createIssue()
     + getIssueById()
     + addComment()
+    + selectProject(projectId : String) : Project
+    + createIssue(title : String, description : String, priority : Priority) : int
+    + getIssueDetail(issueId : int) : Issue
+    + requestStatusChange(newStatus : String, comment : String) : Issue
+}
+
+class UserRepository {
+    + findById()
+    + save()
+}
+
+class ProjectRepository {
+    + findById()
+    + findAll()
+    + save()
 }
 
 class IssueRepository {
-    --
+    + findById()
     + findAll()
     + saveAll()
 }
 
-' --- Relationships ---
 
-' 1. Project가 Issue를 포함 (1 : *) - 최상위 계층
-Project "1" *-- "*" Issue
+' 필드로 상시 참조
+AccountManager -> User : manages >
+AccountManager -> UserRepository : uses >
+IssueService -> PermissionManager : calls >
+IssueService -> ProjectRepository : uses >
+IssueService -> IssueRepository : uses >
+IssueService -> Issue : manages >
 
-' 2. Issue가 Comment를 포함 (1 : *) - Composition
-Issue "1" *-- "*" Comment
+' 메서드 파라미터로 일시적 체크
+PermissionManager ..> User : checks >
 
-' 3. User와 Issue의 관계 (다중도 반영)
-User "1" -- "*" Issue : reports
-User "0..1" -- "*" Issue : assigned to
-User "0..1" -- "*" Issue : fixes
+' 엔티티 간 연관 관계
+User "0..1" -- "*" Issue : fixes >
+User "0..1" -- "*" Issue : assigned to >
+User "1" -- "*" Issue : reports >
+User "1" -- "*" Comment : writes >
 
-' 4. User와 Comment의 관계
-User "1" -- "*" Comment : writes
-' 5. User와 Project와의 관계
-User "*" -- "*" Project
+' 생명주기 종속 관계 (컴포지션)
+Project "1" *-- "*" Issue : contains >
+Issue "1" *-- "*" Comment : owns >
 
-' 6. 시스템 로직 연관 관계
-IssueService ..> PermissionManager : calls
-IssueService --> Issue : manages
-IssueService ..> IssueRepository : uses
-AccountManager --> User : manages
-PermissionManager ..> User : checks
-
-
-@enduml
+@endum
