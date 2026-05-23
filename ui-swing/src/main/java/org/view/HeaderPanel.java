@@ -1,3 +1,5 @@
+package org.view;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -20,14 +22,14 @@ public class HeaderPanel extends JPanel {
     public HeaderPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
-        // 1. 상단 바 전체 디자인 (검은색 배경, 높이 55)
+        // 상단 바 전체 디자인 (검은색 배경, 높이 55)
         setBackground(new Color(43, 43, 43)); // 어두운 챠콜색
         setPreferredSize(new Dimension(0, 55));
         setLayout(new BorderLayout());
         // 양옆에 15픽셀씩 줌으로써 컴포넌트들이 벽에 바짝 붙는 걸 방지
         setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
 
-        // 2. [상단 좌측] 프로젝트 선택 드롭다운 (와이어프레임 완벽 반영)
+        // [상단 좌측] 프로젝트 선택 드롭다운 (와이어프레임 반영)
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 12));
         leftPanel.setOpaque(false); // 배경 투명하게 해서 검은색 비치게 함
 
@@ -42,13 +44,13 @@ public class HeaderPanel extends JPanel {
         leftPanel.add(projectCombo);
         add(leftPanel, BorderLayout.WEST);
 
-        // 3. [상단 우측 ⭐연욱님이 펜으로 표시한 구역⭐]
+        // [상단 우측]
         // 로그인 전/후 상태 화면을 갈아끼울 카드 컨테이너 생성
         cardLayout = new CardLayout();
         authCardContainer = new JPanel(cardLayout);
         authCardContainer.setOpaque(false);
 
-        // (A) 로그인 전 상태의 미니 폼 구성
+        // 로그인 전 상태의 미니 폼 구성
         JPanel beforeLoginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 12));
         beforeLoginPanel.setOpaque(false);
 
@@ -68,7 +70,7 @@ public class HeaderPanel extends JPanel {
         beforeLoginPanel.add(pwField);
         beforeLoginPanel.add(loginBtn);
 
-        // (B) 로그인 후 상태의 유저 정보 구성
+        // 로그인 후 상태의 유저 정보 구성
         JPanel afterLoginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 12));
         afterLoginPanel.setOpaque(false);
 
@@ -90,7 +92,7 @@ public class HeaderPanel extends JPanel {
 
         add(authCardContainer, BorderLayout.EAST);
 
-        // 4. [임시 이벤트] 버튼 누르면 펜 자리만 슥슥 바뀌게 연동
+        // [임시 이벤트] 버튼 누르면 펜 자리만 바뀌게 연동
         loginBtn.addActionListener(e -> {
             String inputId = idField.getText();
             System.out.println("[Header] 로그인 시도 ID: " + inputId);
@@ -106,7 +108,7 @@ public class HeaderPanel extends JPanel {
         });
     }
 
-    // ⭐ Controller가 리스너를 묶거나 데이터를 조작할 수 있게 Getter 개방
+    // Controller가 리스너를 묶거나 데이터를 조작할 수 있게 Getter 개방
     public JTextField getIdField() { return idField; }
     public JPasswordField getPwField() { return pwField; }
     public JButton getLoginBtn() { return loginBtn; }

@@ -1,3 +1,5 @@
+package org.view;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,7 +18,7 @@ public class StatsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // 2. 상단 타이틀 배치
-        JLabel pageTitle = new JLabel("📊 프로젝트 이슈 통계 분석 (Issue Analytics)");
+        JLabel pageTitle = new JLabel("프로젝트 이슈 통계 분석 (Issue Analytics)");
         pageTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 18));
         add(pageTitle, BorderLayout.NORTH);
 
@@ -29,7 +31,7 @@ public class StatsPanel extends JPanel {
         centerContainer.add(Box.createVerticalStrut(20));
 
         // ---------------------------------------------------------------
-        // 📊 (A) 대시보드 상단 4종 스코어 보드 (GridLayout)
+        // 대시보드 상단 4종 스코어 보드 (GridLayout)
         // ---------------------------------------------------------------
         JPanel summaryPanel = new JPanel(new GridLayout(1, 4, 15, 0));
         summaryPanel.setOpaque(false);
@@ -45,7 +47,7 @@ public class StatsPanel extends JPanel {
         centerContainer.add(Box.createVerticalStrut(30));
 
         // ---------------------------------------------------------------
-        // 📈 (B) 하단 상세 리포트 구역 (간단한 진척도 매체 표현)
+        // 하단 상세 리포트 구역 (간단한 진척도 매체 표현)
         // ---------------------------------------------------------------
         JPanel reportPanel = new JPanel(new BorderLayout());
         reportPanel.setBackground(new Color(248, 249, 250));
@@ -101,7 +103,7 @@ public class StatsPanel extends JPanel {
         lblTitle.setForeground(titleColor);
 
         JLabel lblValue = new JLabel(value);
-        lblValue.setFont(new Font("Impact", Font.PLAIN, 32)); // 숫자는 묵직하게 폰트 적용
+        lblValue.setFont(new Font("Impact", Font.PLAIN, 32)); // 폰트 적용
         lblValue.setHorizontalAlignment(SwingConstants.RIGHT);
 
         card.add(lblTitle, BorderLayout.NORTH);

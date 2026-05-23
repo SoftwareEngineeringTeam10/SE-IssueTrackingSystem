@@ -1,3 +1,5 @@
+package org.view;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -23,7 +25,7 @@ public class IssueListPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // ---------------------------------------------------------------
-        // 🔍 2. [신규 추가] 상단 타이틀 + 검색/필터 복합 패널 (NORTH)
+        // [신규 추가] 상단 타이틀 + 검색/필터 복합 패널 (NORTH)
         // ---------------------------------------------------------------
         JPanel topContainer = new JPanel();
         topContainer.setLayout(new BoxLayout(topContainer, BoxLayout.Y_AXIS));
@@ -36,7 +38,7 @@ public class IssueListPanel extends JPanel {
         topContainer.add(listTitle);
         topContainer.add(Box.createVerticalStrut(15)); // 타이틀과 검색바 사이 간격
 
-        // (B) 검색 및 필터 컨트롤 바 (FlowLayout)
+        // 검색 및 필터 컨트롤 바 (FlowLayout)
         JPanel searchBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         searchBarPanel.setOpaque(false);
         searchBarPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -72,7 +74,7 @@ public class IssueListPanel extends JPanel {
 
 
         // ---------------------------------------------------------------
-        // 📊 3. JTable 컬럼 구성 및 더미 데이터 (CENTER)
+        // JTable 컬럼 구성 및 더미 데이터 (CENTER)
         // ---------------------------------------------------------------
         String[] columnNames = {"번호", "이슈 제목", "우선순위", "상태", "보고자", "담당자"};
 
@@ -98,7 +100,7 @@ public class IssueListPanel extends JPanel {
 
 
         // ---------------------------------------------------------------
-        // 🔘 4. 하단 상태 변경 버튼 패널 (SOUTH)
+        // 하단 상태 변경 버튼 패널 (SOUTH)
         // ---------------------------------------------------------------
         JPanel bottomButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         bottomButtonPanel.setOpaque(false);
@@ -117,7 +119,7 @@ public class IssueListPanel extends JPanel {
 
 
         // ---------------------------------------------------------------
-        // 🖱️ 5. 테이블 더블클릭 ➡️ 상세 페이지 화면 전환 이벤트
+        // 테이블 더블클릭 -> 상세 페이지 화면 전환 이벤트
         // ---------------------------------------------------------------
         issueTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -133,13 +135,13 @@ public class IssueListPanel extends JPanel {
         });
     }
 
-    // ⭐ Controller 연동용 Getter 개방
+    // Controller 연동용 Getter 개방
     public JTable getIssueTable() { return issueTable; }
     public DefaultTableModel getTableModel() { return tableModel; }
     public JButton getBtnResolve() { return btnResolve; }
     public JButton getBtnClose() { return btnClose; }
 
-    // [신규 Getter] 검색 필터 값 수집용
+    // 검색 필터 값 수집용
     public JTextField getFieldSearch() { return fieldSearch; }
     public JComboBox<String> getComboStatusFilter() { return comboStatusFilter; }
     public JComboBox<String> getComboPriorityFilter() { return comboPriorityFilter; }

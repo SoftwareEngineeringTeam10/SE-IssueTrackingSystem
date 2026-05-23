@@ -1,4 +1,7 @@
-import org.example.controller.IssueController;
+package org.view;
+
+import org.controller.IssueController;
+import org.issuetracker.service.IssueService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +13,7 @@ public class MainFrame extends JFrame {
     private IssueController controller;
     private SideMenuPanel sideMenuPanel;
 
-    public MainFrame() {
+    public MainFrame(IssueService issueService) {
         // 1. 전체 창틀의 기본적인 설정
         setTitle("이슈 관리 시스템 (ITS) - Dashboard");
         setSize(1100, 700);
@@ -19,7 +22,7 @@ public class MainFrame extends JFrame {
 
         setLayout(new BorderLayout());
 
-        this.controller = new IssueController(this);
+        this.controller = new IssueController(this, issueService);
 
         // 2. 조각 부품 패널들 생성
         HeaderPanel headerPanel = new HeaderPanel(this);
@@ -47,9 +50,9 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * ⭐ 이 시스템의 핵심 리모컨 함수!
+     * 시스템의 핵심 리모컨 함수
      * 좌측 메뉴를 누르거나 테이블을 더블클릭했을 때, 이 함수에 새 패널만 던져주면
-     * 상단바와 좌측메뉴는 가만히 있고 중앙 화면만 마법처럼 슥 갈아 끼워집니다.
+     * 상단바와 좌측메뉴는 가만히 있고 중앙 화면만 갈아끼워진다.
      */
 
 
@@ -59,12 +62,12 @@ public class MainFrame extends JFrame {
 
         // 픽셀을 다시 그려줍니다.
 
-        // 화면이 바뀔 때마다 총지휘관(Controller)에게 새 패널을 토스해서 이벤트를 묶고 버튼을 제어하게 만듭니다.
+        // 화면이 바뀔 때마다 Controller에게 새 패널을 토스해서 이벤트를 묶고 버튼을 제어하게 만든다.
         if (controller != null) {
             controller.bindViewEvents(newPanel);
         }
 
-        centerContainer.revalidate();     // 구조를 새로고침하고
+        centerContainer.revalidate();     // 구조를 새로고침
         centerContainer.repaint();
 
 

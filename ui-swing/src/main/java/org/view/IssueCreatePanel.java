@@ -1,10 +1,12 @@
+package org.view;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class IssueCreatePanel extends JPanel {
     private MainFrame mainFrame;
 
-    // 컨트롤러가 입력된 값을 뜯어가야 하므로 멤버 변수로 선언합니다.
+    // 컨트롤러가 입력된 값을 뜯어가야 하므로 멤버 변수로 선언
     private JTextField titleField;
     private JTextArea descriptionArea;
     private JComboBox<String> priorityCombo;
@@ -13,24 +15,24 @@ public class IssueCreatePanel extends JPanel {
     public IssueCreatePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
-        // 1. 전체 레이아웃 세팅 (BorderLayout) 및 여백 주기
+        // 전체 레이아웃 세팅 (BorderLayout) 및 여백 주기
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // 2. 상단 타이틀 배치
+        // 상단 타이틀 배치
         JLabel pageTitle = new JLabel("새 이슈 등록 (Create New Issue)");
         pageTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 18));
         add(pageTitle, BorderLayout.NORTH);
 
-        // 3. 중앙 입력 폼 영역 (GridBagLayout을 써서 깔끔하게 오열 맞추기)
+        // 중앙 입력 폼 영역
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 5, 10, 5); // 컴포넌트 간 위아래 간격 설정
 
-        // (A) 우선순위 선택 행
+        // 우선순위 선택 행
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         JLabel priorityLabel = new JLabel("우선순위 (Priority) : ");
         priorityLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
@@ -41,7 +43,7 @@ public class IssueCreatePanel extends JPanel {
         priorityCombo.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
         formPanel.add(priorityCombo, gbc);
 
-        // (B) 이슈 제목 입력 행
+        // 이슈 제목 입력 행
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         JLabel titleLabel = new JLabel("이슈 제목 (Title) : ");
         titleLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
@@ -52,7 +54,7 @@ public class IssueCreatePanel extends JPanel {
         titleField.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         formPanel.add(titleField, gbc);
 
-        // (C) 이슈 내용 입력 행 (설명 영역은 널찍하게)
+        // 이슈 내용 입력 행
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST; // 글자 레이블은 위쪽 정렬
         JLabel descLabel = new JLabel("상세 내용 (Description) : ");
@@ -69,7 +71,7 @@ public class IssueCreatePanel extends JPanel {
 
         add(formPanel, BorderLayout.CENTER);
 
-        // 4. 하단 버튼 영역 (등록 / 취소)
+        // 하단 버튼 영역 (등록 / 취소)
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         bottomPanel.setOpaque(false);
 
@@ -86,7 +88,7 @@ public class IssueCreatePanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
 
         // =======================================================
-        // 💡 [임시 이벤트] 버튼 누르면 작동하는 시뮬레이션 로직
+        // 버튼 누르면 작동하는 시뮬레이션 로직
         // =======================================================
 
         // 등록 버튼 누르면 콘솔에 입력값 찍고 다시 목록 화면으로 튕겨내기
@@ -109,7 +111,7 @@ public class IssueCreatePanel extends JPanel {
         });
     }
 
-    // ⭐ Controller가 입력폼 데이터를 싹 긁어갈 수 있도록 셔터 개방 (Getter)
+    // Controller가 입력폼 데이터를 긁어갈 수 있도록 셔터 개방 (Getter)
     public JTextField getTitleField() { return titleField; }
     public JTextArea getDescriptionArea() { return descriptionArea; }
     public JComboBox<String> getPriorityCombo() { return priorityCombo; }

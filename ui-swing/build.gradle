@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    // 백엔드 core 모듈의 데이터(Model, Repository)를 땡겨오기 위한 핵심 연결선
+    implementation project(':core')
+
+    // JSON 파싱용 Jackson 라이브러리
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+}

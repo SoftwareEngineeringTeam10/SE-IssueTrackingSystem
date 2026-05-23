@@ -34,7 +34,7 @@ public class IssueService {
                 : issues.get(issues.size() - 1).id + 1;
 
         newIssue.id = nextId;
-        newIssue.reporter = currentUser.getId();
+        newIssue.reporterId = currentUser.getId();
         newIssue.reportedDate = java.time.LocalDateTime.now().toString();
 
         issues.add(newIssue);
@@ -52,7 +52,7 @@ public class IssueService {
     }
 
     // 댓글 추가
-    public void addCommentToIssue(int issueId, Comment newComment, User currentUser) {
+    public void addComment(int issueId, Comment newComment, User currentUser) {
         // 권한: All 허용 (로그인만 되어 있으면 됨)
         if (currentUser == null) {
             System.out.println("로그인이 필요합니다");
@@ -89,12 +89,12 @@ public class IssueService {
             }
 
             if (assignee != null && !assignee.isEmpty()) {
-                if (issue.assignee == null || !issue.assignee.equalsIgnoreCase(assignee))
+                if (issue.assigneeId == null || !issue.assigneeId.equalsIgnoreCase(assignee))
                     matches = false;
             }
 
             if (reporter != null && !reporter.isEmpty()) {
-                if (issue.reporter == null || !issue.reporter.equalsIgnoreCase(reporter))
+                if (issue.reporterId == null || !issue.reporterId.equalsIgnoreCase(reporter))
                     matches = false;
             }
 
@@ -117,7 +117,7 @@ public class IssueService {
                     System.out.println("현재 상태에서는 배정할 수 없습니다");
                     return;
                 }
-                issue.assignee = assignee;
+                issue.assigneeId = assignee;
                 issue.status = IssueStatus.ASSIGNED;
                 System.out.println("담당자가 배정되었습니다");
                 break;
@@ -146,10 +146,10 @@ public class IssueService {
                 issue.status = newStatus;
 
                 if (newStatus == IssueStatus.FIXED) {
-                    issue.fixer = currentUser.getId();
+                    issue.fixerId = currentUser.getId();
                 }
                 if (newStatus == IssueStatus.REOPENED) {
-                    issue.assignee = null;
+                    issue.assigneeId = null;
                 }
 
                 // 상태 변경 시 코멘트 자동 추가
@@ -201,10 +201,10 @@ public class IssueService {
         System.out.println("ID       : " + issue.id);
         System.out.println("Title    : " + issue.title);
         System.out.println("Desc     : " + issue.description);
-        System.out.println("Reporter : " + issue.reporter);
+        System.out.println("Reporter : " + issue.reporterId);
         System.out.println("Date     : " + issue.reportedDate);
-        System.out.println("Assignee : " + issue.assignee);
-        System.out.println("Fixer    : " + issue.fixer);
+        System.out.println("Assignee : " + issue.assigneeId);
+        System.out.println("Fixer    : " + issue.fixerId);
         System.out.println("Priority : " + issue.priority);
         System.out.println("Status   : " + issue.status);
         System.out.println("\n=== Comments ===");

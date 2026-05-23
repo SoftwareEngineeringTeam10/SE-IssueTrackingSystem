@@ -1,18 +1,31 @@
-package controller;
+package org.controller;
 
-import org.example.view.swing.*;
+import org.issuetracker.model.User;
+import org.view.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import org.issuetracker.service.IssueService;
+import org.issuetracker.model.User;
+import org.issuetracker.model.Issue;
+import org.issuetracker.model.Role;
+import org.issuetracker.model.IssueStatus;
+import org.issuetracker.model.Priority;
 
 public class IssueController {
     private MainFrame mainFrame;
+    private final IssueService issueService;
 
-    // 👥 테스트용 가상 세션 권한 세팅 (ADMIN, PL, DEVELOPER, TESTER)
-    private String currentRole = "ADMIN";
-    private String currentIssueStatus = "NEW";
+    private User currentUser;
 
-    public IssueController(MainFrame mainFrame) {
+    public void setCurrentUser(User user)
+    {
+        this.currentUser = user;
+        configureSideMenuByRole();
+    }
+
+    public IssueController(MainFrame mainFrame, IssueService issueService) {
         this.mainFrame = mainFrame;
+        this.issueService = issueService;
     }
 
     public void bindViewEvents(JPanel currentPanel) {
@@ -31,10 +44,19 @@ public class IssueController {
      * 메인 이슈 목록 화면의 버튼들 통제
      */
     private void setupIssueListListners(IssueListPanel panel) {
-        if (currentRole.equals("DEVELOPER")) {
+
+        if (currentUser == null) {
+            panel.getBtnResolve().setVisible(false);
+            panel.getBtnClose().setVisible(false);
+            return;
+        }
+
+        Role currentRole = currentUser.getRole();
+
+        if (currentRole == Role.DEV) {
             panel.getBtnResolve().setVisible(true);
             panel.getBtnClose().setVisible(false);
-        } else if (currentRole.equals("PL")) {
+        } else if (currentRole == Role.PL) {
             panel.getBtnResolve().setVisible(false);
             panel.getBtnClose().setVisible(true);
         } else {
@@ -81,12 +103,23 @@ public class IssueController {
         panel.getBtnSubmit().addActionListener((ActionEvent e) -> {
             String title = panel.getTitleField().getText().trim();
             String description = panel.getDescriptionArea().getText().trim();
-            String priority = (String) panel.getPriorityCombo().getSelectedItem();
+            String priorityStr = (String) panel.getPriorityCombo().getSelectedItem();
 
             if (title.isEmpty() || description.isEmpty()) {
                 JOptionPane.showMessageDialog(mainFrame, "제목과 내용을 모두 입력해주세요!", "오류", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            /*createIssue 추가됨
+            try {
+                Priority priority = Priority.valueOf(priorityStr.toUpperCase());
+                int newIssueId = issueService.createIssue(title, description, priority, currentUser);
+                System.out.println("[Controller] 발급된 ID: " + newIssueId);
+            } catch (Exception ex) {
+                System.out.println("[Controller] 우선순위 변환 실패 혹은 생성 권한 거부 예외 처리");
+            }
+            */
+
 
             JOptionPane.showMessageDialog(mainFrame, "컨트롤러를 통해 이슈 등록 성공!", "알림", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.changeCenterPanel(new IssueListPanel(mainFrame));
@@ -94,28 +127,30 @@ public class IssueController {
     }
 
     /**
-     * 🔒 로그인한 역할에 따라 좌측 메뉴 버튼 숨김/노출 제어
+     * 로그인한 역할에 따라 좌측 메뉴 버튼 숨김/노출 제어
      */
     public void configureSideMenuByRole() {
         SideMenuPanel sideMenu = mainFrame.getSideMenuPanel();
-        if (sideMenu == null) return;
+        if (sideMenu == null || currentUser == null) return;
 
-        if (currentRole.equals("ADMIN")) {
+        Role currentRole = currentUser.getRole();
+
+        if (currentRole == Role.ADMIN) {
             sideMenu.getBtnAdminManage().setVisible(true);
             sideMenu.getBtnList().setVisible(false);
             sideMenu.getBtnCreate().setVisible(false);
             sideMenu.getBtnStats().setVisible(false);
-        } else if (currentRole.equals("DEVELOPER")) {
+        } else if (currentRole == Role.DEV) {
             sideMenu.getBtnAdminManage().setVisible(false);
             sideMenu.getBtnList().setVisible(true);
             sideMenu.getBtnCreate().setVisible(false);
             sideMenu.getBtnStats().setVisible(false);
-        } else if (currentRole.equals("PL")) {
+        } else if (currentRole == Role.PL) {
             sideMenu.getBtnAdminManage().setVisible(false);
             sideMenu.getBtnList().setVisible(true);
             sideMenu.getBtnCreate().setVisible(true);
             sideMenu.getBtnStats().setVisible(true);
-        } else if (currentRole.equals("TESTER")) {
+        } else if (currentRole == Role.TESTER) {
             sideMenu.getBtnAdminManage().setVisible(false);
             sideMenu.getBtnList().setVisible(true);
             sideMenu.getBtnCreate().setVisible(true);
@@ -136,6 +171,10 @@ public class IssueController {
                 JOptionPane.showMessageDialog(mainFrame, "생성할 프로젝트명을 입력해주세요!", "경고", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            //selectProject 추가
+           // issueService.selectProject(projName);
+
             JOptionPane.showMessageDialog(mainFrame, "[" + projName + "] 프로젝트가 성공적으로 개설되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             panel.getFieldProjectName().setText("");
         });
@@ -159,9 +198,13 @@ public class IssueController {
      * 4. 이슈 상세 보기 화면 컴포넌트 동적 제어 및 시나리오 리스너 바인딩
      */
     private void setupIssueDetailListeners(IssueDetailPanel panel) {
-        // ⭐ [결함 교정] 현재 선택한 이슈의 상태가 무엇인지 필터 레이블이나
-        // 컨트롤러 세션 상태와 동기화하여 화면 전환 시 데이터 락이 걸리는 현상을 방어합니다.
-        panel.getLblStatus().setText(currentIssueStatus);
+
+        if (currentUser == null || panel.getIssue() == null) return;
+
+        Issue currentIssue = panel.getIssue();
+        Role currentRole = currentUser.getRole();
+
+        panel.getLblStatus().setText(currentIssue.getStatus().name());
 
         // 초기 버튼 상태 초기화
         panel.getBtnRecommend().setVisible(false);
@@ -170,22 +213,22 @@ public class IssueController {
         panel.getBtnReopen().setVisible(false);
         panel.getBtnPlClose().setVisible(false);
 
-        // 🔒 명세서 정합성 시나리오 조건 분기 트리
-        if (currentIssueStatus.equals("NEW")) {
-            if (currentRole.equals("PL")) {
+        // 시나리오 조건 분기 트리
+        if (currentIssue.getStatus() == IssueStatus.NEW) {
+            if (currentRole == Role.PL) {
                 panel.getBtnRecommend().setVisible(true);
             }
-        } else if (currentIssueStatus.equals("ASSIGNED")) {
-            if (currentRole.equals("DEVELOPER")) {
+        } else if (currentIssue.getStatus() == IssueStatus.ASSIGNED) {
+            if (currentRole == Role.DEV) {
                 panel.getBtnDevFixed().setVisible(true);
             }
-        } else if (currentIssueStatus.equals("FIXED")) {
-            if (currentRole.equals("TESTER")) {
+        } else if (currentIssue.getStatus() == IssueStatus.FIXED) {
+            if (currentRole == Role.TESTER) {
                 panel.getBtnTesterVerify().setVisible(true);
                 panel.getBtnReopen().setVisible(true);
             }
-        } else if (currentIssueStatus.equals("RESOLVED")) {
-            if (currentRole.equals("PL")) {
+        } else if (currentIssue.getStatus() == IssueStatus.RESOLVED) {
+            if (currentRole == Role.PL) {
                 panel.getBtnPlClose().setVisible(true);
             }
         }
@@ -204,8 +247,12 @@ public class IssueController {
             if (selectedDeveloper != null) {
                 String targetId = selectedDeveloper.split(" ")[0];
                 panel.getLblAssignee().setText(targetId);
-                currentIssueStatus = "ASSIGNED";
-                panel.getLblStatus().setText(currentIssueStatus);
+
+                currentIssue.setStatus(IssueStatus.ASSIGNED);
+                //클래스 다이어그램 명세에 맞는 메소드로 수정함.
+              //  issueService.requestStatusChange(currentIssue.id, "ASSIGNED", "PL 권한에 의해 담당자가 " + targetId + "로 배정됨", currentUser);
+
+                panel.getLblStatus().setText(currentIssue.getStatus().name());
                 panel.getBtnRecommend().setVisible(false);
                 panel.getAreaCommentList().append("\n[시스템]: PL 권한에 의해 담당자가 " + targetId + "로 배정되어 상태가 ASSIGNED로 변경되었습니다.");
                 JOptionPane.showMessageDialog(mainFrame, targetId + " 개발자에게 이슈 배정이 완료되었습니다.", "정합성 완료", JOptionPane.INFORMATION_MESSAGE);
@@ -214,8 +261,9 @@ public class IssueController {
 
         // Developer 전용 FIXED 리스너
         panel.getBtnDevFixed().addActionListener(e -> {
-            currentIssueStatus = "FIXED";
-            panel.getLblStatus().setText(currentIssueStatus);
+            //requestStatusChange 적용함
+          //  issueService.requestStatusChange(currentIssue.id, "FIXED", "개발자 조치 완료", currentUser);
+            panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnDevFixed().setVisible(false);
             panel.getAreaCommentList().append("\n[시스템]: dev1 개발자가 조치를 완료하여 상태가 FIXED로 업데이트되었습니다.");
             JOptionPane.showMessageDialog(mainFrame, "이슈 상태가 FIXED로 변경되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
@@ -223,8 +271,9 @@ public class IssueController {
 
         // Tester 전용 RESOLVED 리스너
         panel.getBtnTesterVerify().addActionListener(e -> {
-            currentIssueStatus = "RESOLVED";
-            panel.getLblStatus().setText(currentIssueStatus);
+           // issueService.requestStatusChange(currentIssue.id, "RESOLVED", "테스터 정상 동작 확인 검증 완료", currentUser);
+
+            panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnTesterVerify().setVisible(false);
             panel.getBtnReopen().setVisible(false);
             panel.getAreaCommentList().append("\n[시스템]: 테스터 검증 결과 정상 동작이 확인되어 RESOLVED 처리되었습니다.");
@@ -233,8 +282,9 @@ public class IssueController {
 
         // Tester 전용 REOPENED 리스너
         panel.getBtnReopen().addActionListener(e -> {
-            currentIssueStatus = "REOPENED";
-            panel.getLblStatus().setText(currentIssueStatus);
+           // issueService.requestStatusChange(currentIssue.id, "REOPENED", "테스터 검증 실패로 결함 재발 결론", currentUser);
+
+            panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnTesterVerify().setVisible(false);
             panel.getBtnReopen().setVisible(false);
             panel.getAreaCommentList().append("\n[시스템]: 테스터 검증 실패로 인해 결함이 재발(REOPENED)되었습니다.");
@@ -243,8 +293,9 @@ public class IssueController {
 
         // PL 전용 CLOSED 리스너
         panel.getBtnPlClose().addActionListener(e -> {
-            currentIssueStatus = "CLOSED";
-            panel.getLblStatus().setText(currentIssueStatus);
+           // issueService.requestStatusChange(currentIssue.id, "CLOSED", "프로젝트 리더 최종 검토 완료 및 종결", currentUser);
+
+            panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnPlClose().setVisible(false);
             panel.getAreaCommentList().append("\n[시스템]: 프로젝트 리더(PL) 검토 후 최종 CLOSED(종결) 처리되었습니다.");
             JOptionPane.showMessageDialog(mainFrame, "해당 이슈 트래킹 사이클이 완전히 종결되었습니다.", "최종 완수", JOptionPane.INFORMATION_MESSAGE);

@@ -1,3 +1,5 @@
+package org.view;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -17,22 +19,22 @@ public class AccountAndProjectManagePanel extends JPanel {
     public AccountAndProjectManagePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
-        // 1. 레이아웃 및 여백 설정 (시원하게 20픽셀 마진)
+        // 레이아웃 및 여백 설정 (20픽셀 마진)
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // 2. 상단 메인 타이틀
+        // 상단 메인 타이틀
         JLabel pageTitle = new JLabel("🛠️ 시스템 관리자 모드 (Admin Dashboard)");
         pageTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
         add(pageTitle, BorderLayout.NORTH);
 
-        // 3. 중앙 영역을 반으로 쪼갤 컨테이너 (GridLayout 1행 2열 사용)
+        // 중앙 영역을 반으로 쪼갤 컨테이너 (GridLayout 1행 2열 사용)
         JPanel centerGrid = new JPanel(new GridLayout(1, 2, 20, 0));
         centerGrid.setOpaque(false);
 
         // ---------------------------------------------------------------
-        // 📁 [좌측 섹션] 프로젝트 추가 및 관리 영역
+        // 프로젝트 추가 및 관리 영역
         // ---------------------------------------------------------------
         JPanel projectPanel = new JPanel(new GridBagLayout());
         projectPanel.setBackground(Color.WHITE);
@@ -71,7 +73,7 @@ public class AccountAndProjectManagePanel extends JPanel {
 
 
         // ---------------------------------------------------------------
-        // 👥 [우측 섹션] 사용자 계정 생성 영역 (명세 2.1 #1 기능)
+        //  [우측 섹션] 사용자 계정 생성 영역 (명세 2.1 #1 기능)
         // ---------------------------------------------------------------
         JPanel accountPanel = new JPanel(new GridBagLayout());
         accountPanel.setBackground(Color.WHITE);
@@ -135,7 +137,7 @@ public class AccountAndProjectManagePanel extends JPanel {
         add(centerGrid, BorderLayout.CENTER);
     }
 
-    // ⭐ Controller가 입력 폼 제어 및 이벤트 위임을 가로챌 수 있게 Getter 개방
+    // Controller가 입력 폼 제어 및 이벤트 위임을 가로챌 수 있게 Getter 개방
     public JTextField getFieldProjectName() { return fieldProjectName; }
     public JButton getBtnCreateProject() { return btnCreateProject; }
     public JTextField getFieldUserId() { return fieldUserId; }

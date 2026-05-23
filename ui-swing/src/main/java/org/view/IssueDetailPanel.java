@@ -1,8 +1,14 @@
+package org.view;
+
 import javax.swing.*;
 import java.awt.*;
+import  org.issuetracker.model.Issue;
+
 
 public class IssueDetailPanel extends JPanel {
     private MainFrame mainFrame;
+    private Issue issue;
+
 
     // 데이터 갱신 및 컨트롤러 제어를 위한 컴포넌트 멤버 변수
     private JLabel lblTitle, lblPriority, lblStatus, lblReporter, lblAssignee;
@@ -17,6 +23,11 @@ public class IssueDetailPanel extends JPanel {
     // PL용 CLOSED 처리 버튼은 목록이나 상세 중 한 곳에 배치하며, 여기서는 상세 화면 검증용으로 추가
     private JButton btnPlClose;
     private JButton btnReopen;      // 테스터용 REOPENED 처리 버튼
+
+
+    public Issue getIssue() {
+        return this.issue;
+    }
 
     public IssueDetailPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;

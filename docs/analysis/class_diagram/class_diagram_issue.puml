@@ -84,7 +84,7 @@ class IssueService {
     + addComment()
     + selectProject(projectId : String) : Project
     + createIssue(title : String, description : String, priority : Priority) : int
-    + getIssueDetail(issueId : int) : Issue
+    + getIssueDetail(issueId : int) : void
     + requestStatusChange(newStatus : String, comment : String) : Issue
 }
 

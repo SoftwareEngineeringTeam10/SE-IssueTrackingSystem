@@ -40,7 +40,7 @@ public class Main {
         testIssue.priority = Priority.CRITICAL;
         issueService.createIssue(testIssue, testerUser);
 
-        issueService.addCommentToIssue(
+        issueService.addComment(
                 1,
                 new Comment(testerUser.getId(), "이슈 재현 확인했습니다."),
                 testerUser
