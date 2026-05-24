@@ -1,3 +1,9 @@
 // 멀티 module 루트 — 하위 module 자율 설정
 // ui-javafx : JavaFX UI module (김태영)
 // core      : 백엔드 module
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+}

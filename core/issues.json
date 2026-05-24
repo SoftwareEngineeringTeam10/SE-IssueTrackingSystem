@@ -28,6 +28,10 @@
     "authorId" : "tester01",
     "content" : "이슈 재현 확인했습니다.",
     "date" : "2026-05-21T01:56:05.844615700"
+  }, {
+    "authorId" : "dev01",
+    "content" : "상태 확인했습니다.",
+    "date" : "2026-05-24T11:01:22.159234100"
   } ]
 }, {
   "id" : 2,
@@ -35,22 +39,50 @@
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
   "reportedDate" : "2026-05-21T01:55:10.026409500",
-  "fixer" : null,
+  "fixer" : "dev01",
   "assignee" : null,
   "priority" : "MINOR",
-  "status" : "NEW",
-  "comments" : [ ]
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "admin01",
+    "content" : "상태가 ASSIGNED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:00:06.523160200"
+  }, {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:18:34.753217800"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:19:10.774852"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:19:33.349077100"
+  } ]
 }, {
   "id" : 3,
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
   "reportedDate" : "2026-05-21T01:55:10.031421400",
-  "fixer" : null,
+  "fixer" : "dev01",
   "assignee" : null,
   "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
+  "status" : "REOPENED",
+  "comments" : [ {
+    "authorId" : "pl01",
+    "content" : "상태가 ASSIGNED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:17:00.470015800"
+  }, {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:25:24.243754600"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 REOPENED으로 변경되었습니다.",
+    "date" : "2026-05-24T13:27:32.130049800"
+  } ]
 }, {
   "id" : 4,
   "title" : "UI 정렬 깨짐",
@@ -93,8 +125,12 @@
   "fixer" : null,
   "assignee" : null,
   "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
+  "status" : "ASSIGNED",
+  "comments" : [ {
+    "authorId" : "pl01",
+    "content" : "상태가 ASSIGNED으로 변경되었습니다.",
+    "date" : "2026-05-24T15:41:19.066584200"
+  } ]
 }, {
   "id" : 8,
   "title" : "UI 정렬 깨짐",
@@ -104,6 +140,17 @@
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 9,
+  "title" : "Issue List 이동 error",
+  "description" : "Issue List 이동 error",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-24T11:03:00.204108700",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
   "status" : "NEW",
   "comments" : [ ]
 } ]
