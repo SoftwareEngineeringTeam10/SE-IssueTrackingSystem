@@ -26,6 +26,10 @@ application {
     mainClass = 'ui.javafx.app.MainApp'
 }
 
+run {
+    workingDir = file("$rootDir/core")
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }

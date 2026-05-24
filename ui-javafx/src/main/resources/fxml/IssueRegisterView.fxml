@@ -24,6 +24,7 @@
               style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
 
             <Label text="Issue Tracking System"
+                   styleClass="label-header"
                    style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
             <ComboBox fx:id="projectCombo" promptText="Project"/>
@@ -31,19 +32,31 @@
             <Pane HBox.hgrow="ALWAYS"/>
 
             <Label fx:id="userLabel" text="User: -"/>
-            <Button text="Logout"/>
+            <Button text="Logout" onAction="#onLogout"/>
         </HBox>
     </top>
 
     <left>
         <VBox spacing="6"
               style="-fx-padding: 10; -fx-background-color: #fafafa;"
-              prefWidth="180">
+              prefWidth="220">
 
             <Label text="Menu" style="-fx-font-weight: bold;"/>
-            <Button text="Issue List" maxWidth="Infinity"/>
+            <Button text="Issue List"
+                    onAction="#onOpenList"
+                    maxWidth="Infinity"/>
             <Button text="Register Issue" maxWidth="Infinity"/>
-            <Button text="Recommend Assignee" maxWidth="Infinity"/>
+            <Button text="Recommend Assignee"
+                    onAction="#onOpenRecommend"
+                    visible="false" managed="false"
+                    maxWidth="Infinity"/>
+            <Button text="Manage"
+                    fx:id="manageButton"
+                    onAction="#onOpenManage"
+                    maxWidth="Infinity"/>
+            <Button text="Statistics"
+                    onAction="#onOpenStats"
+                    maxWidth="Infinity"/>
         </VBox>
     </left>
 
@@ -88,6 +101,7 @@
                   GridPane.rowIndex="6" GridPane.columnIndex="1">
 
                 <Button text="Register"
+                        styleClass="button-primary"
                         onAction="#onRegister"
                         defaultButton="true"/>
                 <Button text="Cancel"

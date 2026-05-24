@@ -25,6 +25,7 @@
               style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
 
             <Label text="Issue Tracking System"
+                   styleClass="label-header"
                    style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
             <ComboBox fx:id="projectCombo" promptText="Project"/>
@@ -32,28 +33,40 @@
             <Pane HBox.hgrow="ALWAYS"/>
 
             <Label fx:id="userLabel" text="User: -"/>
-            <Button text="Logout"/>
+            <Button text="Logout" onAction="#onLogout"/>
         </HBox>
     </top>
 
     <left>
         <VBox spacing="6"
               style="-fx-padding: 10; -fx-background-color: #fafafa;"
-              prefWidth="180">
+              prefWidth="220">
 
             <Label text="Menu" style="-fx-font-weight: bold;"/>
             <Button text="Issue List"
                     onAction="#onBack"
                     maxWidth="Infinity"/>
-            <Button text="Register Issue" maxWidth="Infinity"/>
-            <Button text="Recommend Assignee" maxWidth="Infinity"/>
+            <Button text="Register Issue"
+                    onAction="#onOpenRegister"
+                    maxWidth="Infinity"/>
+            <Button text="Recommend Assignee"
+                    fx:id="recommendButton"
+                    onAction="#onRecommendAssignee"
+                    maxWidth="Infinity"/>
+            <Button text="Manage"
+                    fx:id="manageButton"
+                    onAction="#onOpenManage"
+                    maxWidth="Infinity"/>
+            <Button text="Statistics"
+                    onAction="#onOpenStats"
+                    maxWidth="Infinity"/>
         </VBox>
     </left>
 
     <center>
         <VBox spacing="10" style="-fx-padding: 20;">
 
-            <!-- 이슈 필드 영역 -->
+            <!-- 이슈 필드 -->
             <GridPane hgap="10" vgap="6">
                 <columnConstraints>
                     <ColumnConstraints minWidth="120" prefWidth="140"/>
@@ -105,16 +118,12 @@
 
             <Separator/>
 
-            <!-- 역할별 상태 변경 영역 -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Change Status:"/>
-                <ComboBox fx:id="statusCombo"/>
-                <Button text="Apply" onAction="#onChangeStatus"/>
-            </HBox>
+            <!-- 역할별 상태 변경 — 동적 액션 버튼 추가됨 -->
+            <HBox fx:id="statusActionBox" spacing="10" alignment="CENTER_LEFT"/>
 
             <Separator/>
 
-            <!-- Comments 영역 -->
+            <!-- Comments -->
             <Label text="Comments" style="-fx-font-weight: bold;"/>
             <ListView fx:id="commentsList" prefHeight="160"/>
 
@@ -122,7 +131,7 @@
                 <TextField fx:id="newCommentField"
                            promptText="Add a comment..."
                            HBox.hgrow="ALWAYS"/>
-                <Button text="Add" onAction="#onAddComment"/>
+                <Button text="Add" styleClass="button-primary" onAction="#onAddComment"/>
             </HBox>
         </VBox>
     </center>

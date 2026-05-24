@@ -4,6 +4,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -14,10 +16,9 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ui.javafx.controller.IssueListController"
+            fx:controller="ui.javafx.controller.ManageController"
             prefWidth="1024" prefHeight="720">
 
-    <!-- Top: 타이틀 / 프로젝트 / 사용자 / 로그아웃 -->
     <top>
         <HBox spacing="12"
               alignment="CENTER_LEFT"
@@ -36,63 +37,68 @@
         </HBox>
     </top>
 
-    <!-- Left: 메뉴 -->
     <left>
         <VBox spacing="6"
               style="-fx-padding: 10; -fx-background-color: #fafafa;"
               prefWidth="220">
 
             <Label text="Menu" style="-fx-font-weight: bold;"/>
-            <Button text="Issue List" maxWidth="Infinity"/>
+            <Button text="Issue List"
+                    onAction="#onOpenList"
+                    maxWidth="Infinity"/>
             <Button text="Register Issue"
                     onAction="#onOpenRegister"
                     maxWidth="Infinity"/>
             <Button text="Recommend Assignee"
-                    onAction="#onRecommendAssignee"
+                    onAction="#onOpenRecommend"
                     visible="false" managed="false"
                     maxWidth="Infinity"/>
-            <Button text="Manage"
-                    fx:id="manageButton"
-                    onAction="#onOpenManage"
-                    maxWidth="Infinity"/>
+            <Button text="Manage" maxWidth="Infinity"/>
             <Button text="Statistics"
                     onAction="#onOpenStats"
                     maxWidth="Infinity"/>
         </VBox>
     </left>
 
-    <!-- Center: 검색 / 필터 / 테이블 / 액션 -->
     <center>
-        <VBox spacing="8" style="-fx-padding: 10;">
+        <VBox spacing="12" style="-fx-padding: 20;">
 
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField"
-                           promptText="Search title..."
-                           HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="statusFilter" promptText="Status"/>
-                <ComboBox fx:id="priorityFilter" promptText="Priority"/>
-                <Button text="Search" styleClass="button-primary" onAction="#onSearch"/>
-            </HBox>
+            <!-- 계정 관리 -->
+            <Label text="계정 관리" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
-            <TableView fx:id="issueTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="accountTable" prefHeight="200">
                 <columns>
-                    <TableColumn text="#" prefWidth="50" minWidth="40"/>
-                    <TableColumn text="Title" prefWidth="240" minWidth="160"/>
-                    <TableColumn text="Priority" prefWidth="80" minWidth="70"/>
-                    <TableColumn text="Status" prefWidth="100" minWidth="80"/>
-                    <TableColumn text="Reporter" prefWidth="100" minWidth="80"/>
-                    <TableColumn text="Assignee" prefWidth="100" minWidth="80"/>
-                    <TableColumn text="Reported Date" prefWidth="190" minWidth="170"/>
+                    <TableColumn text="ID" prefWidth="160"/>
+                    <TableColumn text="Name" prefWidth="200"/>
+                    <TableColumn text="Role" prefWidth="120"/>
                 </columns>
             </TableView>
 
-            <HBox spacing="8">
-                <Button text="View Detail" styleClass="button-primary" onAction="#onOpenDetail"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="newIdField" promptText="ID"/>
+                <PasswordField fx:id="newPasswordField" promptText="Password"/>
+                <TextField fx:id="newNameField" promptText="Name"/>
+                <ComboBox fx:id="roleCombo" promptText="Role" prefWidth="110"/>
+                <Button text="계정 추가" styleClass="button-primary" onAction="#onAddAccount" minWidth="90"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- 프로젝트 관리 -->
+            <Label text="프로젝트 관리 (저장 X — 화면 전환 시 휘발)"
+                   style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+
+            <ListView fx:id="projectList" prefHeight="160"/>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="newProjectField"
+                           promptText="Project name..."
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="프로젝트 추가" styleClass="button-primary" onAction="#onAddProject"/>
             </HBox>
         </VBox>
     </center>
 
-    <!-- Right: 활동 로그 -->
     <right>
         <VBox spacing="6"
               style="-fx-padding: 10; -fx-background-color: #fafafa;"
@@ -103,7 +109,6 @@
         </VBox>
     </right>
 
-    <!-- Bottom: 시스템 메시지 -->
     <bottom>
         <HBox style="-fx-padding: 6 10 6 10; -fx-background-color: #eeeeee;">
             <Label fx:id="systemMessage" text=" "/>
