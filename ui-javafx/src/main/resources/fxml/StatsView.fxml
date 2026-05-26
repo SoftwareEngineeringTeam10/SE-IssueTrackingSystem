@@ -107,7 +107,17 @@
                 </yAxis>
             </BarChart>
 
-            <!-- BarChart 2: 상태별 분포 -->
+            <!-- BarChart 2: 월별 발생 추이 -->
+            <BarChart fx:id="monthlyChart" prefHeight="220" legendVisible="false">
+                <xAxis>
+                    <CategoryAxis label="월"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="이슈 건수"/>
+                </yAxis>
+            </BarChart>
+
+            <!-- BarChart 3: 상태별 분포 -->
             <BarChart fx:id="statusChart" prefHeight="220" legendVisible="false">
                 <xAxis>
                     <CategoryAxis label="상태"/>

@@ -27,6 +27,7 @@ public class StatsController {
     @FXML private Label closedLabel;
 
     @FXML private BarChart<String, Number> dailyChart;
+    @FXML private BarChart<String, Number> monthlyChart;
     @FXML private BarChart<String, Number> statusChart;
 
     @FXML private ListView<String> activityLog;
@@ -76,6 +77,14 @@ public class StatsController {
             dailySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
         dailyChart.getData().add(dailySeries);
+
+        // 월별 BarChart
+        XYChart.Series<String, Number> monthlySeries = new XYChart.Series<>();
+        monthlySeries.setName("월별 발생");
+        for (Map.Entry<String, Integer> e : statisticsService.getMonthlyStats().entrySet()) {
+            monthlySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
+        }
+        monthlyChart.getData().add(monthlySeries);
 
         // 상태별 BarChart
         XYChart.Series<String, Number> statusSeries = new XYChart.Series<>();
