@@ -65,16 +65,29 @@
     <center>
         <VBox spacing="8" style="-fx-padding: 10;">
 
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField"
-                           promptText="Search title..."
-                           HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="statusFilter" promptText="Status"/>
-                <ComboBox fx:id="priorityFilter" promptText="Priority"/>
-                <Button text="Search" styleClass="button-primary" onAction="#onSearch"/>
-            </HBox>
+            <VBox spacing="6">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField"
+                               promptText="Search title..."
+                               HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" styleClass="button-primary" onAction="#onSearch" minWidth="80"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Status:" minWidth="55"/>
+                    <ComboBox fx:id="statusFilter" minWidth="100"/>
+                    <Label text="Priority:" minWidth="60"/>
+                    <ComboBox fx:id="priorityFilter" minWidth="100"/>
+                    <Label text="Assignee:" minWidth="65"/>
+                    <ComboBox fx:id="assigneeFilter" minWidth="100"/>
+                    <Label text="Reporter:" minWidth="65"/>
+                    <ComboBox fx:id="reporterFilter" minWidth="100"/>
+                </HBox>
+            </VBox>
 
             <TableView fx:id="issueTable" VBox.vgrow="ALWAYS">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
                 <columns>
                     <TableColumn text="#" prefWidth="50" minWidth="40"/>
                     <TableColumn text="Title" prefWidth="240" minWidth="160"/>

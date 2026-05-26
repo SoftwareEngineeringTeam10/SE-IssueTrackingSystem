@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -24,7 +25,9 @@ import ui.javafx.session.ViewLoader;
 import ui.javafx.util.DateFormats;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class IssueDetailController {
 
@@ -106,7 +109,7 @@ public class IssueDetailController {
         IssueStatus current = issue.status;
 
         if (current == IssueStatus.NEW && PermissionManager.canAssignIssue(currentUser)) {
-            addActionButton("담당자 배정", IssueStatus.ASSIGNED);
+            addAssignButton("담당자 배정");
         }
         if (current == IssueStatus.ASSIGNED && PermissionManager.canFixIssue(currentUser)) {
             addActionButton("수정 완료 (Fix)", IssueStatus.FIXED);
@@ -121,7 +124,7 @@ public class IssueDetailController {
             addActionButton("종료 (Close)", IssueStatus.CLOSED);
         }
         if (current == IssueStatus.REOPENED && PermissionManager.canAssignIssue(currentUser)) {
-            addActionButton("담당자 배정 (Reassign)", IssueStatus.ASSIGNED);
+            addAssignButton("담당자 배정 (Reassign)");
         }
 
         if (statusActionBox.getChildren().isEmpty()) {
@@ -135,6 +138,47 @@ public class IssueDetailController {
         Button btn = new Button(text);
         btn.setOnAction(e -> changeStatusTo(targetStatus));
         statusActionBox.getChildren().add(btn);
+    }
+
+    private void addAssignButton(String text) {
+        Button btn = new Button(text);
+        btn.setOnAction(e -> openAssignDialog());
+        statusActionBox.getChildren().add(btn);
+    }
+
+    private void openAssignDialog() {
+        // 전체 DEV 목록 가져오기
+        List<String> devChoices = new ArrayList<>();
+        for (User u : accountManager.getUsers()) {
+            if (u.getRole() == Role.DEV) {
+                devChoices.add(u.getId() + " (" + u.getName() + ")");
+            }
+        }
+        if (devChoices.isEmpty()) {
+            systemMessage.setText("배정 가능한 DEV 계정이 없습니다");
+            return;
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(devChoices.get(0), devChoices);
+        dialog.setHeaderText("담당자 직접 선택");
+        dialog.setContentText("담당자:");
+
+        Optional<String> selected = dialog.showAndWait();
+        if (selected.isEmpty()) {
+            systemMessage.setText("배정 취소됨");
+            return;
+        }
+
+        String chosen = selected.get();
+        String assigneeId = chosen.substring(0, chosen.indexOf(" ("));
+
+        try {
+            issueService.assignIssue(issue.id, assigneeId, Session.currentUser);
+            systemMessage.setText("배정 완료: " + assigneeId);
+            loadIssue();
+        } catch (Exception ex) {
+            systemMessage.setText("배정 실패: " + ex.getMessage());
+        }
     }
 
     private void changeStatusTo(IssueStatus newStatus) {
@@ -205,24 +249,34 @@ public class IssueDetailController {
             return;
         }
 
-        StringBuilder sb = new StringBuilder();
-        int idx = 1;
+        // 추천 결과를 선택지로 구성
+        List<String> choices = new ArrayList<>();
         for (RecommendationResult r : results) {
             String name = findUserName(r.getFixerId());
-            sb.append(idx++).append(". ")
-              .append(r.getFixerId())
-              .append(" (").append(name).append(")")
-              .append(" - score: ")
-              .append(String.format("%.2f", r.getScore()))
-              .append("\n");
+            choices.add(String.format("%s (%s) — score: %.2f",
+                    r.getFixerId(), name, r.getScore()));
         }
 
-        systemMessage.setText("추천 결과 " + results.size() + "건");
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("추천 담당자 (Top " + results.size() + ")");
-        alert.setContentText(sb.toString());
-        alert.setResizable(true);
-        alert.showAndWait();
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setHeaderText("추천 담당자 (Top " + results.size() + ") 중 1명 선택");
+        dialog.setContentText("배정할 담당자:");
+
+        Optional<String> selected = dialog.showAndWait();
+        if (selected.isEmpty()) {
+            systemMessage.setText("배정 취소됨");
+            return;
+        }
+
+        String chosen = selected.get();
+        String assigneeId = chosen.substring(0, chosen.indexOf(" ("));
+
+        try {
+            issueService.assignIssue(issue.id, assigneeId, Session.currentUser);
+            systemMessage.setText("배정 완료: " + assigneeId);
+            loadIssue();
+        } catch (Exception ex) {
+            systemMessage.setText("배정 실패: " + ex.getMessage());
+        }
     }
 
     // 사용자 id → name 조회 (없으면 "-" 표시)

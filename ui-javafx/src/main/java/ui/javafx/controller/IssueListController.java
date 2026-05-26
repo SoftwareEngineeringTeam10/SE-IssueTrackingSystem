@@ -17,6 +17,8 @@ import org.issuetracker.model.IssueStatus;
 import org.issuetracker.model.Priority;
 import org.issuetracker.model.RecommendationResult;
 import org.issuetracker.model.Role;
+import org.issuetracker.model.User;
+import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
@@ -24,6 +26,7 @@ import ui.javafx.util.DateFormats;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class IssueListController {
 
@@ -32,12 +35,15 @@ public class IssueListController {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> statusFilter;
     @FXML private ComboBox<String> priorityFilter;
+    @FXML private ComboBox<String> assigneeFilter;
+    @FXML private ComboBox<String> reporterFilter;
     @FXML private TableView<Issue> issueTable;
     @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
     @FXML private Button manageButton;
 
     private final IssueService issueService = new IssueService();
+    private final AccountManager accountManager = new AccountManager();
 
     @FXML
     public void initialize() {
@@ -70,6 +76,20 @@ public class IssueListController {
             priorityFilter.getItems().add(p.name());
         }
         priorityFilter.getSelectionModel().selectFirst();
+
+        // assignee 필터 — 전체 사용자 ID 목록
+        assigneeFilter.getItems().add("전체");
+        for (User u : accountManager.getUsers()) {
+            assigneeFilter.getItems().add(u.getId());
+        }
+        assigneeFilter.getSelectionModel().selectFirst();
+
+        // reporter 필터 — 전체 사용자 ID 목록
+        reporterFilter.getItems().add("전체");
+        for (User u : accountManager.getUsers()) {
+            reporterFilter.getItems().add(u.getId());
+        }
+        reporterFilter.getSelectionModel().selectFirst();
 
         // 테이블 컬럼 셀 매핑
         setupTableColumns();
@@ -126,17 +146,29 @@ public class IssueListController {
 
     @FXML
     public void onSearch() {
-        // 검색 핸들러 — 상태는 service, 제목/우선순위는 후처리 필터
+        // 검색 핸들러 — 상태/담당자/보고자는 service, 제목/우선순위는 후처리 필터
         String keyword = searchField.getText() != null ? searchField.getText().trim() : "";
         String status = statusFilter.getValue();
         String priority = priorityFilter.getValue();
+        String assignee = assigneeFilter.getValue();
+        String reporter = reporterFilter.getValue();
 
+        // "전체" 또는 null 처리
         String statusArg = ("전체".equals(status) || status == null) ? null : status;
-        List<Issue> result = issueService.searchIssues(statusArg, null, null);
+        String assigneeArg = ("전체".equals(assignee) || assignee == null) ? null : assignee;
+        String reporterArg = ("전체".equals(reporter) || reporter == null) ? null : reporter;
 
+        // 백엔드 다중 조건 호출
+        List<Issue> result = issueService.searchIssues(statusArg, assigneeArg, reporterArg);
+
+        // priority 프론트 후처리 (백엔드 미지원)
         if (!"전체".equals(priority) && priority != null) {
-            result.removeIf(i -> i.priority == null || !i.priority.name().equals(priority));
+            result = result.stream()
+                    .filter(i -> i.priority != null && i.priority.name().equals(priority))
+                    .collect(Collectors.toList());
         }
+
+        // 제목 키워드 후처리
         if (!keyword.isEmpty()) {
             String kw = keyword.toLowerCase();
             result.removeIf(i -> i.title == null || !i.title.toLowerCase().contains(kw));
