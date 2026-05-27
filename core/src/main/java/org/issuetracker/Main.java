@@ -1,4 +1,5 @@
 package org.issuetracker;
+import java.util.Scanner;
 
 import org.issuetracker.model.Comment;
 import org.issuetracker.model.Issue;
@@ -11,6 +12,7 @@ import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
 import org.issuetracker.service.PermissionManager;
 import org.issuetracker.service.StatisticsService;
+import org.issuetracker.service.ProjectService;
 
 import java.util.List;
 
@@ -20,12 +22,34 @@ public class Main {
 
         AccountManager manager = new AccountManager();
         IssueService issueService = new IssueService();
+        ProjectService projectService = new ProjectService();
+
+        Scanner sc = new Scanner(System.in);
 
         // 계정 초기화
         manager.addUser(new User("admin01", "1234", "admin", Role.ADMIN));
         manager.addUser(new User("tester01", "1111", "tester", Role.TESTER));
         manager.addUser(new User("pl01", "2222", "PL1", Role.PL));
         manager.addUser(new User("dev01", "3333", "DEV1", Role.DEV));
+
+        // Admin 프로젝트 생성
+        manager.login("admin01", "1234");
+
+        User adminUser = manager.getCurrentUser();
+
+        projectService.addProject(
+                "ITS Main Project",
+                "메인 이슈 관리 프로젝트",
+                adminUser
+        );
+
+        projectService.addProject(
+                "Mobile App",
+                "모바일 앱 프로젝트",
+                adminUser
+        );
+
+        manager.logout();
 
         // 1. TESTER 이슈 등록 및 코멘트 추가
         manager.login("tester01", "1111");
@@ -34,11 +58,17 @@ public class Main {
         System.out.println("현재 사용자 : " + testerUser.getName());
         System.out.println("이슈 생성 권한 : " + PermissionManager.canCreateIssue(testerUser));
 
+        projectService.printProjects();
+
+        System.out.print("\n이슈를 등록할 프로젝트 ID 입력: ");
+        int selectedProjectId = sc.nextInt();
+        sc.nextLine();
+
         Issue testIssue = new Issue();
         testIssue.title = "Login Error";
         testIssue.description = "로그인 버튼이 작동하지 않음";
         testIssue.priority = Priority.CRITICAL;
-        issueService.createIssue(testIssue, testerUser);
+        issueService.createIssue(selectedProjectId, testIssue, testerUser);
 
         issueService.addCommentToIssue(
                 1,
@@ -80,32 +110,118 @@ public class Main {
         secondIssue.title = "UI 정렬 깨짐";
         secondIssue.description = "메인 화면 버튼 위치 이상";
         secondIssue.priority = Priority.MINOR;
-        issueService.createIssue(secondIssue, searchUser);
+        issueService.createIssue(selectedProjectId, secondIssue, searchUser);
 
         Issue thirdIssue = new Issue();
         thirdIssue.title = "로그인 오류";
         thirdIssue.description = "로그인 버튼 간헐적 먹통";
         thirdIssue.priority = Priority.CRITICAL;
-        issueService.createIssue(thirdIssue, searchUser);
+        issueService.createIssue(selectedProjectId, thirdIssue, searchUser);
 
         Issue fourthIssue = new Issue();
         fourthIssue.title = "UI 정렬 깨짐";
         fourthIssue.description = "사이드바 텍스트 겹침 현상";
         fourthIssue.priority = Priority.MINOR;
-        issueService.createIssue(fourthIssue, searchUser);
+        issueService.createIssue(selectedProjectId, fourthIssue, searchUser);
+        manager.logout();
+
+        // 첫 번째 해결 이슈
+        manager.login("tester01", "1111");
+        User recTester1 = manager.getCurrentUser();
+
+        Issue recIssue1 = new Issue();
+        recIssue1.title = "로그인 에러 발생";
+        recIssue1.description = "로그인이 안 됩니다.";
+        recIssue1.priority = Priority.CRITICAL;
+
+        issueService.createIssue(selectedProjectId, recIssue1, recTester1);
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.assignIssue(5, "dev01", manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("dev01", "3333");
+        issueService.changeStatus(5, IssueStatus.FIXED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("tester01", "1111");
+        issueService.changeStatus(5, IssueStatus.RESOLVED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.changeStatus(5, IssueStatus.CLOSED, manager.getCurrentUser());
+        manager.logout();
+
+
+        // 두 번째 해결 이슈
+        manager.login("tester01", "1111");
+        User recTester2 = manager.getCurrentUser();
+
+        Issue recIssue2 = new Issue();
+        recIssue2.title = "네이버 로그인 연동 실패";
+        recIssue2.description = "로그인 버튼이 안 눌려요.";
+        recIssue2.priority = Priority.CRITICAL;
+
+        issueService.createIssue(selectedProjectId, recIssue2, recTester2);
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.assignIssue(6, "dev01", manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("dev01", "3333");
+        issueService.changeStatus(6, IssueStatus.FIXED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("tester01", "1111");
+        issueService.changeStatus(6, IssueStatus.RESOLVED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.changeStatus(6, IssueStatus.CLOSED, manager.getCurrentUser());
+        manager.logout();
+
+
+        // 세 번째 해결 이슈
+        manager.login("tester01", "1111");
+        User recTester3 = manager.getCurrentUser();
+
+        Issue recIssue3 = new Issue();
+        recIssue3.title = "구글 로그인 오류";
+        recIssue3.description = "로그인 기능에 문제가 있습니다.";
+        recIssue3.priority = Priority.CRITICAL;
+
+        issueService.createIssue(selectedProjectId, recIssue3, recTester3);
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.assignIssue(7, "dev01", manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("dev01", "3333");
+        issueService.changeStatus(7, IssueStatus.FIXED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("tester01", "1111");
+        issueService.changeStatus(7, IssueStatus.RESOLVED, manager.getCurrentUser());
+        manager.logout();
+
+        manager.login("pl01", "2222");
+        issueService.changeStatus(7, IssueStatus.CLOSED, manager.getCurrentUser());
         manager.logout();
 
         // 7. 이슈 조건별 조회 검증
         List<Issue> allIssues = issueService.getAllIssues();
         System.out.println("전체 이슈: " + allIssues.size() + "개");
 
-        List<Issue> newIssues = issueService.searchIssues("NEW", null, null);
+        List<Issue> newIssues = issueService.searchIssues(1, "NEW", null, null, null);
         System.out.println("NEW 상태 이슈: " + newIssues.size() + "개");
         for (Issue i : newIssues) {
             System.out.println("  - " + i.title + " / 우선순위: " + i.priority);
         }
 
-        List<Issue> reporterIssues = issueService.searchIssues(null, null, "tester01");
+        List<Issue> reporterIssues = issueService.searchIssues(1, null, null, "tester01", null);
         System.out.println("tester01이 등록한 이슈: " + reporterIssues.size() + "개");
 
         // 8. 상세 조회 및 통계 출력
