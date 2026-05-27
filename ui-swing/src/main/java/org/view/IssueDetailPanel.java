@@ -2,45 +2,51 @@ package org.view;
 
 import javax.swing.*;
 import java.awt.*;
-import  org.issuetracker.model.Issue;
-
+import org.issuetracker.model.Comment;
+import org.issuetracker.model.Issue;
 
 public class IssueDetailPanel extends JPanel {
     private MainFrame mainFrame;
     private Issue issue;
 
-
-    // 데이터 갱신 및 컨트롤러 제어를 위한 컴포넌트 멤버 변수
     private JLabel lblTitle, lblPriority, lblStatus, lblReporter, lblAssignee;
     private JTextArea areaDescription, areaCommentList;
     private JTextField fieldCommentInput;
     private JButton btnAddComment, btnBack;
 
-    // 시나리오 정합성을 위해 새로 추가된 버튼들
-    private JButton btnRecommend;   // 담당자 추천 버튼
-    private JButton btnDevFixed;    // 개발자용 FIXED 처리 버튼
-    private JButton btnTesterVerify; // 테스터용 RESOLVED 처리 버튼
-    // PL용 CLOSED 처리 버튼은 목록이나 상세 중 한 곳에 배치하며, 여기서는 상세 화면 검증용으로 추가
+    private JButton btnRecommend;
+    private JButton btnDevFixed;
+    private JButton btnTesterVerify;
     private JButton btnPlClose;
-    private JButton btnReopen;      // 테스터용 REOPENED 처리 버튼
-
+    private JButton btnReopen;
 
     public Issue getIssue() {
         return this.issue;
     }
 
-    public IssueDetailPanel(MainFrame mainFrame) {
+    public IssueDetailPanel(MainFrame mainFrame, Issue issue) {
         this.mainFrame = mainFrame;
+        this.issue = issue;
 
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // 상단 바 (타이틀 및 목록 복귀)
+        lblTitle = new JLabel();
+        lblPriority = new JLabel();
+        lblStatus = new JLabel();
+        lblReporter = new JLabel();
+        lblAssignee = new JLabel();
+
+        areaDescription = new JTextArea(6, 30);
+        areaCommentList = new JTextArea(8, 30);
+        fieldCommentInput = new JTextField();
+
+        // 상단 바
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setOpaque(false);
 
-        JLabel pageTitle = new JLabel("이슈 상세 정보 (Issue Details)");
+        JLabel pageTitle = new JLabel("이슈 상세 정보 - No." + (issue != null ? issue.id : ""));
         pageTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 18));
         topBar.add(pageTitle, BorderLayout.WEST);
 
@@ -51,13 +57,13 @@ public class IssueDetailPanel extends JPanel {
 
         add(topBar, BorderLayout.NORTH);
 
-        // 중앙 메인 컨테이너
+        // 메인 컨테이너
         JPanel centerContainer = new JPanel();
         centerContainer.setLayout(new BoxLayout(centerContainer, BoxLayout.Y_AXIS));
         centerContainer.setOpaque(false);
         centerContainer.add(Box.createVerticalStrut(15));
 
-        // 메타데이터 정보 판넬 (GridBagLayout)
+        // 메타데이터 정보 패널
         JPanel metaPanel = new JPanel(new GridBagLayout());
         metaPanel.setBackground(new Color(248, 249, 250));
         metaPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -69,47 +75,51 @@ public class IssueDetailPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(6, 5, 6, 15);
 
-        // 1행: 제목
+        // 제목
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("이슈 제목:"), gbc);
+
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1; gbc.gridwidth = 3;
-        lblTitle = new JLabel("로그인 버튼 클릭 시 NullPointerException 발생");
+        lblTitle = new JLabel(issue != null ? issue.title : "");
         lblTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
         metaPanel.add(lblTitle, gbc);
 
-        gbc.gridwidth = 1; // 규격 초기화
+        gbc.gridwidth = 1;
 
-        // 2행: 우선순위 & 상태
+        // 우선순위 및 상태
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("우선순위:"), gbc);
+
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 0.5;
-        lblPriority = new JLabel("BLOCKER");
+        lblPriority = new JLabel(issue != null && issue.priority != null ? issue.priority.name() : "NONE");
         lblPriority.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         metaPanel.add(lblPriority, gbc);
 
         gbc.gridx = 2; gbc.gridy = 1; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("현재 상태:"), gbc);
+
         gbc.gridx = 3; gbc.gridy = 1; gbc.weightx = 0.5;
-        lblStatus = new JLabel("NEW");
+        lblStatus = new JLabel(issue != null && issue.status != null ? issue.status.name() : "NEW");
         lblStatus.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
         lblStatus.setForeground(Color.RED);
         metaPanel.add(lblStatus, gbc);
 
-        // 3행: 보고자 & 담당자 (담당자 옆에 추천 버튼 복합 배치)
+        // 보고자 및 담당자
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("보 고 자:"), gbc);
+
         gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.5;
-        lblReporter = new JLabel("tester1");
+        lblReporter = new JLabel(issue != null ? issue.reporterId : "");
         lblReporter.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         metaPanel.add(lblReporter, gbc);
 
         gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
-        metaPanel.add(createMetaLabel("당 담 자:"), gbc);
+        metaPanel.add(createMetaLabel("담당자:"), gbc);
 
-        // 담당자 레이블과 추천 버튼을 한 칸에 묶어서 배치
         JPanel assigneeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         assigneeWrapper.setOpaque(false);
-        lblAssignee = new JLabel("-");
+
+        lblAssignee = new JLabel(issue != null && issue.assigneeId != null ? issue.assigneeId : "");
         lblAssignee.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
 
         btnRecommend = new JButton("담당자 자동 추천 호출");
@@ -125,19 +135,20 @@ public class IssueDetailPanel extends JPanel {
         centerContainer.add(metaPanel);
         centerContainer.add(Box.createVerticalStrut(15));
 
-        // 본문 설명 영역
+        // 본문 설명
         JPanel descPanel = new JPanel(new BorderLayout());
         descPanel.setOpaque(false);
         descPanel.add(createMetaLabel("상세 내용 설명"), BorderLayout.NORTH);
 
-        areaDescription = new JTextArea(4, 30);
-        areaDescription.setText("메인 화면에서 로그인 버튼을 누를 시 AuthController 클래스의 42번째 줄에서\n"
-                + "NullPointerException이 터지면서 프로그램이 강제 다운되는 버그가 있습니다.");
+        areaDescription.setText(issue != null ? issue.description : "");
         areaDescription.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         areaDescription.setEditable(false);
         areaDescription.setBackground(new Color(252, 252, 252));
         areaDescription.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        descPanel.add(new JScrollPane(areaDescription), BorderLayout.CENTER);
+
+        JScrollPane descScrollPane = new JScrollPane(areaDescription);
+        descScrollPane.setPreferredSize(new Dimension(400, 100));
+        descPanel.add(descScrollPane, BorderLayout.CENTER);
 
         centerContainer.add(descPanel);
         centerContainer.add(Box.createVerticalStrut(15));
@@ -149,11 +160,13 @@ public class IssueDetailPanel extends JPanel {
 
         areaCommentList = new JTextArea(5, 30);
         areaCommentList.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
-        areaCommentList.setText("[2026-05-21 14:22] tester1: 이슈 생성합니다.");
         areaCommentList.setEditable(false);
         areaCommentList.setBackground(new Color(245, 245, 245));
         areaCommentList.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        commentPanel.add(new JScrollPane(areaCommentList), BorderLayout.CENTER);
+
+        JScrollPane commentScrollPane = new JScrollPane(areaCommentList);
+        commentScrollPane.setPreferredSize(new Dimension(400, 150));
+        commentPanel.add(commentScrollPane, BorderLayout.CENTER);
 
         JPanel commentInputPanel = new JPanel(new BorderLayout(8, 0));
         commentInputPanel.setOpaque(false);
@@ -168,7 +181,7 @@ public class IssueDetailPanel extends JPanel {
         centerContainer.add(commentPanel);
         centerContainer.add(Box.createVerticalStrut(20));
 
-        // 시나리오별 하단 액션 버튼 배치 구역
+        // 액션 버튼 패널
         JPanel actionButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         actionButtonPanel.setOpaque(false);
 
@@ -192,10 +205,40 @@ public class IssueDetailPanel extends JPanel {
         centerContainer.add(actionButtonPanel);
         add(centerContainer, BorderLayout.CENTER);
 
-        // 목록 복귀 이벤트 내부 구현
+        // 목록 복귀 이벤트
         btnBack.addActionListener(e -> {
             mainFrame.changeCenterPanel(new IssueListPanel(mainFrame));
         });
+
+        // 데이터 반영
+        if (issue != null) {
+            lblTitle.setText(issue.title);
+            lblPriority.setText(issue.priority != null ? issue.priority.name() : "NONE");
+            lblStatus.setText(issue.status != null ? issue.status.name() : "NEW");
+            lblReporter.setText(issue.reporterId != null ? issue.reporterId : "");
+            lblAssignee.setText(issue.assigneeId != null ? issue.assigneeId : "");
+            areaDescription.setText(issue.description != null ? issue.description : "");
+
+            if (issue.comments != null && !issue.comments.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (Comment c : issue.comments) {
+                    sb.append("[").append(c.date != null ? c.date : "").append("] ")
+                            .append(c.authorId != null ? c.authorId : "").append(": ")
+                            .append(c.content != null ? c.content : "").append("\n");
+                }
+                areaCommentList.setText(sb.toString().trim());
+            } else {
+                areaCommentList.setText("등록된 댓글이 없습니다.");
+            }
+        }
+
+        // 생성 완료 시점 컨트롤러 바인딩 강제 호출
+        if (mainFrame.getController() != null) {
+            mainFrame.getController().bindViewEvents(this);
+        }
+
+        revalidate();
+        repaint();
     }
 
     private JLabel createMetaLabel(String text) {
@@ -205,7 +248,7 @@ public class IssueDetailPanel extends JPanel {
         return label;
     }
 
-    // 통제용 Getter 목록
+    // Getter 목록
     public JLabel getLblStatus() { return lblStatus; }
     public JLabel getLblAssignee() { return lblAssignee; }
     public JButton getBtnRecommend() { return btnRecommend; }
