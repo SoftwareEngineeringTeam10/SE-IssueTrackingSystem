@@ -1,0 +1,142 @@
+@startuml
+title Class Diagram - Issue Management System
+
+package "model" {
+    class User {
+        id: String
+        password: String
+        name: String
+        role: Role
+    }
+
+    class Project {
+        id: int
+        name: String
+        description: String
+    }
+
+    class Issue {
+        id: int
+        title: String
+        description: String
+        reporter: String
+        reportedDate: String
+        assignee: String
+        fixer: String
+        priority: Priority
+        status: IssueStatus
+    }
+
+    class Comment {
+        authorId: String
+        content: String
+        date: String
+    }
+
+    class RecommendationResult {
+        fixerId: String
+        score: double
+        matchedIssueIds: List
+    }
+
+    enum Role {
+        ADMIN
+        PL
+        DEV
+        TESTER
+    }
+
+    enum IssueStatus {
+        NEW
+        ASSIGNED
+        FIXED
+        REOPENED
+        RESOLVED
+        CLOSED
+    }
+
+    enum Priority {
+        BLOCKER
+        CRITICAL
+        MAJOR
+        MINOR
+        TRIVIAL
+    }
+}
+
+package "repository" {
+    class IssueRepository {
+        file: File
+        +findAll() : List
+        +saveAll(issues: List) : void
+    }
+}
+
+package "service" {
+    class AccountManager {
+        users: List
+        currentUser: User
+        FILE_PATH: String
+        +addUser(user: User) : void
+        +login(id: String, password: String) : boolean
+        +logout() : void
+        +getCurrentUser() : User
+    }
+
+    class IssueService {
+        repository: IssueRepository
+        +createIssue(title: String, description: String, priority: Priority) : void
+        +getIssueDetail(issueId: int) : Issue
+        +requestStatusChange(newStatus: IssueStatus, comment: String) : void
+        +searchIssues(status: String, assignee: String, reporter: String) : List
+        +assignIssue(issueId: int, assignee: String, currentUser: User) : void
+        +getAssigneeRecommendations(issueId: int) : List
+    }
+
+    class StatisticsService {
+        repository: IssueRepository
+        +getDailyStats() : Map
+        +getMonthlyStats() : Map
+        +getStatusStats() : Map
+        +getPriorityStats() : Map
+        +printAllStats(currentUser: User) : void
+    }
+
+    class PermissionManager {
+        +canCreateIssue(user: User) : boolean
+        +canAssignIssue(user: User) : boolean
+        +canFixIssue(user: User) : boolean
+        +canResolveIssue(user: User) : boolean
+        +canCloseIssue(user: User) : boolean
+        +canReopenIssue(user: User) : boolean
+        +canViewIssue(user: User) : boolean
+    }
+
+    interface RecommendationService {
+        +recommend(target: Issue, historical: List) : List
+    }
+
+    class RecommendationServiceImpl {
+        MIN_SIMILARITY: double
+        TOP_N: int
+    }
+}
+
+' 컴포지션 (연쇄 삭제)
+Project *-- Issue : contains
+Issue *-- Comment : has
+
+' 연관 관계 (실선)
+User --> Role
+Issue --> IssueStatus
+Issue --> Priority
+IssueService --> IssueRepository
+StatisticsService --> IssueRepository
+AccountManager --> IssueRepository
+IssueService --> PermissionManager
+AccountManager --> PermissionManager
+IssueService --> RecommendationService
+RecommendationServiceImpl ..|> RecommendationService
+Issue --> RecommendationResult
+
+@enduml
