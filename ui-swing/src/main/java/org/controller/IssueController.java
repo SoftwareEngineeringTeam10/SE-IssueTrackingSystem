@@ -1,9 +1,12 @@
 package org.controller;
 
 import org.issuetracker.model.*;
+import org.issuetracker.service.ProjectService;
 import org.view.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import org.issuetracker.service.IssueService;
 import org.issuetracker.service.AccountManager;
 import java.util.List;
@@ -12,6 +15,7 @@ public class IssueController {
     private MainFrame mainFrame;
     private final IssueService issueService;
     private final AccountManager accountManager;
+    private final ProjectService projectService;
     private User currentUser;
 
     public void setCurrentUser(User user) {
@@ -20,21 +24,23 @@ public class IssueController {
             accountManager.logout();
         }
     }
+
     public User getCurrentUser() {
         return this.currentUser;
     }
 
-    public IssueController(MainFrame mainFrame, IssueService issueService, AccountManager accountManager) {
+    public IssueController(MainFrame mainFrame, IssueService issueService, AccountManager accountManager, ProjectService projectService) {
         this.mainFrame = mainFrame;
         this.issueService = issueService;
         this.accountManager = accountManager;
+        this.projectService = projectService;
     }
 
     public void bindViewEvents(JPanel currentPanel) {
         if (currentPanel instanceof IssueListPanel) {
-            setupIssueListListners((IssueListPanel) currentPanel);
+            setupIssueListListeners((IssueListPanel) currentPanel);
         } else if (currentPanel instanceof IssueCreatePanel) {
-            setupIssueCreateListners((IssueCreatePanel) currentPanel);
+            setupIssueCreateListeners((IssueCreatePanel) currentPanel);
         } else if (currentPanel instanceof AccountAndProjectManagePanel) {
             setupAdminManageListeners((AccountAndProjectManagePanel) currentPanel);
         } else if (currentPanel instanceof IssueDetailPanel) {
@@ -43,7 +49,7 @@ public class IssueController {
     }
 
     // 이슈 목록 화면 리스너 설정
-    private void setupIssueListListners(IssueListPanel panel) {
+    private void setupIssueListListeners(IssueListPanel panel) {
         if (currentUser == null) {
             panel.getBtnResolve().setVisible(false);
             panel.getBtnClose().setVisible(false);
@@ -66,14 +72,42 @@ public class IssueController {
         panel.revalidate();
         panel.repaint();
 
-        // 검색 버튼
+
+        panel.getIssueTable().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    int selectedRow = panel.getIssueTable().getSelectedRow();
+                    if (selectedRow != -1) {
+                        int issueId = (int) panel.getTableModel().getValueAt(selectedRow, 0);
+                        Issue targetIssue = issueService.getIssueById(issueId);
+                        if (targetIssue != null) {
+                            mainFrame.changeCenterPanel(new IssueDetailPanel(mainFrame, targetIssue));
+                        }
+                    }
+                }
+            }
+        });
+
+
         panel.getBtnSearch().addActionListener(e -> {
             String keyword = panel.getFieldSearch().getText().trim().toLowerCase();
             String status = (String) panel.getComboStatusFilter().getSelectedItem();
             String priority = (String) panel.getComboPriorityFilter().getSelectedItem();
 
             String filterStatus = "전체".equals(status) ? null : status;
-            List<Issue> filteredIssues = issueService.searchIssues(filterStatus, null, null);
+            String filterPriority = "전체".equals(priority) ? null : priority;
+
+            int currentProjectId = -1;
+            if (mainFrame.getHeaderPanel() != null && mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem() != null) {
+                String selectedProj = (String) mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem();
+                if (selectedProj.contains(" : ")) {
+                    currentProjectId = Integer.parseInt(selectedProj.split(" : ")[0]);
+                }
+            }
+
+            // 여기서 백엔드 5-arg API 정상 호출
+            List<Issue> filteredIssues = issueService.searchIssues(currentProjectId, filterStatus, null, null, filterPriority);
 
             panel.getTableModel().setRowCount(0);
 
@@ -84,17 +118,15 @@ public class IssueController {
                         boolean matchDesc = issue.description != null && issue.description.toLowerCase().contains(keyword);
                         if (!matchTitle && !matchDesc) continue;
                     }
-                    if (!"전체".equals(priority)) {
-                        if (issue.priority == null || !issue.priority.name().equalsIgnoreCase(priority)) continue;
-                    }
+
 
                     Object[] row = {
                             issue.id,
                             issue.title,
                             issue.priority != null ? issue.priority.name() : "-",
                             issue.status != null ? issue.status.name() : "NEW",
-                            issue.reporterId != null ? issue.reporterId : "-",
-                            issue.assigneeId != null ? issue.assigneeId : "-"
+                            issue.reporter != null ? issue.reporter : "-",
+                            issue.assignee != null ? issue.assignee : "-"
                     };
                     panel.getTableModel().addRow(row);
                 }
@@ -105,24 +137,14 @@ public class IssueController {
         // Resolve 버튼
         panel.getBtnResolve().addActionListener((ActionEvent e) -> {
             int selectedRow = panel.getIssueTable().getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(mainFrame, "처리할 이슈를 선택해주세요.", "경고", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+            if (selectedRow == -1) return;
             int issueId = (int) panel.getTableModel().getValueAt(selectedRow, 0);
 
             try {
-                Issue realIssue = issueService.getIssueById(issueId);
-                if (realIssue != null) {
-                    realIssue.setStatus(IssueStatus.FIXED);
-                }
-
                 issueService.changeStatus(issueId, IssueStatus.FIXED, currentUser);
                 panel.loadIssues();
-
                 JOptionPane.showMessageDialog(mainFrame, "이슈 상태가 FIXED로 변경되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -137,14 +159,12 @@ public class IssueController {
             int issueId = (int) panel.getTableModel().getValueAt(selectedRow, 0);
 
             try {
+                issueService.changeStatus(issueId, IssueStatus.CLOSED, currentUser);
                 Issue realIssue = issueService.getIssueById(issueId);
                 if (realIssue != null) {
                     realIssue.setStatus(IssueStatus.CLOSED);
                 }
-
-                issueService.changeStatus(issueId, IssueStatus.CLOSED, currentUser);
                 panel.loadIssues();
-
                 JOptionPane.showMessageDialog(mainFrame, "이슈가 CLOSED 처리되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -154,11 +174,32 @@ public class IssueController {
     }
 
     // 이슈 등록 버튼 리스너
-    private void setupIssueCreateListners(IssueCreatePanel panel) {
+    private void setupIssueCreateListeners(IssueCreatePanel panel) {
+        //중복 등록 방지
+        for (java.awt.event.ActionListener al : panel.getBtnSubmit().getActionListeners()) {
+            panel.getBtnSubmit().removeActionListener(al);
+        }
         panel.getBtnSubmit().addActionListener((ActionEvent e) -> {
+            if (currentUser == null || currentUser.getRole() == Role.ADMIN) {
+                JOptionPane.showMessageDialog(mainFrame, "이슈 등록 권한이 없습니다.", "권한 오류", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             String title = panel.getTitleField().getText().trim();
             String description = panel.getDescriptionArea().getText().trim();
             String priorityStr = (String) panel.getPriorityCombo().getSelectedItem();
+
+            int projectId = -1;
+            if (mainFrame.getHeaderPanel() != null && mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem() != null) {
+                String selectedProj = (String) mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem();
+                if (selectedProj.contains(" : ")) {
+                    projectId = Integer.parseInt(selectedProj.split(" : ")[0]);
+                }
+            }
+            if (projectId == -1) {
+                JOptionPane.showMessageDialog(mainFrame, "선택된 프로젝트를 찾을 수 없습니다. 헤더를 확인해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             if (title.isEmpty() || description.isEmpty()) {
                 JOptionPane.showMessageDialog(mainFrame, "제목과 내용을 모두 입력해주세요.", "오류", JOptionPane.ERROR_MESSAGE);
@@ -172,12 +213,12 @@ public class IssueController {
                 newIssue.description = description;
                 newIssue.priority = priority;
                 newIssue.status = IssueStatus.NEW;
+                newIssue.projectId = projectId;
 
-                issueService.createIssue(newIssue, currentUser);
+                issueService.createIssue(projectId, newIssue, currentUser);
                 JOptionPane.showMessageDialog(mainFrame, "이슈가 등록되었습니다.", "알림", JOptionPane.INFORMATION_MESSAGE);
                 mainFrame.changeCenterPanel(new IssueListPanel(mainFrame));
             } catch (Exception ex) {
-                ex.printStackTrace();
                 JOptionPane.showMessageDialog(mainFrame, "이슈 등록 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -193,8 +234,6 @@ public class IssueController {
             sideMenu.getBtnList().setVisible(false);
             sideMenu.getBtnCreate().setVisible(false);
             sideMenu.getBtnStats().setVisible(false);
-            sideMenu.revalidate();
-            sideMenu.repaint();
             return;
         }
 
@@ -205,21 +244,12 @@ public class IssueController {
             sideMenu.getBtnList().setVisible(false);
             sideMenu.getBtnCreate().setVisible(false);
             sideMenu.getBtnStats().setVisible(false);
-        } else if (currentRole == Role.DEV) {
-            sideMenu.getBtnAdminManage().setVisible(false);
-            sideMenu.getBtnList().setVisible(true);
-            sideMenu.getBtnCreate().setVisible(false);
-            sideMenu.getBtnStats().setVisible(false);
-        } else if (currentRole == Role.PL) {
+        } else {
+            // DEV, PL, TESTER 모두 이슈 목록, 생성, 통계 접근 가능
             sideMenu.getBtnAdminManage().setVisible(false);
             sideMenu.getBtnList().setVisible(true);
             sideMenu.getBtnCreate().setVisible(true);
             sideMenu.getBtnStats().setVisible(true);
-        } else if (currentRole == Role.TESTER) {
-            sideMenu.getBtnAdminManage().setVisible(false);
-            sideMenu.getBtnList().setVisible(true);
-            sideMenu.getBtnCreate().setVisible(true);
-            sideMenu.getBtnStats().setVisible(false);
         }
 
         sideMenu.revalidate();
@@ -230,12 +260,28 @@ public class IssueController {
     private void setupAdminManageListeners(AccountAndProjectManagePanel panel) {
         panel.getBtnCreateProject().addActionListener(e -> {
             String projName = panel.getFieldProjectName().getText().trim();
+            String projDesc = "";
+
             if (projName.isEmpty()) {
                 JOptionPane.showMessageDialog(mainFrame, "프로젝트명을 입력해주세요.", "경고", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            JOptionPane.showMessageDialog(mainFrame, "프로젝트가 생성되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
-            panel.getFieldProjectName().setText("");
+
+            try {
+                projectService.addProject(projName, projDesc, currentUser);
+
+                // 생성 직후 헤더 콤보박스 즉시 동기화
+                if (mainFrame.getHeaderPanel() != null) {
+                    mainFrame.getHeaderPanel().loadProjects();
+                }
+
+                JOptionPane.showMessageDialog(mainFrame, "프로젝트가 성공적으로 생성 및 저장되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+                panel.getFieldProjectName().setText("");
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(mainFrame, "프로젝트 생성 권한이 없거나 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         panel.getBtnCreateAccount().addActionListener(e -> {
@@ -274,6 +320,11 @@ public class IssueController {
                 }
 
                 Role selectedRole = Role.valueOf(standardRoleStr);
+
+                if (selectedRole == Role.ADMIN) {
+                    JOptionPane.showMessageDialog(mainFrame, "ADMIN 계정은 추가로 생성할 수 없습니다.", "권한 오류", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 User newUser = new User();
                 newUser.setId(userId);
@@ -331,7 +382,7 @@ public class IssueController {
         panel.revalidate();
         panel.repaint();
 
-        // 담당자 추천 기능
+        // 담당자 추천 및 배정
         panel.getBtnRecommend().addActionListener(e -> {
             List<RecommendationResult> recs = issueService.getAssigneeRecommendations(currentIssue.id);
 
@@ -365,8 +416,8 @@ public class IssueController {
 
         // FIXED 처리
         panel.getBtnDevFixed().addActionListener(e -> {
-            currentIssue.setStatus(IssueStatus.FIXED);
             issueService.changeStatus(currentIssue.id, IssueStatus.FIXED, currentUser);
+            currentIssue.setStatus(IssueStatus.FIXED);
 
             panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnDevFixed().setVisible(false);
@@ -377,8 +428,8 @@ public class IssueController {
 
         // RESOLVED 처리
         panel.getBtnTesterVerify().addActionListener(e -> {
-            currentIssue.setStatus(IssueStatus.RESOLVED);
             issueService.changeStatus(currentIssue.id, IssueStatus.RESOLVED, currentUser);
+            currentIssue.setStatus(IssueStatus.RESOLVED);
 
             panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnTesterVerify().setVisible(false);
@@ -390,8 +441,8 @@ public class IssueController {
 
         // REOPENED 처리
         panel.getBtnReopen().addActionListener(e -> {
-            currentIssue.setStatus(IssueStatus.REOPENED);
             issueService.changeStatus(currentIssue.id, IssueStatus.REOPENED, currentUser);
+            currentIssue.setStatus(IssueStatus.REOPENED);
 
             panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnTesterVerify().setVisible(false);
@@ -403,8 +454,8 @@ public class IssueController {
 
         // CLOSED 처리
         panel.getBtnPlClose().addActionListener(e -> {
-            currentIssue.setStatus(IssueStatus.CLOSED);
             issueService.changeStatus(currentIssue.id, IssueStatus.CLOSED, currentUser);
+            currentIssue.setStatus(IssueStatus.CLOSED);
 
             panel.getLblStatus().setText(currentIssue.getStatus().name());
             panel.getBtnPlClose().setVisible(false);
@@ -423,7 +474,8 @@ public class IssueController {
                     newComment.content = text;
                     newComment.date = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-                    issueService.addComment(currentIssue.id, newComment, currentUser);
+
+                    issueService.addCommentToIssue(currentIssue.id, newComment, currentUser);
 
                     panel.getAreaCommentList().append("\n[" + newComment.date + "] " + newComment.authorId + ": " + text);
                     panel.getFieldCommentInput().setText("");
@@ -440,4 +492,5 @@ public class IssueController {
 
     public AccountManager getAccountManager() { return this.accountManager; }
     public IssueService getService() { return this.issueService; }
+    public ProjectService getProjectService() { return this.projectService; }
 }

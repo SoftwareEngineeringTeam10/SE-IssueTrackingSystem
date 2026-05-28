@@ -1,0 +1,66 @@
+@startuml
+title Use Case Diagram - Issue Tracker System
+
+left to right direction
+
+actor ADMIN
+actor PL
+actor DEV
+actor TESTER
+
+rectangle "Issue Tracker System" {
+
+usecase "UC01\n로그인" as UC01
+usecase "UC02\n계정 추가" as UC02
+usecase "UC03\n프로젝트 추가" as UC03
+
+usecase "UC04\n이슈 등록" as UC04
+usecase "UC05\n이슈 검색" as UC05
+usecase "UC06\n이슈 상세 조회" as UC06
+usecase "UC07\n코멘트 추가" as UC07
+usecase "UC08\n담당자 배정" as UC08
+usecase "UC09\n이슈 상태 변경" as UC09
+
+usecase "UC10\n이슈 통계 조회" as UC10
+usecase "UC11\nAssignee 추천 확인" as UC11
+}
+
+ADMIN --> UC01
+ADMIN --> UC02
+ADMIN --> UC03
+
+PL --> UC01
+PL --> UC04
+PL --> UC05
+PL --> UC06
+PL --> UC07
+PL --> UC08
+PL --> UC09
+PL --> UC10
+PL --> UC11
+
+DEV --> UC01
+DEV --> UC04
+DEV --> UC05
+DEV --> UC06
+DEV --> UC07
+DEV --> UC09
+DEV --> UC10
+DEV --> UC11
+
+TESTER --> UC01
+TESTER --> UC04
+TESTER --> UC05
+TESTER --> UC06
+TESTER --> UC07
+TESTER --> UC09
+TESTER --> UC10
+TESTER --> UC11
+
+UC08 ..> UC05 : <<include>>
+UC09 ..> UC07 : <<include>>
+
+UC11 ..> UC06 : <<extend>>
+UC07 ..> UC06 : <<extend>>
+
+@enduml

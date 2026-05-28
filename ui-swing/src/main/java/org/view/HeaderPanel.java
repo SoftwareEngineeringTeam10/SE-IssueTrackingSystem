@@ -11,6 +11,7 @@ public class HeaderPanel extends JPanel {
     private MainFrame mainFrame;
     private CardLayout cardLayout;
     private JPanel authCardContainer;
+    private JComboBox<String> projectCombo;
 
     // 로그인 전 컴포넌트
     private JTextField idField;
@@ -38,8 +39,19 @@ public class HeaderPanel extends JPanel {
         projectLabel.setForeground(Color.WHITE);
         projectLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
 
-        JComboBox<String> projectCombo = new JComboBox<>(new String[]{"Model-Based-ITS", "NextGen-ERP", "SmartFactory-IoT"});
+
+        projectCombo = new JComboBox<>();
         projectCombo.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
+
+
+        projectCombo.addActionListener(e -> {
+            if (mainFrame.getCenterPanel() instanceof IssueListPanel) {
+                ((IssueListPanel) mainFrame.getCenterPanel()).loadIssues();
+            }
+        });
+
+        // 데이터 깔끔하게 로드
+        loadProjects();
 
         leftPanel.add(projectLabel);
         leftPanel.add(projectCombo);
@@ -115,7 +127,6 @@ public class HeaderPanel extends JPanel {
                 cardLayout.show(authCardContainer, "USER");
                 mainFrame.getController().configureSideMenuByRole();
 
-
                 if (matchedRole == Role.ADMIN) {
                     mainFrame.changeCenterPanel(new AccountAndProjectManagePanel(mainFrame));
                 } else {
@@ -141,8 +152,27 @@ public class HeaderPanel extends JPanel {
         });
     }
 
+    public void loadProjects() {
+        projectCombo.removeAllItems(); // 기존 목록 싹 비우기
+
+        if (mainFrame.getController() != null && mainFrame.getController().getProjectService() != null) {
+            java.util.List<org.issuetracker.model.Project> realProjects = mainFrame.getController().getProjectService().getAllProjects();
+
+            if (realProjects.isEmpty()) {
+                projectCombo.addItem("생성된 프로젝트가 없습니다");
+            } else {
+                for (org.issuetracker.model.Project p : realProjects) {
+                    projectCombo.addItem(p.id + " : " + p.name);
+                }
+            }
+        } else {
+            projectCombo.addItem("프로젝트 로드 대기중...");
+        }
+    }
+
     public JTextField getIdField() { return idField; }
     public JPasswordField getPwField() { return pwField; }
     public JButton getLoginBtn() { return loginBtn; }
     public JButton getLogoutBtn() { return logoutBtn; }
+    public JComboBox<String> getProjectCombo() { return projectCombo; }
 }

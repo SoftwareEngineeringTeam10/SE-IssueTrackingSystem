@@ -10,6 +10,7 @@ public class IssueCreatePanel extends JPanel {
     private JTextArea descriptionArea;
     private JComboBox<String> priorityCombo;
     private JButton btnSubmit, btnCancel;
+    private JComboBox<String> comboProject;
 
     public IssueCreatePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -29,6 +30,17 @@ public class IssueCreatePanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 5, 10, 5);
+
+        // 프로젝트
+        JLabel lblProject = new JLabel("프로젝트 배정:");
+        comboProject = new JComboBox<>();
+        comboProject.setBackground(Color.WHITE);
+
+        if (mainFrame.getController() != null && mainFrame.getController().getProjectService() != null) {
+            for (org.issuetracker.model.Project p : mainFrame.getController().getProjectService().getAllProjects()) {
+                comboProject.addItem(p.id + " : " + p.name); // 예: "1 : ITS Main Project"
+            }
+        }
 
         // 우선순위
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
@@ -105,4 +117,5 @@ public class IssueCreatePanel extends JPanel {
     public JComboBox<String> getPriorityCombo() { return priorityCombo; }
     public JButton getBtnSubmit() { return btnSubmit; }
     public JButton getBtnCancel() { return btnCancel; }
+    public JComboBox<String> getComboProject() { return comboProject; }
 }

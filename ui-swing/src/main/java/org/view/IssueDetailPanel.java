@@ -109,7 +109,7 @@ public class IssueDetailPanel extends JPanel {
         metaPanel.add(createMetaLabel("보 고 자:"), gbc);
 
         gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.5;
-        lblReporter = new JLabel(issue != null ? issue.reporterId : "");
+        lblReporter = new JLabel(issue != null ? issue.reporter : "");
         lblReporter.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         metaPanel.add(lblReporter, gbc);
 
@@ -119,7 +119,7 @@ public class IssueDetailPanel extends JPanel {
         JPanel assigneeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         assigneeWrapper.setOpaque(false);
 
-        lblAssignee = new JLabel(issue != null && issue.assigneeId != null ? issue.assigneeId : "");
+        lblAssignee = new JLabel(issue != null && issue.assignee != null ? issue.assignee : "");
         lblAssignee.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
 
         btnRecommend = new JButton("담당자 자동 추천 호출");
@@ -215,8 +215,8 @@ public class IssueDetailPanel extends JPanel {
             lblTitle.setText(issue.title);
             lblPriority.setText(issue.priority != null ? issue.priority.name() : "NONE");
             lblStatus.setText(issue.status != null ? issue.status.name() : "NEW");
-            lblReporter.setText(issue.reporterId != null ? issue.reporterId : "");
-            lblAssignee.setText(issue.assigneeId != null ? issue.assigneeId : "");
+            lblReporter.setText(issue.reporter != null ? issue.reporter : "");
+            lblAssignee.setText(issue.assignee != null ? issue.assignee : "");
             areaDescription.setText(issue.description != null ? issue.description : "");
 
             if (issue.comments != null && !issue.comments.isEmpty()) {

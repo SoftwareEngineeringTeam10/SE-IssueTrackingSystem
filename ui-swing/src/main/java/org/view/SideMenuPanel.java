@@ -33,24 +33,30 @@ public class SideMenuPanel extends JPanel {
         add(lblNav);
         add(Box.createVerticalStrut(20));
 
-        // 메뉴 버튼 생성 및 배치
+
         btnAdminManage = createMenuButton("계정/프로젝트 관리");
+        btnAdminManage.addActionListener(e -> mainFrame.changeCenterPanel(new AccountAndProjectManagePanel(mainFrame)));
         add(btnAdminManage);
         add(Box.createVerticalStrut(10));
 
+
         btnList = createMenuButton("이슈 목록");
+        btnList.addActionListener(e -> mainFrame.changeCenterPanel(new IssueListPanel(mainFrame)));
         add(btnList);
         add(Box.createVerticalStrut(10));
 
+
         btnCreate = createMenuButton("이슈 등록");
+        btnCreate.addActionListener(e -> mainFrame.changeCenterPanel(new IssueCreatePanel(mainFrame)));
         add(btnCreate);
         add(Box.createVerticalStrut(10));
 
+
         btnStats = createMenuButton("통계 분석");
+        btnStats.addActionListener(e -> mainFrame.changeCenterPanel(new StatsPanel(mainFrame)));
         add(btnStats);
 
         add(Box.createVerticalGlue());
-
     }
 
     // 버튼 생성 헬퍼

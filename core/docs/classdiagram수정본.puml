@@ -1,0 +1,164 @@
+@startuml
+title Class Diagram - Issue Tracker System
+
+package model {
+
+class User {
+    - id : String
+    - password : String
+    - name : String
+    - role : Role
+    + getId()
+    + getPassword()
+    + getName()
+    + getRole()
+    + setId()
+    + setPassword()
+    + setName()
+    + setRole()
+}
+
+class Project {
+    + id : int
+    + name : String
+    + description : String
+}
+
+class Issue {
+    + id : int
+    + projectId : int
+    + title : String
+    + description : String
+    + reporter : String
+    + reportedDate : String
+    + fixer : String
+    + assignee : String
+    + priority : Priority
+    + status : IssueStatus
+    + comments : List<Comment>
+    + addComment()
+}
+
+class Comment {
+    + authorId : String
+    + content : String
+    + date : String
+}
+
+class RecommendationResult {
+    - fixerId : String
+    - score : double
+    - matchedIssueIds : List<Integer>
+    + getFixerId()
+    + getScore()
+    + getMatchedIssueIds()
+}
+
+class Role
+class Priority
+class IssueStatus
+
+}
+
+package repository {
+
+class IssueRepository {
+    - file : File
+    - mapper : ObjectMapper
+    + findAll() : List<Issue>
+    + saveAll(issues : List<Issue>) : void
+}
+
+class ProjectRepository {
+    - file : File
+    - mapper : ObjectMapper
+    + findAll() : List<Project>
+    + saveAll(projects : List<Project>) : void
+}
+}
+
+package service {
+
+class AccountManager {
+    - users : List<User>
+    - currentUser : User
+    - FILE_PATH : String
+    + addUser(user : User)
+    + login(id : String, password : String)
+    + logout()
+    + getCurrentUser()
+}
+
+class IssueService {
+    - repository : IssueRepository
+    + createIssue(projectId : int, newIssue : Issue, currentUser : User)
+    + getIssueById(id : int)
+    + addCommentToIssue(issueId : int, newComment : Comment, currentUser : User)
+
+    + searchIssues(projectId : int, status : String, assignee : String, reporter : String, priority : String)
+    + assignIssue(issueId : int, assignee : String, currentUser : User)
+    + changeStatus(issueId : int, newStatus : IssueStatus, currentUser : User)
+    + printIssueDetail(issueId : int, currentUser : User)
+    + getAssigneeRecommendations(issueId : int)
+}
+
+class ProjectService {
+    - repository : ProjectRepository
+    + addProject(name : String, description : String, currentUser : User)
+    + getProjectById(id : int)
+    + getAllProjects()
+}
+
+class StatisticsService {
+    - repository : IssueRepository
+    + getDailyStats()
+    + getMonthlyStats()
+    + getStatusStats()
+    + getPriorityStats()
+    + printAllStats(currentUser : User)
+}
+
+class PermissionManager {
+    + canCreateIssue(user : User)
+    + canAssignIssue(user : User)
+    + canManageUsers(user : User)
+    + canFixIssue(user : User)
+    + canResolveIssue(user : User)
+    + canCloseIssue(user : User)
+    + canReopenIssue(user : User)
+    + canViewIssue(user : User)
+}
+
+interface RecommendationService {
+    + recommend(targetIssue : Issue, historicalIssues : List<Issue>)
+}
+
+class RecommendationServiceImpl {
+    - MIN_SIMILARITY : double
+    - TOP_N : int
+    + recommend()
+    + tokenize()
+    + calculateTfIdf()
+    + calculateCosineSimilarity()
+}
+
+}
+
+Project *-- Issue
+Issue *-- Comment
+
+User --> Role
+Issue --> IssueStatus
+Issue --> Priority
+
+IssueService --> IssueRepository
+ProjectService --> ProjectRepository
+StatisticsService --> IssueRepository
+
+IssueService --> PermissionManager
+ProjectService --> PermissionManager
+
+IssueService --> RecommendationService
+RecommendationServiceImpl ..|> RecommendationService
+
+@enduml

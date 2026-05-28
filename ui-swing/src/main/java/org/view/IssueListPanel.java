@@ -112,38 +112,34 @@ public class IssueListPanel extends JPanel {
     public void loadIssues() {
         tableModel.setRowCount(0);
 
-        if (mainFrame.getController() == null || mainFrame.getController().getService() == null) {
-            return;
+        int currentProjectId = -1;
+        if (mainFrame.getHeaderPanel() != null && mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem() != null) {
+            String selectedProj = (String) mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem();
+            if (selectedProj.contains(" : ")) {
+                currentProjectId = Integer.parseInt(selectedProj.split(" : ")[0]);
+            }
         }
 
-        java.util.List<org.issuetracker.model.Issue> issues = mainFrame.getController().getService().getAllIssues();
-        if (issues == null) return;
+        try {
+            java.util.List<org.issuetracker.model.Issue> issues = mainFrame.getController().getService().searchIssues(currentProjectId, null, null, null, null);
 
-        User currentUser = mainFrame.getController().getCurrentUser();
-
-        for (org.issuetracker.model.Issue issue : issues) {
-            // 개발자 권한 필터링
-            if (currentUser != null && currentUser.getRole() == Role.DEV) {
-                if (issue.assigneeId == null || !issue.assigneeId.equals(currentUser.getId())) {
-                    continue;
+            if (issues != null) {
+                for (org.issuetracker.model.Issue issue : issues) {
+                    Object[] row = {
+                            issue.id,
+                            issue.title,
+                            issue.priority != null ? issue.priority.name() : "-",
+                            issue.status != null ? issue.status.name() : "NEW",
+                            issue.reporter != null ? issue.reporter : "-",  // Id 꼬리표 뗀 거 적용
+                            issue.assignee != null ? issue.assignee : "-"   // Id 꼬리표 뗀 거 적용
+                    };
+                    tableModel.addRow(row);
                 }
             }
-
-            Object[] row = {
-                    issue.id,
-                    issue.title,
-                    issue.priority != null ? issue.priority.name() : "-",
-                    issue.status != null ? issue.status.name() : "NEW",
-                    issue.reporterId != null ? issue.reporterId : "-",
-                    issue.assigneeId != null ? issue.assigneeId : "-"
-            };
-            tableModel.addRow(row);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("데이터 로드 중 에러 발생! 백엔드 시그니처 정합성을 확인하세요.");
         }
-
-        tableModel.fireTableDataChanged();
-
-        revalidate();
-        repaint();
     }
 
     // Getter 목록
