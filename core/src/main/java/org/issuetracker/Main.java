@@ -26,6 +26,11 @@ public class Main {
         manager.addUser(new User("tester01", "1111", "tester", Role.TESTER));
         manager.addUser(new User("pl01", "2222", "PL1", Role.PL));
         manager.addUser(new User("dev01", "3333", "DEV1", Role.DEV));
+        // 추가된 테스트용 개발자
+        User user02 = new User("user02", "4444", "User2", Role.DEV);
+        User user03 = new User("user03", "5555", "User3", Role.DEV);
+        manager.addUser(user02);
+        manager.addUser(user03);
 
         // 1. TESTER 이슈 등록 및 코멘트 추가
         manager.login("tester01", "1111");
@@ -94,6 +99,18 @@ public class Main {
         fourthIssue.priority = Priority.MINOR;
         issueService.createIssue(fourthIssue, searchUser);
         manager.logout();
+
+        // --- 여기서부터 추가된 부분 (학습용 데이터) ---
+        manager.login("tester01", "1111");
+        Issue learn1 = new Issue(); learn1.title = "로그인 오류"; learn1.description = "로그인 버튼 오류";
+        issueService.createIssue(learn1, manager.getCurrentUser());
+        issueService.changeStatus(5, IssueStatus.CLOSED, user02); // ID 5번은 user02가 해결
+
+        Issue learn2 = new Issue(); learn2.title = "로그인 실패"; learn2.description = "로그인 안됨";
+        issueService.createIssue(learn2, manager.getCurrentUser());
+        issueService.changeStatus(6, IssueStatus.CLOSED, user03); // ID 6번은 user03이 해결
+        manager.logout();
+        // ------------------------------------------
 
         // 7. 이슈 조건별 조회 검증
         List<Issue> allIssues = issueService.getAllIssues();

@@ -1,5 +1,7 @@
 package org.issuetracker.service;
 
+import org.issuetracker.service.RecommendationService;
+import org.issuetracker.service.RecommendationServiceImpl;
 import org.issuetracker.model.Comment;
 import org.issuetracker.model.Issue;
 import org.issuetracker.model.IssueStatus;
