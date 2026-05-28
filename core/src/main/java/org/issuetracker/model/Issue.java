@@ -6,6 +6,7 @@ import java.util.List;
 public class Issue {
 
     public int id;
+    public int projectId;
     public String title;
     public String description;
     public String reporter;

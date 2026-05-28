@@ -72,4 +72,11 @@ public class ProjectService {
             );
         }
     }
+
+    /**
+     * 앱 시작 시 projects.json 을 완전히 초기화합니다.
+     */
+    public void resetAll() {
+        repository.saveAll(new java.util.ArrayList<>());
+    }
 }
