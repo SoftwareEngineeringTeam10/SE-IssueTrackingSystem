@@ -12,9 +12,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
 import org.issuetracker.model.User;
 import org.issuetracker.service.AccountManager;
+import org.issuetracker.service.PermissionManager;
+import org.issuetracker.service.ProjectService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
 
@@ -36,6 +39,7 @@ public class ManageController {
     @FXML private Label systemMessage;
 
     private final AccountManager accountManager = new AccountManager();
+    private final ProjectService projectService = new ProjectService();
     private final ObservableList<String> projects = FXCollections.observableArrayList();
 
     @FXML
@@ -58,12 +62,14 @@ public class ManageController {
 
         ObservableList<String> roleNames = FXCollections.observableArrayList();
         for (Role r : Role.values()) {
+            if (r == Role.ADMIN) continue;   // admin은 단일 계정이므로 추가 대상에서 제외
             roleNames.add(r.name());
         }
         roleCombo.setItems(roleNames);
         roleCombo.setValue("DEV");
 
         projectList.setItems(projects);
+        reloadProjects();
     }
 
     @SuppressWarnings("unchecked")
@@ -114,15 +120,30 @@ public class ManageController {
 
     @FXML
     public void onAddProject() {
-        // 프로젝트 추가 핸들러 — UI만 (저장 X)
+        // 프로젝트 추가 핸들러 — ProjectService로 영속 저장
         String name = newProjectField.getText() != null ? newProjectField.getText().trim() : "";
         if (name.isEmpty()) {
             systemMessage.setText("프로젝트 이름을 입력해주세요");
             return;
         }
-        projects.add(name);
+
+        if (!PermissionManager.canManageUsers(Session.currentUser)) {
+            systemMessage.setText("프로젝트 추가 권한이 없습니다");
+            return;
+        }
+
+        projectService.addProject(name, "", Session.currentUser);
+        reloadProjects();
         newProjectField.clear();
-        systemMessage.setText("프로젝트 추가 완료 (화면 전환 시 휘발)");
+        systemMessage.setText("프로젝트 추가 완료");
+    }
+
+    private void reloadProjects() {
+        // 저장된 프로젝트 목록 다시 로드
+        projects.clear();
+        for (Project p : projectService.getAllProjects()) {
+            projects.add(p.name);
+        }
     }
 
     @FXML

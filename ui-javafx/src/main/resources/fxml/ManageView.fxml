@@ -67,6 +67,9 @@
             <Label text="계정 관리" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
             <TableView fx:id="accountTable" prefHeight="200">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
                 <columns>
                     <TableColumn text="ID" prefWidth="160"/>
                     <TableColumn text="Name" prefWidth="200"/>
@@ -85,7 +88,7 @@
             <Separator/>
 
             <!-- 프로젝트 관리 -->
-            <Label text="프로젝트 관리 (저장 X — 화면 전환 시 휘발)"
+            <Label text="프로젝트 관리"
                    style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
             <ListView fx:id="projectList" prefHeight="160"/>
