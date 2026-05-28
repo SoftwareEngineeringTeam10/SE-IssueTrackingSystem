@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ui.javafx.controller.IssueDetailController"
+            prefWidth="1024" prefHeight="720">
+
+    <top>
+        <HBox spacing="12"
+              alignment="CENTER_LEFT"
+              style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
+
+            <Label text="Issue Tracking System"
+                   styleClass="label-header"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <ComboBox fx:id="projectCombo" promptText="Project"/>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="userLabel" text="User: -"/>
+            <Button text="Logout" onAction="#onLogout"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="6"
+              style="-fx-padding: 10; -fx-background-color: #fafafa;"
+              prefWidth="220">
+
+            <Label text="Menu" style="-fx-font-weight: bold;"/>
+            <Button text="Issue List"
+                    onAction="#onBack"
+                    maxWidth="Infinity"/>
+            <Button text="Register Issue"
+                    onAction="#onOpenRegister"
+                    maxWidth="Infinity"/>
+            <Button text="Recommend Assignee"
+                    fx:id="recommendButton"
+                    onAction="#onRecommendAssignee"
+                    maxWidth="Infinity"/>
+            <Button text="Manage"
+                    fx:id="manageButton"
+                    onAction="#onOpenManage"
+                    maxWidth="Infinity"/>
+            <Button text="Statistics"
+                    onAction="#onOpenStats"
+                    maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 20;">
+
+            <!-- 이슈 필드 -->
+            <GridPane hgap="10" vgap="6">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="120" prefWidth="140"/>
+                    <ColumnConstraints prefWidth="400" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Title"
+                       GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label fx:id="titleLabel"
+                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Priority"
+                       GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label fx:id="priorityLabel"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Status"
+                       GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <Label fx:id="statusLabel"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Reporter"
+                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Label fx:id="reporterLabel"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                <Label text="Reported Date"
+                       GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <Label fx:id="reportedDateLabel"
+                       GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                <Label text="Assignee"
+                       GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <Label fx:id="assigneeLabel"
+                       GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                <Label text="Fixer"
+                       GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <Label fx:id="fixerLabel"
+                       GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                <Label text="Description"
+                       GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <TextArea fx:id="descriptionArea"
+                          editable="false"
+                          prefRowCount="4"
+                          GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <Separator/>
+
+            <!-- 역할별 상태 변경 — 동적 액션 버튼 추가됨 -->
+            <HBox fx:id="statusActionBox" spacing="10" alignment="CENTER_LEFT"/>
+
+            <Separator/>
+
+            <!-- Comments -->
+            <Label text="Comments" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="commentsList" prefHeight="160"/>
+
+            <HBox spacing="8">
+                <TextField fx:id="newCommentField"
+                           promptText="Add a comment..."
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Add" styleClass="button-primary" onAction="#onAddComment"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <right>
+        <VBox spacing="6"
+              style="-fx-padding: 10; -fx-background-color: #fafafa;"
+              prefWidth="220">
+
+            <Label text="Activity Log" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="activityLog" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </right>
+
+    <bottom>
+        <HBox style="-fx-padding: 6 10 6 10; -fx-background-color: #eeeeee;">
+            <Label fx:id="systemMessage" text=" "/>
+        </HBox>
+    </bottom>
+</BorderPane>

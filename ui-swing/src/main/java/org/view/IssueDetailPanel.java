@@ -12,6 +12,7 @@ public class IssueDetailPanel extends JPanel {
     private JLabel lblTitle, lblPriority, lblStatus, lblReporter, lblAssignee;
     private JTextArea areaDescription, areaCommentList;
     private JTextField fieldCommentInput;
+    private JComboBox<String> comboAssignee;
     private JButton btnAddComment, btnBack;
 
     private JButton btnRecommend;
@@ -19,6 +20,7 @@ public class IssueDetailPanel extends JPanel {
     private JButton btnTesterVerify;
     private JButton btnPlClose;
     private JButton btnReopen;
+    private JButton btnDirectAssign;
 
     public Issue getIssue() {
         return this.issue;
@@ -116,17 +118,22 @@ public class IssueDetailPanel extends JPanel {
         gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("담당자:"), gbc);
 
-        JPanel assigneeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        JPanel assigneeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         assigneeWrapper.setOpaque(false);
 
-        lblAssignee = new JLabel(issue != null && issue.assignee != null ? issue.assignee : "");
-        lblAssignee.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
+        lblAssignee = new JLabel(issue != null && issue.assignee != null && !issue.assignee.isEmpty() ? issue.assignee : "미지정");
+        lblAssignee.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
 
-        btnRecommend = new JButton("담당자 자동 추천 호출");
+        btnRecommend = new JButton("자동 추천");
         btnRecommend.setFont(new Font("Malgun Gothic", Font.BOLD, 11));
         btnRecommend.setBackground(new Color(230, 240, 250));
 
+        btnDirectAssign = new JButton("직접 지정");
+        btnDirectAssign.setFont(new Font("Malgun Gothic", Font.BOLD, 11));
+        btnDirectAssign.setBackground(new Color(245, 245, 245));
+
         assigneeWrapper.add(lblAssignee);
+        assigneeWrapper.add(btnDirectAssign);
         assigneeWrapper.add(btnRecommend);
 
         gbc.gridx = 3; gbc.gridy = 2; gbc.weightx = 0.5;
@@ -259,4 +266,20 @@ public class IssueDetailPanel extends JPanel {
     public JTextField getFieldCommentInput() { return fieldCommentInput; }
     public JButton getBtnAddComment() { return btnAddComment; }
     public JTextArea getAreaCommentList() { return areaCommentList; }
+    public JComboBox<String> getComboAssignee() { return comboAssignee; }
+    public JButton getBtnDirectAssign() { return btnDirectAssign; }
+
+
+
+    public void addAssigneeItem(String userId) {
+        if (this.comboAssignee != null) {
+            this.comboAssignee.addItem(userId);
+        }
+    }
+
+    public void setInitialAssignee(String assignee) {
+        if (this.comboAssignee != null && assignee != null && !assignee.trim().isEmpty()) {
+            this.comboAssignee.setSelectedItem(assignee);
+        }
+    }
 }

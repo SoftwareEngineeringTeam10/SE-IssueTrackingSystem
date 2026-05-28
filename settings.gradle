@@ -1,2 +1,4 @@
 rootProject.name = 'SE-IssueTrackingSystem'
-include 'core', 'ui-swing'
+
+include 'ui-javafx'
+include 'core'

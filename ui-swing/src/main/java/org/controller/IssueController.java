@@ -4,6 +4,7 @@ import org.issuetracker.model.*;
 import org.issuetracker.service.ProjectService;
 import org.view.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -106,7 +107,6 @@ public class IssueController {
                 }
             }
 
-            // 여기서 백엔드 5-arg API 정상 호출
             List<Issue> filteredIssues = issueService.searchIssues(currentProjectId, filterStatus, null, null, filterPriority);
 
             panel.getTableModel().setRowCount(0);
@@ -171,6 +171,7 @@ public class IssueController {
                 JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
             }
         });
+
     }
 
     // 이슈 등록 버튼 리스너
@@ -382,112 +383,245 @@ public class IssueController {
         panel.revalidate();
         panel.repaint();
 
+        for (java.awt.event.ActionListener al : panel.getBtnRecommend().getActionListeners()) {
+            panel.getBtnRecommend().removeActionListener(al);
+        }
+
         // 담당자 추천 및 배정
         panel.getBtnRecommend().addActionListener(e -> {
-            List<RecommendationResult> recs = issueService.getAssigneeRecommendations(currentIssue.id);
+            try {
+                org.issuetracker.service.RecommendationServiceImpl recService = new org.issuetracker.service.RecommendationServiceImpl();
 
-            String[] recommendations;
-            if (recs == null || recs.isEmpty()) {
-                recommendations = new String[]{"추천 개발자가 없습니다."};
-            } else {
-                recommendations = new String[recs.size()];
-                for (int i = 0; i < recs.size(); i++) {
-                    recommendations[i] = recs.get(i).getFixerId() + " (추천도: " + String.format("%.1f", recs.get(i).getScore() * 100) + "%)";
+                List<Issue> allHistoricalIssues = issueService.getAllIssues();
+
+                List<RecommendationResult> recs = recService.recommend(currentIssue, allHistoricalIssues);
+
+                if (recs == null || recs.isEmpty()) {
+                    JOptionPane.showMessageDialog(mainFrame,
+                            "현재 이슈와 유사한 해결 이력이 없거나 커트라인(5%)을 통과한 개발자가 없습니다.",
+                            "알림", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
-            }
 
-            String selectedDeveloper = (String) JOptionPane.showInputDialog(
-                    mainFrame, "담당자 선택", "추천 결과",
-                    JOptionPane.QUESTION_MESSAGE, null, recommendations, recommendations[0]
-            );
+                String[] selectionOptions = new String[recs.size()];
+                for (int i = 0; i < recs.size(); i++) {
+                    RecommendationResult r = recs.get(i);
+                    int matchPercent = (int) (r.getScore() * 100);
+                    selectionOptions[i] = r.getFixerId() + " | (추천 점수: " + matchPercent + "% / 매칭 이력: " + r.getMatchedIssueIds() + ")";
+                }
 
-            if (selectedDeveloper != null && recs != null && !recs.isEmpty()) {
-                String targetId = selectedDeveloper.split(" ")[0];
-                panel.getLblAssignee().setText(targetId);
+                String selectedOption = (String) JOptionPane.showInputDialog(
+                        mainFrame,
+                        "분석 결과 가장 연관성이 높은 후보 TOP-3 명단입니다.\n배정할 개발자를 선택하세요.",
+                        " 최적의 담당 개발자 추천 (Best Candidate)",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        selectionOptions,
+                        selectionOptions[0]
+                );
 
-                issueService.assignIssue(currentIssue.id, targetId, currentUser);
+                if (selectedOption == null) return;
 
-                panel.getLblStatus().setText(currentIssue.getStatus().name());
-                panel.getBtnRecommend().setVisible(false);
-                panel.getAreaCommentList().append("\n[시스템]: 담당자가 " + targetId + "로 배정되었습니다.");
-                JOptionPane.showMessageDialog(mainFrame, "이슈 배정이 완료되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+
+                String targetDeveloperId = selectedOption.split(" \\| ")[0].trim();
+
+                if (!targetDeveloperId.isEmpty()) {
+                    panel.getLblAssignee().setText(targetDeveloperId);
+                    currentIssue.assignee = targetDeveloperId;
+
+                    issueService.assignIssue(currentIssue.id, targetDeveloperId, currentUser);
+                    currentIssue.setStatus(IssueStatus.ASSIGNED);
+
+                    panel.getLblStatus().setText(IssueStatus.ASSIGNED.name());
+                    panel.getBtnRecommend().setVisible(false);
+
+                    panel.getAreaCommentList().append("\n[시스템]: 추천 시스템 분석을 통해 담당자가 [" + targetDeveloperId + "]로 최적 배정되었습니다.");
+
+                    JOptionPane.showMessageDialog(mainFrame,
+                            "[" + targetDeveloperId + "] 개발자에게 이슈 배정 및 데이터 저장이 완료되었습니다.",
+                            "배정 성공", JOptionPane.INFORMATION_MESSAGE);
+
+                    panel.revalidate();
+                    panel.repaint();
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(mainFrame, "추천 알고리즘 처리 중 컨텍스트 예외 발생: " + ex.getMessage(), "오류", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+        for (java.awt.event.ActionListener al : panel.getBtnDevFixed().getActionListeners()) {
+            panel.getBtnDevFixed().removeActionListener(al);
+        }
         // FIXED 처리
         panel.getBtnDevFixed().addActionListener(e -> {
-            issueService.changeStatus(currentIssue.id, IssueStatus.FIXED, currentUser);
-            currentIssue.setStatus(IssueStatus.FIXED);
+            try {
+                issueService.changeStatus(currentIssue.id, IssueStatus.FIXED, currentUser);
 
-            panel.getLblStatus().setText(currentIssue.getStatus().name());
-            panel.getBtnDevFixed().setVisible(false);
+                currentIssue.setStatus(IssueStatus.FIXED);
 
-            panel.getAreaCommentList().append("\n[시스템]: " + currentUser.getId() + " 개발자가 조치를 완료했습니다.");
-            JOptionPane.showMessageDialog(mainFrame, "상태가 FIXED로 변경되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+                panel.getLblStatus().setText(currentIssue.getStatus().name());
+                panel.getBtnDevFixed().setVisible(false);
+
+                panel.getAreaCommentList().append("\n[시스템]: " + currentUser.getId() + " 개발자가 조치를 완료했습니다.");
+                JOptionPane.showMessageDialog(mainFrame, "상태가 FIXED로 변경되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // RESOLVED 처리
+        for (java.awt.event.ActionListener al : panel.getBtnTesterVerify().getActionListeners()) {
+            panel.getBtnTesterVerify().removeActionListener(al);
+        }
+
         panel.getBtnTesterVerify().addActionListener(e -> {
-            issueService.changeStatus(currentIssue.id, IssueStatus.RESOLVED, currentUser);
-            currentIssue.setStatus(IssueStatus.RESOLVED);
+            try {
+                issueService.changeStatus(currentIssue.id, IssueStatus.RESOLVED, currentUser);
+                currentIssue.setStatus(IssueStatus.RESOLVED);
 
-            panel.getLblStatus().setText(currentIssue.getStatus().name());
-            panel.getBtnTesterVerify().setVisible(false);
-            panel.getBtnReopen().setVisible(false);
+                panel.getLblStatus().setText(currentIssue.getStatus().name());
+                panel.getBtnTesterVerify().setVisible(false);
+                panel.getBtnReopen().setVisible(false);
 
-            panel.getAreaCommentList().append("\n[시스템]: 검증 결과 정상 동작이 확인되었습니다.");
-            JOptionPane.showMessageDialog(mainFrame, "검증이 완료되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+                panel.getAreaCommentList().append("\n[시스템]: 검증 결과 정상 동작이 확인되었습니다.");
+                JOptionPane.showMessageDialog(mainFrame, "검증이 완료되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
+        for (java.awt.event.ActionListener al : panel.getBtnReopen().getActionListeners()) {
+            panel.getBtnReopen().removeActionListener(al);
+        }
         // REOPENED 처리
         panel.getBtnReopen().addActionListener(e -> {
-            issueService.changeStatus(currentIssue.id, IssueStatus.REOPENED, currentUser);
-            currentIssue.setStatus(IssueStatus.REOPENED);
+            try {
+                issueService.changeStatus(currentIssue.id, IssueStatus.REOPENED, currentUser);
+                currentIssue.setStatus(IssueStatus.REOPENED);
 
-            panel.getLblStatus().setText(currentIssue.getStatus().name());
-            panel.getBtnTesterVerify().setVisible(false);
-            panel.getBtnReopen().setVisible(false);
+                panel.getLblStatus().setText(currentIssue.getStatus().name());
+                panel.getBtnTesterVerify().setVisible(false);
+                panel.getBtnReopen().setVisible(false);
 
-            panel.getAreaCommentList().append("\n[시스템]: 검증 실패로 이슈가 재오픈되었습니다.");
-            JOptionPane.showMessageDialog(mainFrame, "이슈가 재오픈되었습니다.", "알림", JOptionPane.WARNING_MESSAGE);
+                panel.getAreaCommentList().append("\n[시스템]: 검증 실패로 이슈가 재오픈되었습니다.");
+                JOptionPane.showMessageDialog(mainFrame, "이슈가 재오픈되었습니다.", "알림", JOptionPane.WARNING_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
+        for (java.awt.event.ActionListener al : panel.getBtnPlClose().getActionListeners()) {
+            panel.getBtnPlClose().removeActionListener(al);
+        }
         // CLOSED 처리
         panel.getBtnPlClose().addActionListener(e -> {
-            issueService.changeStatus(currentIssue.id, IssueStatus.CLOSED, currentUser);
-            currentIssue.setStatus(IssueStatus.CLOSED);
+            try {
+                issueService.changeStatus(currentIssue.id, IssueStatus.CLOSED, currentUser);
+                currentIssue.setStatus(IssueStatus.CLOSED);
 
-            panel.getLblStatus().setText(currentIssue.getStatus().name());
-            panel.getBtnPlClose().setVisible(false);
+                panel.getLblStatus().setText(currentIssue.getStatus().name());
+                panel.getBtnPlClose().setVisible(false);
 
-            panel.getAreaCommentList().append("\n[시스템]: 최종 CLOSED 처리되었습니다.");
-            JOptionPane.showMessageDialog(mainFrame, "이슈가 최종 종결되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+                panel.getAreaCommentList().append("\n[시스템]: 최종 CLOSED 처리되었습니다.");
+                JOptionPane.showMessageDialog(mainFrame, "이슈가 최종 종결되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(mainFrame, "상태 변경 권한이 없거나 전이 규칙에 위배됩니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
         });
+
+        for (java.awt.event.ActionListener al : panel.getBtnAddComment().getActionListeners()) {
+            panel.getBtnAddComment().removeActionListener(al);
+        }
 
         // 댓글 등록
         panel.getBtnAddComment().addActionListener(e -> {
             String text = panel.getFieldCommentInput().getText().trim();
-            if (!text.isEmpty()) {
-                try {
-                    org.issuetracker.model.Comment newComment = new org.issuetracker.model.Comment();
-                    newComment.authorId = currentUser.getId();
-                    newComment.content = text;
-                    newComment.date = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-
-                    issueService.addCommentToIssue(currentIssue.id, newComment, currentUser);
-
-                    panel.getAreaCommentList().append("\n[" + newComment.date + "] " + newComment.authorId + ": " + text);
-                    panel.getFieldCommentInput().setText("");
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(mainFrame, "댓글 등록 중 오류가 발생했습니다.", "에러", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
+            if (text.isEmpty()) {
                 JOptionPane.showMessageDialog(mainFrame, "댓글 내용을 입력해주세요.", "경고", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                org.issuetracker.model.Comment newComment = new org.issuetracker.model.Comment();
+                newComment.authorId = currentUser.getId();
+                newComment.content = text;
+                newComment.date = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+                issueService.addCommentToIssue(currentIssue.id, newComment, currentUser);
+
+                panel.getAreaCommentList().append("\n[" + newComment.date + "] " + newComment.authorId + ": " + text);
+                panel.getFieldCommentInput().setText("");
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(mainFrame, "댓글 등록 중 오류가 발생했습니다.", "에러", JOptionPane.ERROR_MESSAGE);
             }
         });
+
+        for (java.awt.event.ActionListener al : panel.getBtnDirectAssign().getActionListeners()) {
+            panel.getBtnDirectAssign().removeActionListener(al);
+        }
+
+        panel.getBtnDirectAssign().addActionListener(e -> {
+            try {
+                List<User> devUsers = accountManager.getUsersByRole(Role.DEV);
+
+                java.util.ArrayList<String> userOptions = new java.util.ArrayList<>();
+                userOptions.add("선택 안 함");
+
+                if (devUsers != null && !devUsers.isEmpty()) {
+                    for (User user : devUsers) {
+                        userOptions.add(user.getId());
+                    }
+                }
+
+                String[] selectionValues = userOptions.toArray(new String[0]);
+
+                String initialValue = (currentIssue.assignee != null && !currentIssue.assignee.isEmpty())
+                        ? currentIssue.assignee : "선택 안 함";
+
+                String selectedDeveloper = (String) JOptionPane.showInputDialog(
+                        mainFrame,
+                        "담당 개발자를 선택하세요.", // 팝업 메시지
+                        "담당자 직접 지정",         // 팝업 창 제목
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        selectionValues,
+                        initialValue
+                );
+
+                if (selectedDeveloper == null) {
+                    return;
+                }
+
+                if ("선택 안 함".equals(selectedDeveloper)) {
+                    issueService.assignIssue(currentIssue.id, "", currentUser);
+                    currentIssue.assignee = "";
+                    panel.getLblAssignee().setText("미지정");
+                    panel.getAreaCommentList().append("\n[시스템]: 담당자 지정이 해제되었습니다.");
+                } else {
+                    issueService.assignIssue(currentIssue.id, selectedDeveloper, currentUser);
+                    currentIssue.assignee = selectedDeveloper;
+                    panel.getLblAssignee().setText(selectedDeveloper);
+                    panel.getAreaCommentList().append("\n[시스템]: 담당자가 " + selectedDeveloper + "(으)로 변경되었습니다.");
+                }
+
+                panel.revalidate();
+                panel.repaint();
+
+                JOptionPane.showMessageDialog(mainFrame, "담당자 배정이 업데이트되었습니다.", "완료", JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(mainFrame, "담당자 배정 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
+
     }
 
     public AccountManager getAccountManager() { return this.accountManager; }
