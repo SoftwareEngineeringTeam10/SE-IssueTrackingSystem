@@ -6,6 +6,8 @@ import org.issuetracker.model.IssueStatus;
 import org.issuetracker.model.RecommendationResult;
 import org.issuetracker.model.User;
 import org.issuetracker.repository.IssueRepository;
+import org.issuetracker.model.Priority;
+import org.issuetracker.model.Project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +17,36 @@ public class IssueService {
     private final IssueRepository repository =
             new IssueRepository();
 
+    private final ProjectService projectService =
+            new ProjectService();
+
     // 전체 이슈 조회
     public List<Issue> getAllIssues() {
         return repository.findAll();
     }
 
     // 이슈 생성
-    public void createIssue(Issue newIssue, User currentUser) {
+    public void createIssue(int projectId,
+                            Issue newIssue,
+                            User currentUser) {
+        if (newIssue.title == null || newIssue.title.trim().isEmpty()) {
+            System.out.println("제목은 필수입니다");
+            return;
+        }
+
+        if (newIssue.description == null || newIssue.description.trim().isEmpty()) {
+            System.out.println("설명은 필수입니다");
+            return;
+        }
+
+        Project project =
+                projectService.getProjectById(projectId);
+
+        if (project == null) {
+            System.out.println("존재하지 않는 프로젝트입니다");
+            return;
+        }
+
         if (!PermissionManager.canCreateIssue(currentUser)) {
             System.out.println("이슈 생성 권한이 없습니다");
             return;
@@ -34,6 +59,7 @@ public class IssueService {
                 : issues.get(issues.size() - 1).id + 1;
 
         newIssue.id = nextId;
+        newIssue.projectId = projectId;
         newIssue.reporter = currentUser.getId();
         newIssue.reportedDate = java.time.LocalDateTime.now().toString();
 
@@ -71,11 +97,20 @@ public class IssueService {
     }
 
     // 이슈 검색/필터링 (All 허용)
-    public List<Issue> searchIssues(String status, String assignee, String reporter) {
+    public List<Issue> searchIssues(int projectId,
+                                    String status,
+                                    String assignee,
+                                    String reporter,
+                                    String priority
+    ) {
         List<Issue> allIssues = repository.findAll();
         List<Issue> result = new ArrayList<>();
 
         for (Issue issue : allIssues) {
+            if (issue.projectId != projectId) {
+                continue;
+            }
+
             boolean matches = true;
 
             // status 필터 (enum 이름으로 비교)
@@ -96,6 +131,21 @@ public class IssueService {
             if (reporter != null && !reporter.isEmpty()) {
                 if (issue.reporter == null || !issue.reporter.equalsIgnoreCase(reporter))
                     matches = false;
+            }
+
+            if (priority != null && !priority.isEmpty()) {
+
+                try {
+                    Priority filterPriority =
+                            Priority.valueOf(priority.toUpperCase());
+
+                    if (issue.priority != filterPriority) {
+                        matches = false;
+                    }
+
+                } catch (IllegalArgumentException e) {
+                    matches = false;
+                }
             }
 
             if (matches) result.add(issue);
