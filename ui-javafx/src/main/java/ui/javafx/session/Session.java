@@ -7,4 +7,5 @@ public class Session {
 
     public static User currentUser;
     public static int selectedIssueId;
+    public static int currentProjectId = 1;
 }

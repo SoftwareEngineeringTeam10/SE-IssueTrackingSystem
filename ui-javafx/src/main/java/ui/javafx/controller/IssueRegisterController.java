@@ -12,6 +12,7 @@ import org.issuetracker.model.Issue;
 import org.issuetracker.model.Priority;
 import org.issuetracker.model.Role;
 import org.issuetracker.service.IssueService;
+import org.issuetracker.service.PermissionManager;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
 import ui.javafx.util.DateFormats;
@@ -81,12 +82,17 @@ public class IssueRegisterController {
             return;
         }
 
+        if (!PermissionManager.canCreateIssue(Session.currentUser)) {
+            systemMessage.setText("이슈 등록 권한이 없습니다");
+            return;
+        }
+
         Issue issue = new Issue();
         issue.title = title;
         issue.description = description;
         issue.priority = Priority.valueOf(priorityStr);
 
-        issueService.createIssue(issue, Session.currentUser);
+        issueService.createIssue(Session.currentProjectId, issue, Session.currentUser);
 
         new Alert(Alert.AlertType.INFORMATION, "이슈 등록 완료").showAndWait();
         ViewLoader.loadView("/fxml/IssueListView.fxml");

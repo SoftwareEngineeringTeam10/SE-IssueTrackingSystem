@@ -45,6 +45,7 @@
             <Label text="Menu" style="-fx-font-weight: bold;"/>
             <Button text="Issue List" maxWidth="Infinity"/>
             <Button text="Register Issue"
+                    fx:id="registerButton"
                     onAction="#onOpenRegister"
                     maxWidth="Infinity"/>
             <Button text="Recommend Assignee"

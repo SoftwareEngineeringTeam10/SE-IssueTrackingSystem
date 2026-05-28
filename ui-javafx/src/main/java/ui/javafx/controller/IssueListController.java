@@ -41,6 +41,7 @@ public class IssueListController {
     @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
     @FXML private Button manageButton;
+    @FXML private Button registerButton;
 
     private final IssueService issueService = new IssueService();
     private final AccountManager accountManager = new AccountManager();
@@ -56,6 +57,12 @@ public class IssueListController {
         if (Session.currentUser != null && Session.currentUser.getRole() != Role.ADMIN) {
             manageButton.setVisible(false);
             manageButton.setManaged(false);
+        }
+
+        // admin은 이슈 등록 대상이 아니므로 등록 메뉴 숨김
+        if (Session.currentUser != null && Session.currentUser.getRole() == Role.ADMIN) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
         }
 
         // 프로젝트 콤보 — 더미값 + 비활성
@@ -159,7 +166,7 @@ public class IssueListController {
         String reporterArg = ("전체".equals(reporter) || reporter == null) ? null : reporter;
 
         // 백엔드 다중 조건 호출
-        List<Issue> result = issueService.searchIssues(statusArg, assigneeArg, reporterArg);
+        List<Issue> result = issueService.searchIssues(Session.currentProjectId, statusArg, assigneeArg, reporterArg, null);
 
         // priority 프론트 후처리 (백엔드 미지원)
         if (!"전체".equals(priority) && priority != null) {
