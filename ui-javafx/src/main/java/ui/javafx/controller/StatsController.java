@@ -6,7 +6,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.util.StringConverter;
 import org.issuetracker.model.IssueStatus;
 import org.issuetracker.model.Project;
@@ -33,7 +32,6 @@ public class StatsController {
     @FXML private BarChart<String, Number> monthlyChart;
     @FXML private BarChart<String, Number> statusChart;
 
-    @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
 
     private final StatisticsService statisticsService = new StatisticsService();

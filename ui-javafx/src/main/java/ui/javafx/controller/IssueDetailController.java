@@ -47,7 +47,6 @@ public class IssueDetailController {
     @FXML private HBox statusActionBox;
     @FXML private ListView<String> commentsList;
     @FXML private TextField newCommentField;
-    @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
     @FXML private Button manageButton;
     @FXML private Button recommendButton;

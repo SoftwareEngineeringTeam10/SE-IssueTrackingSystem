@@ -36,7 +36,6 @@ public class ManageController {
     @FXML private ListView<String> projectList;
     @FXML private TextField newProjectField;
 
-    @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
 
     private final AccountManager accountManager = new AccountManager();

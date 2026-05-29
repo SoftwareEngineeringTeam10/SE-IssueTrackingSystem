@@ -102,16 +102,6 @@
         </VBox>
     </center>
 
-    <right>
-        <VBox spacing="6"
-              style="-fx-padding: 10; -fx-background-color: #fafafa;"
-              prefWidth="220">
-
-            <Label text="Activity Log" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="activityLog" VBox.vgrow="ALWAYS"/>
-        </VBox>
-    </right>
-
     <bottom>
         <HBox style="-fx-padding: 6 10 6 10; -fx-background-color: #eeeeee;">
             <Label fx:id="systemMessage" text=" "/>
