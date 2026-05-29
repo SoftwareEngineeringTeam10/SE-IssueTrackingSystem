@@ -35,7 +35,10 @@ public class IssueService {
         }
 
         List<Issue> issues = repository.findAll();
-        int nextId = issues.isEmpty() ? 1 : issues.get(issues.size() - 1).id + 1;
+        int nextId = issues.stream()
+                .mapToInt(i -> i.id)
+                .max()
+                .orElse(0) + 1;
         newIssue.id = nextId;
         newIssue.projectId = projectId;
         newIssue.reporter = currentUser.getId();

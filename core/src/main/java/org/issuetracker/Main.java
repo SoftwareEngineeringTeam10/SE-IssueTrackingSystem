@@ -17,6 +17,9 @@ public class Main {
         manager.resetAll();         // users.json 초기화
         projectService.resetAll();  // projects.json 초기화
 
+        // 실행할 때마다 issues.json도 깨끗하게 포맷하여 옛날 찌꺼기 완벽 차단!
+        new org.issuetracker.repository.IssueRepository().clear();
+
         Scanner sc = new Scanner(System.in);
 
         // ── ② 사용자 시드 (명세 2.2 기준 18명) ───────────────────────────
@@ -83,6 +86,9 @@ public class Main {
         sc.nextLine();
 
         Issue testIssue = new Issue();
+
+        // 객체 내부에 프로젝트 ID를 명시하여 projectId=0 버그 해결
+        testIssue.projectId = selectedProjectId;
 
         testIssue.title       = "Login Error";
         testIssue.description = "로그인 버튼이 작동하지 않음";
@@ -175,7 +181,7 @@ public class Main {
         User searchUser = manager.getCurrentUser();
 
         Issue secondIssue = new Issue();
-
+        secondIssue.projectId = selectedProjectId;
         secondIssue.title       = "UI 정렬 깨짐";
         secondIssue.description = "메인 화면 버튼 위치 이상";
         secondIssue.priority    = Priority.MINOR;
@@ -190,7 +196,7 @@ public class Main {
         }
 
         Issue thirdIssue = new Issue();
-
+        thirdIssue.projectId = selectedProjectId;
         thirdIssue.title       = "로그인 오류";
         thirdIssue.description = "로그인 버튼 간헐적 먹통";
         thirdIssue.priority    = Priority.CRITICAL;
@@ -205,7 +211,7 @@ public class Main {
         }
 
         Issue fourthIssue = new Issue();
-
+        fourthIssue.projectId = selectedProjectId;
         fourthIssue.title       = "UI 정렬 깨짐";
         fourthIssue.description = "사이드바 텍스트 겹침 현상";
         fourthIssue.priority    = Priority.MINOR;
@@ -232,22 +238,24 @@ public class Main {
 
         for (int i = 0; i < recIssues.length; i++) {
 
-            int issueId = 5 + i;
-
             // 이슈 생성
             manager.login("tester01", "1111");
 
             Issue rec = new Issue();
-
+            rec.projectId = selectedProjectId;
             rec.title       = recIssues[i][0];
             rec.description = recIssues[i][1];
             rec.priority    = Priority.CRITICAL;
 
+            // ① 이슈 생성 및 등록 실행 (Service의 리턴 타입 boolean을 맞춰서 바로 호출)
             issueService.createIssue(
                     selectedProjectId,
                     rec,
                     manager.getCurrentUser()
             );
+
+            // ② 등록될 때 객체에 자동으로 세팅된 '진짜 ID값'을 안정적으로 빼와서 할당
+            int issueId = rec.id;
 
             manager.logout();
 
@@ -296,6 +304,12 @@ public class Main {
             );
 
             manager.logout();
+        }
+
+        List<Issue> issues = issueService.getAllIssues();
+
+        for (Issue i : issues) {
+            System.out.println("id=" + i.id + ", projectId=" + i.projectId);
         }
 
         // ── 검색 결과 출력 ────────────────────────────────────────────────
