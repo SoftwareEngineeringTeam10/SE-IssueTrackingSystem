@@ -1,109 +1,729 @@
 [ {
-  "id" : 1,
-  "title" : "Login Error",
-  "description" : "로그인 버튼이 작동하지 않음",
+
+  "id" : 101,
+
+  "projectId" : 1,
+
+  "title" : "로그인 에러 발생",
+
+  "description" : "로그인이 안 됩니다.",
+
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:55:09.887035900",
+
+  "reportedDate" : "2026-05-27T15:00:00.000000",
+
   "fixer" : "dev01",
+
   "assignee" : "dev01",
+
   "priority" : "CRITICAL",
+
+  "status" : "FIXED",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 102,
+
+  "projectId" : 1,
+
+  "title" : "네이버 로그인 연동 실패",
+
+  "description" : "로그인 버튼이 안 눌려요.",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:05:00.000000",
+
+  "fixer" : "dev02",
+
+  "assignee" : "dev02",
+
+  "priority" : "CRITICAL",
+
+  "status" : "RESOLVED",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 103,
+
+  "projectId" : 1,
+
+  "title" : "구글 로그인 오류 수정 요청",
+
+  "description" : "로그인 기능에 문제가 있습니다.",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:10:00.000000",
+
+  "fixer" : "dev03",
+
+  "assignee" : "dev03",
+
+  "priority" : "CRITICAL",
+
   "status" : "CLOSED",
-  "comments" : [ {
-    "authorId" : "tester01",
-    "content" : "이슈 재현 확인했습니다.",
-    "date" : "2026-05-21T01:55:09.910598700"
-  }, {
-    "authorId" : "dev01",
-    "content" : "상태가 FIXED으로 변경되었습니다.",
-    "date" : "2026-05-21T01:55:10.012369300"
-  }, {
-    "authorId" : "tester01",
-    "content" : "상태가 RESOLVED으로 변경되었습니다.",
-    "date" : "2026-05-21T01:55:10.016881700"
-  }, {
-    "authorId" : "pl01",
-    "content" : "상태가 CLOSED으로 변경되었습니다.",
-    "date" : "2026-05-21T01:55:10.021895300"
-  }, {
-    "authorId" : "tester01",
-    "content" : "이슈 재현 확인했습니다.",
-    "date" : "2026-05-21T01:56:05.844615700"
-  } ]
-}, {
-  "id" : 2,
-  "title" : "UI 정렬 깨짐",
-  "description" : "메인 화면 버튼 위치 이상",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:55:10.026409500",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "MINOR",
-  "status" : "NEW",
+
   "comments" : [ ]
+
 }, {
-  "id" : 3,
-  "title" : "로그인 오류",
-  "description" : "로그인 버튼 간헐적 먹통",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:55:10.031421400",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 4,
-  "title" : "UI 정렬 깨짐",
-  "description" : "사이드바 텍스트 겹침 현상",
-  "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:55:10.037436200",
-  "fixer" : null,
-  "assignee" : null,
-  "priority" : "MINOR",
-  "status" : "NEW",
-  "comments" : [ ]
-}, {
-  "id" : 5,
+
+  "id" : 1,
+
+  "projectId" : 1,
+
   "title" : "Login Error",
-  "description" : "로그인 버튼이 작동하지 않음",
+
+  "description" : "Login button not working",
+
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:56:05.804509700",
-  "fixer" : null,
-  "assignee" : null,
+
+  "reportedDate" : "2026-05-18T19:50:28.631233300",
+
+  "fixer" : "dev01",
+
+  "assignee" : "dev01",
+
   "priority" : "CRITICAL",
-  "status" : "NEW",
-  "comments" : [ ]
+
+  "status" : "CLOSED",
+
+  "comments" : [ {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-18T19:50:28.659230"
+
+  }, {
+
+    "authorId" : "dev01",
+
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+
+    "date" : "2026-05-18T19:50:28.730867800"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+
+    "date" : "2026-05-18T19:50:28.733281"
+
+  }, {
+
+    "authorId" : "pl01",
+
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+
+    "date" : "2026-05-18T19:50:28.738278500"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-18T19:56:00.306509800"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-18T20:06:39.844211500"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-18T20:14:24.795557200"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-20T12:33:14.794615200"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-27T15:40:27.035551900"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "이슈 재현 확인했습니다.",
+
+    "date" : "2026-05-29T12:22:37.796730700"
+
+  } ]
+
 }, {
-  "id" : 6,
+
+  "id" : 2,
+
+  "projectId" : 1,
+
   "title" : "UI 정렬 깨짐",
+
   "description" : "메인 화면 버튼 위치 이상",
+
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:56:05.861160600",
+
+  "reportedDate" : "2026-05-18T19:50:28.742760200",
+
   "fixer" : null,
+
   "assignee" : null,
+
   "priority" : "MINOR",
+
   "status" : "NEW",
+
   "comments" : [ ]
+
 }, {
-  "id" : 7,
-  "title" : "로그인 오류",
-  "description" : "로그인 버튼 간헐적 먹통",
+
+  "id" : 3,
+
+  "projectId" : 1,
+
+  "title" : "Login Error",
+
+  "description" : "로그인 버튼이 작동하지 않음",
+
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:56:05.866173700",
+
+  "reportedDate" : "2026-05-18T19:56:00.275495600",
+
   "fixer" : null,
+
   "assignee" : null,
+
   "priority" : "CRITICAL",
+
   "status" : "NEW",
+
   "comments" : [ ]
+
 }, {
-  "id" : 8,
+
+  "id" : 4,
+
+  "projectId" : 1,
+
   "title" : "UI 정렬 깨짐",
-  "description" : "사이드바 텍스트 겹침 현상",
+
+  "description" : "메인 화면 버튼 위치 이상",
+
   "reporter" : "tester01",
-  "reportedDate" : "2026-05-21T01:56:05.869682600",
+
+  "reportedDate" : "2026-05-18T19:56:00.322492900",
+
   "fixer" : null,
+
   "assignee" : null,
+
   "priority" : "MINOR",
+
   "status" : "NEW",
+
   "comments" : [ ]
+
+}, {
+
+  "id" : 5,
+
+  "projectId" : 1,
+
+  "title" : "로그인 오류",
+
+  "description" : "로그인 버튼 간헐적 먹통",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T19:56:00.325510",
+
+  "fixer" : "dev01",
+
+  "assignee" : "dev01",
+
+  "priority" : "CRITICAL",
+
+  "status" : "CLOSED",
+
+  "comments" : [ {
+
+    "authorId" : "dev01",
+
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.856915600"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.862942400"
+
+  }, {
+
+    "authorId" : "pl01",
+
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.865939900"
+
+  } ]
+
+}, {
+
+  "id" : 6,
+
+  "projectId" : 1,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "사이드바 텍스트 겹침 현상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T19:56:00.327492700",
+
+  "fixer" : "dev02",
+
+  "assignee" : "dev02",
+
+  "priority" : "MINOR",
+
+  "status" : "CLOSED",
+
+  "comments" : [ {
+
+    "authorId" : "dev02",
+
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.878974800"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.882987200"
+
+  }, {
+
+    "authorId" : "pl01",
+
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.889002"
+
+  } ]
+
+}, {
+
+  "id" : 7,
+
+  "projectId" : 1,
+
+  "title" : "Login Error",
+
+  "description" : "로그인 버튼이 작동하지 않음",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T20:06:39.812637100",
+
+  "fixer" : "dev03",
+
+  "assignee" : "dev03",
+
+  "priority" : "CRITICAL",
+
+  "status" : "CLOSED",
+
+  "comments" : [ {
+
+    "authorId" : "dev03",
+
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.908295300"
+
+  }, {
+
+    "authorId" : "tester01",
+
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.913066"
+
+  }, {
+
+    "authorId" : "pl01",
+
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+
+    "date" : "2026-05-29T12:22:37.919245800"
+
+  } ]
+
+}, {
+
+  "id" : 8,
+
+  "projectId" : 1,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "메인 화면 버튼 위치 이상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T20:06:39.860061300",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 9,
+
+  "projectId" : 1,
+
+  "title" : "로그인 오류",
+
+  "description" : "로그인 버튼 간헐적 먹통",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T20:06:39.864087900",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 10,
+
+  "projectId" : 1,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "사이드바 텍스트 겹침 현상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-18T20:06:39.867149400",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 11,
+
+  "projectId" : 1,
+
+  "title" : "Login Error",
+
+  "description" : "로그인 버튼이 작동하지 않음",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:40:26.997680700",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 12,
+
+  "projectId" : 1,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "메인 화면 버튼 위치 이상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:40:27.101684100",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 13,
+
+  "projectId" : 1,
+
+  "title" : "로그인 오류",
+
+  "description" : "로그인 버튼 간헐적 먹통",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:40:27.124693",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 14,
+
+  "projectId" : 1,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "사이드바 텍스트 겹침 현상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-27T15:40:27.159632800",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 15,
+
+  "projectId" : 2,
+
+  "title" : "Login Error",
+
+  "description" : "로그인 버튼이 작동하지 않음",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.782191600",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 16,
+
+  "projectId" : 2,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "메인 화면 버튼 위치 이상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.824805300",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 17,
+
+  "projectId" : 2,
+
+  "title" : "로그인 오류",
+
+  "description" : "로그인 버튼 간헐적 먹통",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.833850600",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 18,
+
+  "projectId" : 2,
+
+  "title" : "UI 정렬 깨짐",
+
+  "description" : "사이드바 텍스트 겹침 현상",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.838363",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "MINOR",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 19,
+
+  "projectId" : 2,
+
+  "title" : "로그인 에러 발생",
+
+  "description" : "로그인이 안 됩니다.",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.842876",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 20,
+
+  "projectId" : 2,
+
+  "title" : "네이버 로그인 연동 실패",
+
+  "description" : "로그인 버튼이 안 눌려요.",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.868949800",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
+}, {
+
+  "id" : 21,
+
+  "projectId" : 2,
+
+  "title" : "구글 로그인 오류",
+
+  "description" : "로그인 기능에 문제가 있습니다.",
+
+  "reporter" : "tester01",
+
+  "reportedDate" : "2026-05-29T12:22:37.895018600",
+
+  "fixer" : null,
+
+  "assignee" : null,
+
+  "priority" : "CRITICAL",
+
+  "status" : "NEW",
+
+  "comments" : [ ]
+
 } ]

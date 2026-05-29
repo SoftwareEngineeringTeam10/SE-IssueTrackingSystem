@@ -60,11 +60,24 @@ public class RecommendationServiceImpl implements RecommendationService {
             if (similarity < MIN_SIMILARITY) continue;
 
             String fixer = histIssue.fixer;
-            if (!fixerMaxScores.containsKey(fixer) || similarity > fixerMaxScores.get(fixer)) {
+            if (!fixerMaxScores.containsKey(fixer)) {
+
                 fixerMaxScores.put(fixer, similarity);
+
                 List<Integer> matchedIds = new ArrayList<>();
                 matchedIds.add(histIssue.id);
+
                 fixerMatchedIssues.put(fixer, matchedIds);
+
+            } else {
+
+                if (similarity > fixerMaxScores.get(fixer)) {
+                    fixerMaxScores.put(fixer, similarity);
+                }
+
+                fixerMatchedIssues
+                        .get(fixer)
+                        .add(histIssue.id);
             }
         }
 

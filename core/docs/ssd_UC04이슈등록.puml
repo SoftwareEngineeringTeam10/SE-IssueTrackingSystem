@@ -1,0 +1,10 @@
+@startuml
+actor User
+
+User -> System : selectProject(projectId)
+System --> User : selected
+
+User -> System : createIssue(title, description, priority)
+System --> User : issue created
+
+@enduml
