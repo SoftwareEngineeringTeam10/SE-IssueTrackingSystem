@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -45,6 +44,7 @@
                     onAction="#onOpenList"
                     maxWidth="Infinity"/>
             <Button text="Register Issue"
+                    fx:id="registerButton"
                     onAction="#onOpenRegister"
                     maxWidth="Infinity"/>
             <Button text="Recommend Assignee"
@@ -128,16 +128,6 @@
             </BarChart>
         </VBox>
     </center>
-
-    <right>
-        <VBox spacing="6"
-              style="-fx-padding: 10; -fx-background-color: #fafafa;"
-              prefWidth="220">
-
-            <Label text="Activity Log" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="activityLog" VBox.vgrow="ALWAYS"/>
-        </VBox>
-    </right>
 
     <bottom>
         <HBox style="-fx-padding: 6 10 6 10; -fx-background-color: #eeeeee;">

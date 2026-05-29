@@ -6,9 +6,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.util.StringConverter;
 import org.issuetracker.model.IssueStatus;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
+import org.issuetracker.service.PermissionManager;
+import org.issuetracker.service.ProjectService;
 import org.issuetracker.service.StatisticsService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
@@ -17,9 +20,10 @@ import java.util.Map;
 
 public class StatsController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private Button manageButton;
+    @FXML private Button registerButton;
 
     @FXML private Label totalLabel;
     @FXML private Label newLabel;
@@ -30,10 +34,10 @@ public class StatsController {
     @FXML private BarChart<String, Number> monthlyChart;
     @FXML private BarChart<String, Number> statusChart;
 
-    @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
 
     private final StatisticsService statisticsService = new StatisticsService();
+    private final ProjectService projectService = new ProjectService();
 
     @FXML
     public void initialize() {
@@ -42,9 +46,24 @@ public class StatsController {
             userLabel.setText("User: " + Session.currentUser.getId());
         }
 
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
-        projectCombo.setDisable(true);
+        // 프로젝트 콤보 — 멀티프로젝트 연동
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == Session.currentProjectId) {
+                projectCombo.getSelectionModel().select(p);
+                break;
+            }
+        }
+        projectCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Session.currentProjectId = newVal.id;
+                loadStats();
+            }
+        });
 
         // admin 권한이 있을 때만 Manage 메뉴 visible
         if (Session.currentUser != null && Session.currentUser.getRole() != Role.ADMIN) {
@@ -52,12 +71,23 @@ public class StatsController {
             manageButton.setManaged(false);
         }
 
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
+        }
+
         loadStats();
     }
 
     private void loadStats() {
+        // 재호출 시 시리즈 중첩 방지
+        dailyChart.getData().clear();
+        monthlyChart.getData().clear();
+        statusChart.getData().clear();
+
         // 상태별 stats
-        Map<IssueStatus, Integer> statusStats = statisticsService.getStatusStats();
+        Map<IssueStatus, Integer> statusStats = statisticsService.getStatusStats(Session.currentProjectId);
         int total = 0;
         for (int v : statusStats.values()) total += v;
         int newCount = statusStats.getOrDefault(IssueStatus.NEW, 0);
@@ -73,7 +103,7 @@ public class StatsController {
         // 일별 BarChart
         XYChart.Series<String, Number> dailySeries = new XYChart.Series<>();
         dailySeries.setName("일별 발생");
-        for (Map.Entry<String, Integer> e : statisticsService.getDailyStats().entrySet()) {
+        for (Map.Entry<String, Integer> e : statisticsService.getDailyStats(Session.currentProjectId).entrySet()) {
             dailySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
         dailyChart.getData().add(dailySeries);
@@ -81,7 +111,7 @@ public class StatsController {
         // 월별 BarChart
         XYChart.Series<String, Number> monthlySeries = new XYChart.Series<>();
         monthlySeries.setName("월별 발생");
-        for (Map.Entry<String, Integer> e : statisticsService.getMonthlyStats().entrySet()) {
+        for (Map.Entry<String, Integer> e : statisticsService.getMonthlyStats(Session.currentProjectId).entrySet()) {
             monthlySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
         monthlyChart.getData().add(monthlySeries);

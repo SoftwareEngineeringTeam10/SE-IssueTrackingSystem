@@ -47,6 +47,7 @@
                     onAction="#onOpenList"
                     maxWidth="Infinity"/>
             <Button text="Register Issue"
+                    fx:id="registerButton"
                     onAction="#onOpenRegister"
                     maxWidth="Infinity"/>
             <Button text="Recommend Assignee"
@@ -67,6 +68,9 @@
             <Label text="계정 관리" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
             <TableView fx:id="accountTable" prefHeight="200">
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
                 <columns>
                     <TableColumn text="ID" prefWidth="160"/>
                     <TableColumn text="Name" prefWidth="200"/>
@@ -85,7 +89,7 @@
             <Separator/>
 
             <!-- 프로젝트 관리 -->
-            <Label text="프로젝트 관리 (저장 X — 화면 전환 시 휘발)"
+            <Label text="프로젝트 관리"
                    style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
 
             <ListView fx:id="projectList" prefHeight="160"/>
@@ -98,16 +102,6 @@
             </HBox>
         </VBox>
     </center>
-
-    <right>
-        <VBox spacing="6"
-              style="-fx-padding: 10; -fx-background-color: #fafafa;"
-              prefWidth="220">
-
-            <Label text="Activity Log" style="-fx-font-weight: bold;"/>
-            <ListView fx:id="activityLog" VBox.vgrow="ALWAYS"/>
-        </VBox>
-    </right>
 
     <bottom>
         <HBox style="-fx-padding: 6 10 6 10; -fx-background-color: #eeeeee;">

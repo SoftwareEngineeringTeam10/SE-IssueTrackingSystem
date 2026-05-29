@@ -8,18 +8,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.issuetracker.model.Issue;
 import org.issuetracker.model.IssueStatus;
 import org.issuetracker.model.Priority;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.RecommendationResult;
 import org.issuetracker.model.Role;
 import org.issuetracker.model.User;
 import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
+import org.issuetracker.service.PermissionManager;
+import org.issuetracker.service.ProjectService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
 import ui.javafx.util.DateFormats;
@@ -30,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class IssueListController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private TextField searchField;
     @FXML private ComboBox<String> statusFilter;
@@ -38,12 +41,13 @@ public class IssueListController {
     @FXML private ComboBox<String> assigneeFilter;
     @FXML private ComboBox<String> reporterFilter;
     @FXML private TableView<Issue> issueTable;
-    @FXML private ListView<String> activityLog;
     @FXML private Label systemMessage;
     @FXML private Button manageButton;
+    @FXML private Button registerButton;
 
     private final IssueService issueService = new IssueService();
     private final AccountManager accountManager = new AccountManager();
+    private final ProjectService projectService = new ProjectService();
 
     @FXML
     public void initialize() {
@@ -58,10 +62,30 @@ public class IssueListController {
             manageButton.setManaged(false);
         }
 
-        // 프로젝트 콤보 — 더미값 + 비활성
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
-        projectCombo.setDisable(true);
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
+        }
+
+        // 프로젝트 콤보 — 멀티프로젝트 연동
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == Session.currentProjectId) {
+                projectCombo.getSelectionModel().select(p);
+                break;
+            }
+        }
+        projectCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Session.currentProjectId = newVal.id;
+                loadIssues(issueService.searchIssues(Session.currentProjectId, null, null, null, null));
+            }
+        });
 
         // 상태 필터
         statusFilter.getItems().add("전체");
@@ -105,8 +129,8 @@ public class IssueListController {
             }
         });
 
-        // 데이터 로드
-        loadIssues(issueService.getAllIssues());
+        // 데이터 로드 — 현재 프로젝트 기준
+        loadIssues(issueService.searchIssues(Session.currentProjectId, null, null, null, null));
     }
 
     @SuppressWarnings("unchecked")
@@ -159,7 +183,7 @@ public class IssueListController {
         String reporterArg = ("전체".equals(reporter) || reporter == null) ? null : reporter;
 
         // 백엔드 다중 조건 호출
-        List<Issue> result = issueService.searchIssues(statusArg, assigneeArg, reporterArg);
+        List<Issue> result = issueService.searchIssues(Session.currentProjectId, statusArg, assigneeArg, reporterArg, null);
 
         // priority 프론트 후처리 (백엔드 미지원)
         if (!"전체".equals(priority) && priority != null) {

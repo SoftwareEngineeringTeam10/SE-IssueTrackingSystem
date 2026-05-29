@@ -1,5 +1,6 @@
 [ {
   "id" : 101,
+  "projectId" : 0,
   "title" : "로그인 에러 발생",
   "description" : "로그인이 안 됩니다.",
   "reporter" : "tester01",
@@ -11,6 +12,7 @@
   "comments" : [ ]
 }, {
   "id" : 102,
+  "projectId" : 0,
   "title" : "네이버 로그인 연동 실패",
   "description" : "로그인 버튼이 안 눌려요.",
   "reporter" : "tester01",
@@ -22,6 +24,7 @@
   "comments" : [ ]
 }, {
   "id" : 103,
+  "projectId" : 0,
   "title" : "구글 로그인 오류 수정 요청",
   "description" : "로그인 기능에 문제가 있습니다.",
   "reporter" : "tester01",
@@ -33,6 +36,7 @@
   "comments" : [ ]
 }, {
   "id" : 1,
+  "projectId" : 0,
   "title" : "Login Error",
   "description" : "Login button not working",
   "reporter" : "tester01",
@@ -80,6 +84,7 @@
   } ]
 }, {
   "id" : 2,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
@@ -91,6 +96,7 @@
   "comments" : [ ]
 }, {
   "id" : 3,
+  "projectId" : 0,
   "title" : "Login Error",
   "description" : "로그인 버튼이 작동하지 않음",
   "reporter" : "tester01",
@@ -102,6 +108,7 @@
   "comments" : [ ]
 }, {
   "id" : 4,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
@@ -113,6 +120,7 @@
   "comments" : [ ]
 }, {
   "id" : 5,
+  "projectId" : 0,
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
@@ -124,6 +132,7 @@
   "comments" : [ ]
 }, {
   "id" : 6,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "사이드바 텍스트 겹침 현상",
   "reporter" : "tester01",
@@ -135,6 +144,7 @@
   "comments" : [ ]
 }, {
   "id" : 7,
+  "projectId" : 0,
   "title" : "Login Error",
   "description" : "로그인 버튼이 작동하지 않음",
   "reporter" : "tester01",
@@ -146,6 +156,7 @@
   "comments" : [ ]
 }, {
   "id" : 8,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
@@ -157,6 +168,7 @@
   "comments" : [ ]
 }, {
   "id" : 9,
+  "projectId" : 0,
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
@@ -168,6 +180,7 @@
   "comments" : [ ]
 }, {
   "id" : 10,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "사이드바 텍스트 겹침 현상",
   "reporter" : "tester01",
@@ -179,6 +192,7 @@
   "comments" : [ ]
 }, {
   "id" : 11,
+  "projectId" : 0,
   "title" : "Login Error",
   "description" : "로그인 버튼이 작동하지 않음",
   "reporter" : "tester01",
@@ -190,6 +204,7 @@
   "comments" : [ ]
 }, {
   "id" : 12,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "메인 화면 버튼 위치 이상",
   "reporter" : "tester01",
@@ -201,6 +216,7 @@
   "comments" : [ ]
 }, {
   "id" : 13,
+  "projectId" : 0,
   "title" : "로그인 오류",
   "description" : "로그인 버튼 간헐적 먹통",
   "reporter" : "tester01",
@@ -212,6 +228,7 @@
   "comments" : [ ]
 }, {
   "id" : 14,
+  "projectId" : 0,
   "title" : "UI 정렬 깨짐",
   "description" : "사이드바 텍스트 겹침 현상",
   "reporter" : "tester01",
@@ -219,6 +236,358 @@
   "fixer" : null,
   "assignee" : null,
   "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 15,
+  "projectId" : 888,
+  "title" : "Critical Memory Leak UI Bug",
+  "description" : "메모리 누수로 인한 화면 멈춤",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:12.616921100",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 16,
+  "projectId" : 888,
+  "title" : "Simple Typography Error",
+  "description" : "오탈자 수정 요청",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:12.649716900",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 17,
+  "projectId" : 888,
+  "title" : "Critical Network Timeout",
+  "description" : "패킷 유실 현상",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:12.654955900",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 18,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:12.684258",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "FIXED",
+  "comments" : [ {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-30T00:52:12.708610900"
+  } ]
+}, {
+  "id" : 19,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:12.718507",
+  "fixer" : null,
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 20,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:12.736232400",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "FIXED",
+  "comments" : [ {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-30T00:52:39.965836600"
+  } ]
+}, {
+  "id" : 21,
+  "projectId" : 888,
+  "title" : "Critical Memory Leak UI Bug",
+  "description" : "메모리 누수로 인한 화면 멈춤",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:39.855551500",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 22,
+  "projectId" : 888,
+  "title" : "Simple Typography Error",
+  "description" : "오탈자 수정 요청",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:39.889742700",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 23,
+  "projectId" : 888,
+  "title" : "Critical Network Timeout",
+  "description" : "패킷 유실 현상",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:52:39.895679400",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 24,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:39.932256400",
+  "fixer" : null,
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 25,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:39.980795700",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "FIXED",
+  "comments" : [ {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-30T00:57:15.787397700"
+  } ]
+}, {
+  "id" : 26,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:52:40.003172300",
+  "fixer" : null,
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 27,
+  "projectId" : 888,
+  "title" : "Critical Memory Leak UI Bug",
+  "description" : "메모리 누수로 인한 화면 멈춤",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:15.678365100",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 28,
+  "projectId" : 888,
+  "title" : "Simple Typography Error",
+  "description" : "오탈자 수정 요청",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:15.712567",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 29,
+  "projectId" : 888,
+  "title" : "Critical Network Timeout",
+  "description" : "패킷 유실 현상",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:15.718182800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 30,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:15.759542700",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "FIXED",
+  "comments" : [ {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-30T00:57:26.717867100"
+  } ]
+}, {
+  "id" : 31,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:15.798251100",
+  "fixer" : null,
+  "assignee" : "dev01",
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 32,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:15.818719700",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 33,
+  "projectId" : 888,
+  "title" : "Critical Memory Leak UI Bug",
+  "description" : "메모리 누수로 인한 화면 멈춤",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:26.614795800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 34,
+  "projectId" : 888,
+  "title" : "Simple Typography Error",
+  "description" : "오탈자 수정 요청",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:26.651212900",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "ASSIGNED",
+  "comments" : [ ]
+}, {
+  "id" : 35,
+  "projectId" : 888,
+  "title" : "Critical Network Timeout",
+  "description" : "패킷 유실 현상",
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T00:57:26.657460700",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 36,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:26.698988900",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 37,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:26.733442500",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 38,
+  "projectId" : 999,
+  "title" : "계정 시드 이슈",
+  "description" : null,
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-30T00:57:26.752762800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 39,
+  "projectId" : 111,
+  "title" : "통계 테스트용 NEW 버그 1",
+  "description" : null,
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T01:51:21.603764400",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 40,
+  "projectId" : 111,
+  "title" : "통계 테스트용 NEW 버그 2",
+  "description" : null,
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T01:51:21.636945200",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 41,
+  "projectId" : 111,
+  "title" : "통계 테스트용 NEW 버그 1",
+  "description" : null,
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T01:51:21.674158800",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 42,
+  "projectId" : 111,
+  "title" : "통계 테스트용 NEW 버그 2",
+  "description" : null,
+  "reporter" : "dev01",
+  "reportedDate" : "2026-05-30T01:51:21.682200500",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MAJOR",
   "status" : "NEW",
   "comments" : [ ]
 } ]

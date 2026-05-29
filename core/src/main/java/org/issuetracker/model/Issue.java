@@ -9,20 +9,12 @@ public class Issue {
     public int projectId;
     public String title;
     public String description;
-    public String reporterId;
+    public String reporter;
     public String reportedDate;
-    public String fixerId;
-    public String assigneeId;
+    public String fixer;
+    public String assignee;
     public Priority priority = Priority.MAJOR;
     public IssueStatus status = IssueStatus.NEW;    public List<Comment> comments = new ArrayList<>();
-
-    public void setStatus(IssueStatus status) {
-        this.status = status;
-    }
-    public IssueStatus getStatus(){
-        return this.status;
-    }
-
 
     public Issue() {}
 

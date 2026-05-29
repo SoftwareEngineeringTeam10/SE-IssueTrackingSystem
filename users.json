@@ -88,4 +88,9 @@
   "password" : "1111",
   "name" : "TESTER5",
   "role" : "TESTER"
+}, {
+  "id" : "dev12",
+  "password" : "1234",
+  "name" : "dev12",
+  "role" : "DEV"
 } ]

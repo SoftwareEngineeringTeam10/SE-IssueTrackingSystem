@@ -130,4 +130,10 @@ public class AccountManager {
         users = new ArrayList<>();
         saveUsers();
     }
+
+
+    public void resetAll() {
+        users = new ArrayList<>();
+        saveUsers();
+    }
 }

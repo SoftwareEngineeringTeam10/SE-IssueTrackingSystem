@@ -9,7 +9,6 @@ import java.util.List;
 
 public class IssueRepository {
 
-    // [수정된 부분] 상대 경로 대신 프로젝트 루트를 기준으로 절대 경로를 생성합니다.
     private final String filePath = System.getProperty("user.dir") + File.separator + "issues.json";
     private final File file = new File(filePath);
     private final ObjectMapper mapper = new ObjectMapper();
@@ -38,9 +37,7 @@ public class IssueRepository {
         }
     }
 
-    /**
-     * 앱 시작 시 issues.json 을 완전히 초기화합니다.
-     */
+
     public void clear() {
         saveAll(new ArrayList<>());
     }

@@ -3,6 +3,8 @@ package org.issuetracker.service;
 import org.issuetracker.model.*;
 import org.issuetracker.repository.IssueRepository;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,11 @@ public class IssueService {
 
     public List<Issue> getAllIssues() {
         return repository.findAll();
+    }
+
+    // 프로젝트별 전체 이슈 조회
+    public List<Issue> getIssuesByProject(int projectId) {
+        return searchIssues(projectId, null, null, null, null);
     }
 
     /**
@@ -28,7 +35,10 @@ public class IssueService {
         }
 
         List<Issue> issues = repository.findAll();
-        int nextId = issues.isEmpty() ? 1 : issues.get(issues.size() - 1).id + 1;
+        int nextId = issues.stream()
+                .mapToInt(i -> i.id)
+                .max()
+                .orElse(0) + 1;
         newIssue.id = nextId;
         newIssue.projectId = projectId;
         newIssue.reporter = currentUser.getId();
@@ -113,6 +123,38 @@ public class IssueService {
             result.add(issue);
         }
         return result;
+    }
+
+    public List<IssueStatus> getNextStates(IssueStatus currentStatus) {
+        List<IssueStatus> nextStates = new ArrayList<>();
+
+        switch (currentStatus) {
+            case NEW:
+                nextStates.add(IssueStatus.ASSIGNED);
+                break;
+
+            case ASSIGNED:
+                nextStates.add(IssueStatus.FIXED);
+                break;
+
+            case FIXED:
+                nextStates.add(IssueStatus.REOPENED);
+                nextStates.add(IssueStatus.RESOLVED);
+                break;
+
+            case REOPENED:
+                nextStates.add(IssueStatus.ASSIGNED);
+                break;
+
+            case RESOLVED:
+                nextStates.add(IssueStatus.CLOSED);
+                break;
+
+            default:
+                break;
+        }
+
+        return nextStates;
     }
 
     /**
@@ -224,6 +266,27 @@ public class IssueService {
         return true;
     }
 
+    public Map<IssueStatus, Integer> getStatusTotals(int projectId) {
+        List<Issue> issues = repository.findAll();
+
+        Map<IssueStatus, Integer> result = new LinkedHashMap<>();
+
+        for (IssueStatus status : IssueStatus.values()) {
+            result.put(status, 0);
+        }
+
+        for (Issue issue : issues) {
+            if (issue.projectId != projectId) continue;
+
+            result.put(
+                    issue.status,
+                    result.get(issue.status) + 1
+            );
+        }
+
+        return result;
+    }
+
     public List<RecommendationResult> getAssigneeRecommendations(int issueId) {
         Issue target = getIssueById(issueId);
         if (target == null) return new ArrayList<>();
@@ -236,6 +299,7 @@ public class IssueService {
                 historicalIssues.add(i);
             }
         }
+
         return new RecommendationServiceImpl().recommend(target, historicalIssues);
     }
 }
