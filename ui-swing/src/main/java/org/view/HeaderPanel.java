@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import org.issuetracker.model.User;
 import org.issuetracker.model.Role;
-import org.issuetracker.service.IssueService;
-import org.issuetracker.service.AccountManager;
+import org.controller.AuthController;
 
 public class HeaderPanel extends JPanel {
     private MainFrame mainFrame;
@@ -25,39 +24,37 @@ public class HeaderPanel extends JPanel {
     public HeaderPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
-        // 헤더 패널 기본 설정
-        setBackground(new Color(43, 43, 43));
+        setBackground(new Color(43, 43, 43)); // 어두운 테마 배경
         setPreferredSize(new Dimension(0, 55));
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
 
-        // 좌측 프로젝트 선택 구역
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 12));
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 12));
         leftPanel.setOpaque(false);
+
+        JLabel headerTitle = new JLabel("ITS Project");
+        headerTitle.setFont(new Font("Malgun Gothic", Font.BOLD, 16));
+        headerTitle.setForeground(Color.WHITE);
+        leftPanel.add(headerTitle);
 
         JLabel projectLabel = new JLabel("Project:");
         projectLabel.setForeground(Color.WHITE);
         projectLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 13));
 
-
         projectCombo = new JComboBox<>();
         projectCombo.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
 
-
         projectCombo.addActionListener(e -> {
-            if (mainFrame.getCenterPanel() instanceof IssueListPanel) {
-                ((IssueListPanel) mainFrame.getCenterPanel()).loadIssues();
+            if (mainFrame.getController() != null) {
+                mainFrame.getController().handleProjectSelectionChanged();
             }
         });
-
-        // 데이터 깔끔하게 로드
-        loadProjects();
 
         leftPanel.add(projectLabel);
         leftPanel.add(projectCombo);
         add(leftPanel, BorderLayout.WEST);
 
-        // 우측 로그인/로그아웃 카드 레이아웃 구성
+        // 우측 구역: 로그인/로그아웃 카드 레이아웃
         cardLayout = new CardLayout();
         authCardContainer = new JPanel(cardLayout);
         authCardContainer.setOpaque(false);
@@ -100,79 +97,59 @@ public class HeaderPanel extends JPanel {
 
         authCardContainer.add(beforeLoginPanel, "GUEST");
         authCardContainer.add(afterLoginPanel, "USER");
-
         add(authCardContainer, BorderLayout.EAST);
 
-        // 로그인 버튼 이벤트
         loginBtn.addActionListener(e -> {
             String inputId = idField.getText().trim();
             String inputPw = new String(pwField.getPassword()).trim();
 
-            if (inputId.isEmpty() || inputPw.isEmpty()) {
-                JOptionPane.showMessageDialog(mainFrame, "ID와 PW를 입력해주세요.", "경고", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            AccountManager am = mainFrame.getController().getAccountManager();
-            boolean loginSuccess = am.login(inputId, inputPw);
-
-            if (loginSuccess) {
-                User loggedInUser = am.getCurrentUser();
-                Role matchedRole = loggedInUser.getRole();
-
-                userContainerLabel.setText("User: " + loggedInUser.getName() + " [" + matchedRole + "]");
-                mainFrame.getController().setCurrentUser(loggedInUser);
-                JOptionPane.showMessageDialog(mainFrame, loggedInUser.getName() + "님 환영합니다.", "로그인 성공", JOptionPane.INFORMATION_MESSAGE);
-
-                cardLayout.show(authCardContainer, "USER");
-                mainFrame.getController().configureSideMenuByRole();
-
-                if (matchedRole == Role.ADMIN) {
-                    mainFrame.changeCenterPanel(new AccountAndProjectManagePanel(mainFrame));
-                } else {
-                    mainFrame.changeCenterPanel(new IssueListPanel(mainFrame));
-                }
-            } else {
-                JOptionPane.showMessageDialog(mainFrame, "ID 또는 PW가 일치하지 않습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
+            if (mainFrame != null && mainFrame.getAuthController() != null) {
+                AuthController authCtrl = (AuthController) mainFrame.getAuthController();
+                authCtrl.handleLogin(inputId, inputPw);
             }
         });
 
-        // 로그아웃 버튼 이벤트
         logoutBtn.addActionListener(e -> {
-            mainFrame.getController().setCurrentUser(null);
-
-            idField.setText("");
-            pwField.setText("");
-            cardLayout.show(authCardContainer, "GUEST");
-
-            mainFrame.getController().configureSideMenuByRole();
-            JPanel blankPanel = new JPanel();
-            blankPanel.setBackground(Color.WHITE);
-            mainFrame.changeCenterPanel(blankPanel);
+            if (mainFrame != null && mainFrame.getAuthController() != null) {
+                AuthController authCtrl = (AuthController) mainFrame.getAuthController();
+                authCtrl.handleLogout();
+            }
         });
     }
 
-    public void loadProjects() {
-        projectCombo.removeAllItems(); // 기존 목록 싹 비우기
-
-        if (mainFrame.getController() != null && mainFrame.getController().getProjectService() != null) {
-            java.util.List<org.issuetracker.model.Project> realProjects = mainFrame.getController().getProjectService().getAllProjects();
-
-            if (realProjects.isEmpty()) {
-                projectCombo.addItem("생성된 프로젝트가 없습니다");
-            } else {
-                for (org.issuetracker.model.Project p : realProjects) {
-                    projectCombo.addItem(p.id + " : " + p.name);
-                }
-            }
+    public void renderProjectList(java.util.List<org.issuetracker.model.Project> realProjects) {
+        projectCombo.removeAllItems();
+        if (realProjects == null || realProjects.isEmpty()) {
+            projectCombo.addItem("생성된 프로젝트가 없습니다");
         } else {
-            projectCombo.addItem("프로젝트 로드 대기중...");
+            for (org.issuetracker.model.Project p : realProjects) {
+                projectCombo.addItem(p.id + " : " + p.name);
+            }
         }
+        projectCombo.revalidate();
+        projectCombo.repaint();
     }
 
+    public void setStatusWaiting() {
+        projectCombo.removeAllItems();
+        projectCombo.addItem("프로젝트 로드 대기중...");
+    }
+
+    public void showUserMode(User loggedInUser, Role matchedRole) {
+        userContainerLabel.setText("User: " + loggedInUser.getName() + " [" + matchedRole + "]");
+        cardLayout.show(authCardContainer, "USER");
+    }
+
+    public void showGuestMode() {
+        idField.setText("");
+        pwField.setText("");
+        cardLayout.show(authCardContainer, "GUEST");
+    }
+
+    // Getter 선언부
+    public JComboBox<String> getProjectCombo() { return projectCombo; }
     public JTextField getIdField() { return idField; }
     public JPasswordField getPwField() { return pwField; }
     public JButton getLoginBtn() { return loginBtn; }
     public JButton getLogoutBtn() { return logoutBtn; }
-    public JComboBox<String> getProjectCombo() { return projectCombo; }
 }

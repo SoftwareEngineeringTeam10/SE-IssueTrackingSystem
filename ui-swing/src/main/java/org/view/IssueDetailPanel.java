@@ -239,10 +239,6 @@ public class IssueDetailPanel extends JPanel {
             }
         }
 
-        // 생성 완료 시점 컨트롤러 바인딩 강제 호출
-        if (mainFrame.getController() != null) {
-            mainFrame.getController().bindViewEvents(this);
-        }
 
         revalidate();
         repaint();

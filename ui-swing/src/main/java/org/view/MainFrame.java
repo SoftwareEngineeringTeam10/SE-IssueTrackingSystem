@@ -1,9 +1,10 @@
 package org.view;
 
-import org.controller.IssueController;
+import org.controller.*;
 import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
 import org.issuetracker.service.ProjectService;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,13 +12,20 @@ import java.awt.*;
 public class MainFrame extends JFrame {
 
     private JPanel centerContainer;
-    private IssueController controller;
     private SideMenuPanel sideMenuPanel;
     private ProjectService projectService;
     private HeaderPanel headerPanel;
     private JPanel currentCenterPanel;
+    private AuthController authController;
+    private IssueListController issueListController;
+    private IssueRegisterController issueRegisterController;
+    private ManageController manageController;
+    private IssueDetailController issueDetailController;
 
-    public MainFrame(IssueService issueService, AccountManager accountManager) {
+
+    private IssueController issueController;
+
+    public MainFrame() {
         setTitle("이슈 관리 시스템");
         setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,8 +33,6 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         this.projectService = new ProjectService();
-
-        this.controller = new IssueController(this, issueService, accountManager, this.projectService);
 
         this.headerPanel = new HeaderPanel(this);
         this.sideMenuPanel = new SideMenuPanel(this);
@@ -39,10 +45,26 @@ public class MainFrame extends JFrame {
         add(centerContainer, BorderLayout.CENTER);
 
 
-        // 초기 화면 주입
-        changeCenterPanel(new IssueListPanel(this));
+        currentCenterPanel = new JPanel();
+        centerContainer.add(currentCenterPanel, BorderLayout.CENTER);
+    }
 
-        this.controller.configureSideMenuByRole();
+    public void setControllers(IssueController issueCtrl, AuthController auth, IssueListController list,
+                               IssueRegisterController reg, ManageController manage, IssueDetailController detail) {
+        this.issueController = issueCtrl;
+        this.authController = auth;
+        this.issueListController = list;
+        this.issueRegisterController = reg;
+        this.manageController = manage;
+        this.issueDetailController = detail;
+
+        if (this.issueController != null) {
+            this.issueController.configureSideMenuByRole();
+        }
+
+        if (this.headerPanel != null && this.authController != null) {
+            this.authController.bindViewEvents(this.headerPanel);
+        }
     }
 
     public SideMenuPanel getSideMenuPanel() {
@@ -50,29 +72,34 @@ public class MainFrame extends JFrame {
     }
 
     public IssueController getController() {
-        return this.controller;
+        return this.issueController;
     }
+
     public HeaderPanel getHeaderPanel() {
         return this.headerPanel;
     }
 
-    // 중앙 패널 교체 및 리렌더링
     public void changeCenterPanel(JPanel newPanel) {
         centerContainer.removeAll();
         centerContainer.add(newPanel, BorderLayout.CENTER);
 
         this.currentCenterPanel = newPanel;
 
-        if (this.controller != null) {
-            this.controller.bindViewEvents(newPanel);
-        } else {
-            Timer timer = new Timer(50, e -> {
-                if (this.getController() != null) {
-                    this.getController().bindViewEvents(newPanel);
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
+        if (newPanel instanceof LoginPanel && authController != null) {
+            authController.bindViewEvents(newPanel);
+        }
+        else if (newPanel instanceof IssueListPanel && issueListController != null) {
+            issueListController.bindViewEvents(newPanel);
+            ((IssueListPanel) newPanel).loadIssues();
+        }
+        else if (newPanel instanceof IssueCreatePanel && issueRegisterController != null) {
+            issueRegisterController.bindViewEvents(newPanel);
+        }
+        else if (newPanel instanceof AccountAndProjectManagePanel && manageController != null) {
+            manageController.bindViewEvents(newPanel);
+        }
+        else if (newPanel instanceof IssueDetailPanel && issueDetailController != null) {
+            issueDetailController.bindViewEvents(newPanel);
         }
 
         centerContainer.revalidate();
@@ -83,5 +110,7 @@ public class MainFrame extends JFrame {
         return this.currentCenterPanel;
     }
 
-
+    public AuthController getAuthController() {
+        return this.authController;
+    }
 }

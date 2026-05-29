@@ -102,6 +102,22 @@ public class AccountManager {
         }
     }
 
+    public String getUserNameById(String id) {
+        if (id == null) { return "-"; }
+        for (User user : users) {
+            if (user.getId().equals(id)) { return user.getName(); }
+        }
+        return "-";
+    }
+
+    public List<User> getUsersByRole(org.issuetracker.model.Role role) {
+        List<User> result = new ArrayList<>();
+        for (User user : users) {
+            if (user.getRole() == role) { result.add(user); }
+        }
+        return result;
+    }
+
     public List<User> getUsers() {
         return users;
     }

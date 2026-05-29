@@ -36,9 +36,12 @@ public class IssueCreatePanel extends JPanel {
         comboProject = new JComboBox<>();
         comboProject.setBackground(Color.WHITE);
 
-        if (mainFrame.getController() != null && mainFrame.getController().getProjectService() != null) {
-            for (org.issuetracker.model.Project p : mainFrame.getController().getProjectService().getAllProjects()) {
-                comboProject.addItem(p.id + " : " + p.name); // 예: "1 : ITS Main Project"
+        if (mainFrame != null && mainFrame.getController() != null) {
+            org.issuetracker.service.ProjectService projService = mainFrame.getController().getProjectService();
+            if (projService != null) {
+                for (org.issuetracker.model.Project p : projService.getAllProjects()) {
+                    comboProject.addItem(p.id + " : " + p.name);
+                }
             }
         }
 
@@ -97,15 +100,9 @@ public class IssueCreatePanel extends JPanel {
         bottomPanel.add(btnCancel);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // 취소 버튼 이벤트만 기본 단순 처리
         btnCancel.addActionListener(e -> {
             mainFrame.changeCenterPanel(new IssueListPanel(mainFrame));
         });
-
-        // 생성 즉시 컨트롤러에게 이벤트 바인딩 제어권 강제 위임
-        if (mainFrame.getController() != null) {
-            mainFrame.getController().bindViewEvents(this);
-        }
 
         revalidate();
         repaint();

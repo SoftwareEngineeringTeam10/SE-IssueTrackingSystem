@@ -100,7 +100,7 @@ public class AccountAndProjectManagePanel extends JPanel {
         accountPanel.add(lblRole, gbcAcc);
 
         gbcAcc.gridx = 1; gbcAcc.gridy = 2; gbcAcc.weightx = 1;
-        comboRole = new JComboBox<>(new String[]{"ADMIN", "PL", "DEVELOPER", "TESTER"});
+        comboRole = new JComboBox<>(new String[]{"PL", "DEVELOPER", "TESTER"});
         comboRole.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
         accountPanel.add(comboRole, gbcAcc);
 

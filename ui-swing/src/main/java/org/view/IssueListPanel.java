@@ -16,6 +16,7 @@ public class IssueListPanel extends JPanel {
     private JComboBox<String> comboStatusFilter;
     private JComboBox<String> comboPriorityFilter;
     private JButton btnSearch;
+    private String currentProjectId = "";
 
     public IssueListPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -103,42 +104,99 @@ public class IssueListPanel extends JPanel {
         // 데이터 로드
         loadIssues();
 
-        // 생성 완료 후 컨트롤러에게 리스너 제어권 강제 위임
-        if (mainFrame.getController() != null) {
-            mainFrame.getController().bindViewEvents(this);
-        }
     }
 
+    public void setCurrentProjectId(String currentProjectId) {
+        this.currentProjectId = currentProjectId;
+    }
+
+
+
     public void loadIssues() {
-        tableModel.setRowCount(0);
-
-        int currentProjectId = -1;
-        if (mainFrame.getHeaderPanel() != null && mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem() != null) {
-            String selectedProj = (String) mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem();
-            if (selectedProj.contains(" : ")) {
-                currentProjectId = Integer.parseInt(selectedProj.split(" : ")[0]);
-            }
-        }
-
         try {
-            java.util.List<org.issuetracker.model.Issue> issues = mainFrame.getController().getService().searchIssues(currentProjectId, null, null, null, null);
+            if (tableModel != null) {
+                tableModel.setRowCount(0); // 기존 테이블 행 초기화
+            }
 
-            if (issues != null) {
-                for (org.issuetracker.model.Issue issue : issues) {
-                    Object[] row = {
-                            issue.id,
-                            issue.title,
-                            issue.priority != null ? issue.priority.name() : "-",
-                            issue.status != null ? issue.status.name() : "NEW",
-                            issue.reporter != null ? issue.reporter : "-",  // Id 꼬리표 뗀 거 적용
-                            issue.assignee != null ? issue.assignee : "-"   // Id 꼬리표 뗀 거 적용
-                    };
-                    tableModel.addRow(row);
+            int projectIdInt = -1;
+            if (mainFrame != null && mainFrame.getHeaderPanel() != null) {
+                JComboBox<String> combo = mainFrame.getHeaderPanel().getProjectCombo();
+                if (combo != null && combo.getSelectedItem() != null) {
+                    String selectedProj = (String) combo.getSelectedItem();
+                    if (selectedProj.contains(" : ")) {
+                        try {
+                            projectIdInt = Integer.parseInt(selectedProj.split(" : ")[0].trim());
+                        } catch (NumberFormatException nfe) {
+                            projectIdInt = -1;
+                        }
+                    }
                 }
             }
+
+            if (projectIdInt == -1) return; // 프로젝트 선택 안 됐으면 중단
+
+            String selectedStatus = null;
+            if (comboStatusFilter != null && comboStatusFilter.getSelectedItem() != null) {
+                String status = (String) comboStatusFilter.getSelectedItem();
+                if (!"전체".equals(status) && !status.trim().isEmpty()) {
+                    selectedStatus = status.trim();
+                }
+            }
+
+            String selectedPriority = null;
+            if (comboPriorityFilter != null && comboPriorityFilter.getSelectedItem() != null) {
+                String priority = (String) comboPriorityFilter.getSelectedItem();
+                if (!"전체".equals(priority) && !priority.trim().isEmpty()) {
+                    selectedPriority = priority.trim();
+                }
+            }
+
+            String searchKeyword = null;
+            if (fieldSearch != null && !fieldSearch.getText().trim().isEmpty()) {
+                searchKeyword = fieldSearch.getText().trim();
+            }
+
+            if (mainFrame != null && mainFrame.getController() != null && mainFrame.getController().getIssueService() != null) {
+
+                java.util.List<org.issuetracker.model.Issue> issues =
+                        mainFrame.getController().getIssueService().searchIssues(
+                                projectIdInt,
+                                selectedStatus,
+                                null,
+                                null,
+                                searchKeyword
+                        );
+
+                if (issues != null) {
+                    for (org.issuetracker.model.Issue issue : issues) {
+
+                        if (selectedPriority != null) {
+                            if (issue.priority == null || !issue.priority.name().equalsIgnoreCase(selectedPriority)) {
+                                continue;
+                            }
+                        }
+
+                        // 복합 필터(상태 + 키워드 + 우선순위)를 모두 통과한 순정 데이터만 테이블에 적재
+                        Object[] row = {
+                                issue.id,
+                                issue.title,
+                                issue.priority != null ? issue.priority.name() : "-",
+                                issue.status != null ? issue.status.name() : "NEW",
+                                issue.reporter != null ? issue.reporter : "-",
+                                issue.assignee != null ? issue.assignee : "-"
+                        };
+                        tableModel.addRow(row);
+                    }
+                }
+            }
+
+            if (tableModel != null) {
+                tableModel.fireTableDataChanged();
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("데이터 로드 중 에러 발생! 백엔드 시그니처 정합성을 확인하세요.");
+            JOptionPane.showMessageDialog(mainFrame, "이슈 필터링 렌더링 중 오류 발생", "시스템 에러", JOptionPane.ERROR_MESSAGE);
         }
     }
 
