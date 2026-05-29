@@ -15,7 +15,7 @@ class StatisticsServiceTest {
     private StatisticsService statisticsService;
     private IssueService issueService;
     private User devUser;
-    private final int TEST_PROJECT_ID = 111; 
+    private final int TEST_PROJECT_ID = 111;
 
     @BeforeEach
     void setUp() {
