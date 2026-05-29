@@ -8,11 +8,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.issuetracker.model.Issue;
 import org.issuetracker.model.Priority;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
 import org.issuetracker.service.IssueService;
 import org.issuetracker.service.PermissionManager;
+import org.issuetracker.service.ProjectService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
 import ui.javafx.util.DateFormats;
@@ -21,7 +24,7 @@ import java.time.LocalDateTime;
 
 public class IssueRegisterController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private TextField projectField;
     @FXML private TextField titleField;
@@ -34,6 +37,7 @@ public class IssueRegisterController {
     @FXML private Button manageButton;
 
     private final IssueService issueService = new IssueService();
+    private final ProjectService projectService = new ProjectService();
 
     @FXML
     public void initialize() {
@@ -49,11 +53,25 @@ public class IssueRegisterController {
             manageButton.setManaged(false);
         }
 
-        // 프로젝트 콤보 — 더미값 + 비활성
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
-        projectCombo.setDisable(true);
-        projectField.setText("기본 프로젝트");
+        // 프로젝트 콤보 — 멀티프로젝트 연동
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == Session.currentProjectId) {
+                projectCombo.getSelectionModel().select(p);
+                projectField.setText(p.name);
+                break;
+            }
+        }
+        projectCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Session.currentProjectId = newVal.id;
+                projectField.setText(newVal.name);
+            }
+        });
 
         // 우선순위 콤보 (기본값 MAJOR)
         for (Priority p : Priority.values()) {

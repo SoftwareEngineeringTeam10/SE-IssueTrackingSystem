@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
 import org.issuetracker.model.User;
@@ -23,7 +24,7 @@ import ui.javafx.session.ViewLoader;
 
 public class ManageController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
 
     @FXML private TableView<User> accountTable;
@@ -53,9 +54,23 @@ public class ManageController {
 
         userLabel.setText("User: " + Session.currentUser.getId());
 
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
-        projectCombo.setDisable(true);
+        // 프로젝트 콤보 — 멀티프로젝트 연동
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == Session.currentProjectId) {
+                projectCombo.getSelectionModel().select(p);
+                break;
+            }
+        }
+        projectCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Session.currentProjectId = newVal.id;
+            }
+        });
 
         setupAccountTable();
         accountTable.setItems(FXCollections.observableArrayList(accountManager.getUsers()));

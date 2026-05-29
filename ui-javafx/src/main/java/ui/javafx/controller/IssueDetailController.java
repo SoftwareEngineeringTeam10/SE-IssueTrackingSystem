@@ -11,15 +11,18 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 import org.issuetracker.model.Comment;
 import org.issuetracker.model.Issue;
 import org.issuetracker.model.IssueStatus;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.RecommendationResult;
 import org.issuetracker.model.Role;
 import org.issuetracker.model.User;
 import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
 import org.issuetracker.service.PermissionManager;
+import org.issuetracker.service.ProjectService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
 import ui.javafx.util.DateFormats;
@@ -31,7 +34,7 @@ import java.util.Optional;
 
 public class IssueDetailController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private Label titleLabel;
     @FXML private Label priorityLabel;
@@ -51,6 +54,7 @@ public class IssueDetailController {
 
     private final IssueService issueService = new IssueService();
     private final AccountManager accountManager = new AccountManager();
+    private final ProjectService projectService = new ProjectService();
     private Issue issue;
 
     @FXML
@@ -66,9 +70,12 @@ public class IssueDetailController {
             manageButton.setManaged(false);
         }
 
-        // 프로젝트 콤보 — 더미값 + 비활성
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
+        // 프로젝트 콤보 — 상세 화면은 이슈 소속 프로젝트 표시 전용
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
         projectCombo.setDisable(true);
 
         loadIssue();
@@ -79,6 +86,14 @@ public class IssueDetailController {
         if (issue == null) {
             systemMessage.setText("이슈를 찾을 수 없습니다");
             return;
+        }
+
+        // 콤보 표시를 이슈 소속 프로젝트로 맞춤
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == issue.projectId) {
+                projectCombo.getSelectionModel().select(p);
+                break;
+            }
         }
 
         titleLabel.setText(issue.title);

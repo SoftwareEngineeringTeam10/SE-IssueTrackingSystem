@@ -7,8 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.util.StringConverter;
 import org.issuetracker.model.IssueStatus;
+import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
+import org.issuetracker.service.ProjectService;
 import org.issuetracker.service.StatisticsService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
@@ -17,7 +20,7 @@ import java.util.Map;
 
 public class StatsController {
 
-    @FXML private ComboBox<String> projectCombo;
+    @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private Button manageButton;
 
@@ -34,6 +37,7 @@ public class StatsController {
     @FXML private Label systemMessage;
 
     private final StatisticsService statisticsService = new StatisticsService();
+    private final ProjectService projectService = new ProjectService();
 
     @FXML
     public void initialize() {
@@ -42,9 +46,24 @@ public class StatsController {
             userLabel.setText("User: " + Session.currentUser.getId());
         }
 
-        projectCombo.getItems().add("기본 프로젝트");
-        projectCombo.getSelectionModel().selectFirst();
-        projectCombo.setDisable(true);
+        // 프로젝트 콤보 — 멀티프로젝트 연동
+        projectCombo.setConverter(new StringConverter<Project>() {
+            @Override public String toString(Project p) { return p == null ? "" : p.name; }
+            @Override public Project fromString(String s) { return null; }
+        });
+        projectCombo.getItems().setAll(projectService.getAllProjects());
+        for (Project p : projectCombo.getItems()) {
+            if (p.id == Session.currentProjectId) {
+                projectCombo.getSelectionModel().select(p);
+                break;
+            }
+        }
+        projectCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Session.currentProjectId = newVal.id;
+                loadStats();
+            }
+        });
 
         // admin 권한이 있을 때만 Manage 메뉴 visible
         if (Session.currentUser != null && Session.currentUser.getRole() != Role.ADMIN) {
@@ -56,6 +75,11 @@ public class StatsController {
     }
 
     private void loadStats() {
+        // 재호출 시 시리즈 중첩 방지
+        dailyChart.getData().clear();
+        monthlyChart.getData().clear();
+        statusChart.getData().clear();
+
         // 상태별 stats
         Map<IssueStatus, Integer> statusStats = statisticsService.getStatusStats(Session.currentProjectId);
         int total = 0;
