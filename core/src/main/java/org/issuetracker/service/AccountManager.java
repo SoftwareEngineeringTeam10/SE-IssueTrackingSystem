@@ -2,6 +2,7 @@ package org.issuetracker.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.issuetracker.model.User;
+import org.issuetracker.model.Role;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -104,6 +105,34 @@ public class AccountManager {
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public String getUserNameById(String id) {
+
+        if (id == null) {
+            return "-";
+        }
+
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                return user.getName();
+            }
+        }
+
+        return "-";
+    }
+
+    public List<User> getUsersByRole(Role role) {
+
+        List<User> result = new ArrayList<>();
+
+        for (User user : users) {
+            if (user.getRole() == role) {
+                result.add(user);
+            }
+        }
+
+        return result;
     }
 
 
