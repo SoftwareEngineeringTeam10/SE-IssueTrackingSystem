@@ -57,7 +57,7 @@ public class StatsController {
 
     private void loadStats() {
         // 상태별 stats
-        Map<IssueStatus, Integer> statusStats = statisticsService.getStatusStats();
+        Map<IssueStatus, Integer> statusStats = statisticsService.getStatusStats(Session.currentProjectId);
         int total = 0;
         for (int v : statusStats.values()) total += v;
         int newCount = statusStats.getOrDefault(IssueStatus.NEW, 0);
@@ -73,7 +73,7 @@ public class StatsController {
         // 일별 BarChart
         XYChart.Series<String, Number> dailySeries = new XYChart.Series<>();
         dailySeries.setName("일별 발생");
-        for (Map.Entry<String, Integer> e : statisticsService.getDailyStats().entrySet()) {
+        for (Map.Entry<String, Integer> e : statisticsService.getDailyStats(Session.currentProjectId).entrySet()) {
             dailySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
         dailyChart.getData().add(dailySeries);
@@ -81,7 +81,7 @@ public class StatsController {
         // 월별 BarChart
         XYChart.Series<String, Number> monthlySeries = new XYChart.Series<>();
         monthlySeries.setName("월별 발생");
-        for (Map.Entry<String, Integer> e : statisticsService.getMonthlyStats().entrySet()) {
+        for (Map.Entry<String, Integer> e : statisticsService.getMonthlyStats(Session.currentProjectId).entrySet()) {
             monthlySeries.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
         monthlyChart.getData().add(monthlySeries);
