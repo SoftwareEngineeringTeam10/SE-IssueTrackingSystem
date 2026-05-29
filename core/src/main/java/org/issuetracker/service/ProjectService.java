@@ -72,4 +72,9 @@ public class ProjectService {
             );
         }
     }
+
+
+    public void resetAll() {
+        repository.saveAll(new java.util.ArrayList<>());
+    }
 }

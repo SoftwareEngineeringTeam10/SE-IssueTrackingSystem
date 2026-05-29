@@ -2,7 +2,6 @@ package org.issuetracker.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.issuetracker.model.User;
-import org.issuetracker.model.Role;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,7 +11,9 @@ public class AccountManager {
 
     private List<User> users = new ArrayList<>();
     private ObjectMapper objectMapper = new ObjectMapper();
-    private final String FILE_PATH = "users.json";
+
+    // [수정된 부분] 실행 환경에 관계없이 프로젝트 루트 폴더를 기준으로 절대 경로 설정
+    private final String FILE_PATH = System.getProperty("user.dir") + File.separator + "users.json";
 
     // 현재 로그인한 사용자
     private User currentUser;
@@ -74,10 +75,9 @@ public class AccountManager {
     // JSON 저장
     private void saveUsers() {
         try {
-            objectMapper.writeValue(
-                    new File(FILE_PATH),
-                    users
-            );
+            // [수정된 부분] 명시적으로 지정된 절대 경로를 사용하여 파일 저장
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(new File(FILE_PATH), users);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -106,31 +106,9 @@ public class AccountManager {
         return users;
     }
 
-    public String getUserNameById(String id) {
 
-        if (id == null) {
-            return "-";
-        }
-
-        for (User user : users) {
-            if (user.getId().equals(id)) {
-                return user.getName();
-            }
-        }
-
-        return "-";
-    }
-
-    public List<User> getUsersByRole(Role role) {
-
-        List<User> result = new ArrayList<>();
-
-        for (User user : users) {
-            if (user.getRole() == role) {
-                result.add(user);
-            }
-        }
-
-        return result;
+    public void resetAll() {
+        users = new ArrayList<>();
+        saveUsers();
     }
 }
