@@ -26,8 +26,8 @@ public class StatsPanel extends JPanel {
         centerContainer.setOpaque(false);
 
         GridBagConstraints mainGbc = new GridBagConstraints();
-        mainGbc.fill = GridBagConstraints.HORIZONTAL; // 가로로 꽉 채우기
-        mainGbc.weightx = 1.0; // 가로 영역 배분 비율 100%
+        mainGbc.fill = GridBagConstraints.HORIZONTAL;
+        mainGbc.weightx = 1.0;
         mainGbc.gridx = 0;
 
         JPanel summaryPanel = new JPanel(new GridLayout(1, 4, 15, 0));
@@ -134,9 +134,20 @@ public class StatsPanel extends JPanel {
         try {
             StatisticsService statsService = new StatisticsService();
 
-            Map<String, Integer> dailyStats = statsService.getDailyStats();
-            Map<String, Integer> monthlyStats = statsService.getMonthlyStats();
-            Map<IssueStatus, Integer> statusStats = statsService.getStatusStats();
+            int projectId = 888; // 콤보박스가 비어있거나 대기 중일 때를 대비
+
+            if (mainFrame != null && mainFrame.getHeaderPanel() != null && mainFrame.getHeaderPanel().getProjectCombo() != null) {
+                String selected = (String) mainFrame.getHeaderPanel().getProjectCombo().getSelectedItem();
+
+                if (selected != null && !selected.contains("없습니다") && !selected.contains("대기중")) {
+                    String currentProjectIdStr = selected.split(":")[0].trim();
+                    projectId = Integer.parseInt(currentProjectIdStr); // "888" -> 888
+                }
+            }
+
+            Map<String, Integer> dailyStats = statsService.getDailyStats(projectId);
+            Map<String, Integer> monthlyStats = statsService.getMonthlyStats(projectId);
+            Map<IssueStatus, Integer> statusStats = statsService.getStatusStats(projectId);
 
             int newCount = statusStats.getOrDefault(IssueStatus.NEW, 0);
             int fixedCount = statusStats.getOrDefault(IssueStatus.FIXED, 0);
@@ -166,7 +177,6 @@ public class StatsPanel extends JPanel {
                 c.fill = GridBagConstraints.HORIZONTAL; c.weightx = 1.0; c.gridx = 0; c.gridy = mRowIndex[0]++;
                 pnlMonthlyReport.add(createChartBarRow(month, count, maxMonthly), c);
             });
-
 
             clearComponentExceptTitle(pnlStatusReport);
             int maxStatus = statusStats.values().stream().mapToInt(Integer::intValue).max().orElse(10);

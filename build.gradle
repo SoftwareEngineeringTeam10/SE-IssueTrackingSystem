@@ -7,3 +7,28 @@ allprojects {
         options.encoding = 'UTF-8'
     }
 }
+
+subprojects {
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    }
+
+    test {
+        useJUnitPlatform()
+        systemProperty 'file.encoding', 'UTF-8'
+        systemProperty 'stdout.encoding', 'UTF-8'
+    }
+}

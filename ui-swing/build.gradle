@@ -5,10 +5,8 @@ plugins {
 dependencies {
     implementation project(':core')
 
-    // JSON 파싱용 Jackson 라이브러리
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
-    // JFreeChart 라이브러리 추가
     implementation 'org.jfree:jfreechart:1.5.4'
 }
 
@@ -16,9 +14,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
