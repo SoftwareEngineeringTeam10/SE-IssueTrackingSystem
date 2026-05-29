@@ -50,6 +50,7 @@ public class IssueDetailController {
     @FXML private Label systemMessage;
     @FXML private Button manageButton;
     @FXML private Button recommendButton;
+    @FXML private Button registerButton;
 
     private final IssueService issueService = new IssueService();
     private final AccountManager accountManager = new AccountManager();
@@ -67,6 +68,12 @@ public class IssueDetailController {
         if (Session.currentUser != null && Session.currentUser.getRole() != Role.ADMIN) {
             manageButton.setVisible(false);
             manageButton.setManaged(false);
+        }
+
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
         }
 
         // 프로젝트 콤보 — 상세 화면은 이슈 소속 프로젝트 표시 전용

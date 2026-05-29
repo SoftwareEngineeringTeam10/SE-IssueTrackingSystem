@@ -21,6 +21,7 @@ import org.issuetracker.model.Role;
 import org.issuetracker.model.User;
 import org.issuetracker.service.AccountManager;
 import org.issuetracker.service.IssueService;
+import org.issuetracker.service.PermissionManager;
 import org.issuetracker.service.ProjectService;
 import ui.javafx.session.Session;
 import ui.javafx.session.ViewLoader;
@@ -61,8 +62,8 @@ public class IssueListController {
             manageButton.setManaged(false);
         }
 
-        // admin은 이슈 등록 대상이 아니므로 등록 메뉴 숨김
-        if (Session.currentUser != null && Session.currentUser.getRole() == Role.ADMIN) {
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
             registerButton.setVisible(false);
             registerButton.setManaged(false);
         }

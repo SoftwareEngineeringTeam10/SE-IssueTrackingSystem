@@ -44,6 +44,7 @@
                     onAction="#onOpenList"
                     maxWidth="Infinity"/>
             <Button text="Register Issue"
+                    fx:id="registerButton"
                     onAction="#onOpenRegister"
                     maxWidth="Infinity"/>
             <Button text="Recommend Assignee"

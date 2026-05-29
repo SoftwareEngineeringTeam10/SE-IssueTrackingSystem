@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -36,6 +37,7 @@ public class ManageController {
     @FXML private ListView<String> projectList;
     @FXML private TextField newProjectField;
 
+    @FXML private Button registerButton;
     @FXML private Label systemMessage;
 
     private final AccountManager accountManager = new AccountManager();
@@ -52,6 +54,12 @@ public class ManageController {
         }
 
         userLabel.setText("User: " + Session.currentUser.getId());
+
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
+        }
 
         // 프로젝트 콤보 — 멀티프로젝트 연동
         projectCombo.setConverter(new StringConverter<Project>() {

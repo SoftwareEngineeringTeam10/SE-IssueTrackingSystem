@@ -10,6 +10,7 @@ import javafx.util.StringConverter;
 import org.issuetracker.model.IssueStatus;
 import org.issuetracker.model.Project;
 import org.issuetracker.model.Role;
+import org.issuetracker.service.PermissionManager;
 import org.issuetracker.service.ProjectService;
 import org.issuetracker.service.StatisticsService;
 import ui.javafx.session.Session;
@@ -22,6 +23,7 @@ public class StatsController {
     @FXML private ComboBox<Project> projectCombo;
     @FXML private Label userLabel;
     @FXML private Button manageButton;
+    @FXML private Button registerButton;
 
     @FXML private Label totalLabel;
     @FXML private Label newLabel;
@@ -67,6 +69,12 @@ public class StatsController {
         if (Session.currentUser != null && Session.currentUser.getRole() != Role.ADMIN) {
             manageButton.setVisible(false);
             manageButton.setManaged(false);
+        }
+
+        // 이슈 등록 권한이 없으면 Register 메뉴 숨김
+        if (Session.currentUser != null && !PermissionManager.canCreateIssue(Session.currentUser)) {
+            registerButton.setVisible(false);
+            registerButton.setManaged(false);
         }
 
         loadStats();
