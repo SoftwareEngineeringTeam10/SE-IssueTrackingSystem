@@ -3,6 +3,8 @@ package org.issuetracker.service;
 import org.issuetracker.model.*;
 import org.issuetracker.repository.IssueRepository;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,6 +122,38 @@ public class IssueService {
         return result;
     }
 
+    public List<IssueStatus> getNextStates(IssueStatus currentStatus) {
+        List<IssueStatus> nextStates = new ArrayList<>();
+
+        switch (currentStatus) {
+            case NEW:
+                nextStates.add(IssueStatus.ASSIGNED);
+                break;
+
+            case ASSIGNED:
+                nextStates.add(IssueStatus.FIXED);
+                break;
+
+            case FIXED:
+                nextStates.add(IssueStatus.REOPENED);
+                nextStates.add(IssueStatus.RESOLVED);
+                break;
+
+            case REOPENED:
+                nextStates.add(IssueStatus.ASSIGNED);
+                break;
+
+            case RESOLVED:
+                nextStates.add(IssueStatus.CLOSED);
+                break;
+
+            default:
+                break;
+        }
+
+        return nextStates;
+    }
+
     /**
      * 담당자 배정
      * @param issueId     대상 이슈 ID
@@ -227,6 +261,27 @@ public class IssueService {
             }
         }
         return true;
+    }
+
+    public Map<IssueStatus, Integer> getStatusTotals(int projectId) {
+        List<Issue> issues = repository.findAll();
+
+        Map<IssueStatus, Integer> result = new LinkedHashMap<>();
+
+        for (IssueStatus status : IssueStatus.values()) {
+            result.put(status, 0);
+        }
+
+        for (Issue issue : issues) {
+            if (issue.projectId != projectId) continue;
+
+            result.put(
+                    issue.status,
+                    result.get(issue.status) + 1
+            );
+        }
+
+        return result;
     }
 
     public List<RecommendationResult> getAssigneeRecommendations(int issueId) {
