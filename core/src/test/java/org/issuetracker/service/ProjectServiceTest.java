@@ -1,6 +1,7 @@
 package org.issuetracker.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.issuetracker.model.Project;
 import org.issuetracker.model.User;
 import org.issuetracker.model.Role;
 
+import java.io.File;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,8 +20,21 @@ class ProjectServiceTest {
     private User adminUser;
     private User devUser;
 
+    private String originalUserDir;
+    private String testUserDir;
+
     @BeforeEach
     void setUp() {
+        originalUserDir = System.getProperty("user.dir");
+        testUserDir = originalUserDir + File.separator + "test_sandbox";
+
+        File sandboxDir = new File(testUserDir);
+        if (!sandboxDir.exists()) {
+            sandboxDir.mkdirs();
+        }
+
+        System.setProperty("user.dir", testUserDir);
+
         projectService = new ProjectService();
 
         adminUser = new User();
@@ -33,6 +48,12 @@ class ProjectServiceTest {
         devUser.setRole(Role.DEV);
     }
 
+    @AfterEach
+    void tearDown() {
+        if (originalUserDir != null) {
+            System.setProperty("user.dir", originalUserDir);
+        }
+    }
 
     @Nested
     @DisplayName("프로젝트 생성 권한 가드 및 실시간 영속화 검증")
@@ -41,7 +62,6 @@ class ProjectServiceTest {
         @Test
         @DisplayName("정상 흐름: ADMIN 계정으로 신규 프로젝트 생성 및 실제 저장소 영속화 반영 검증")
         void testProjectCreationByAdmin() {
-            // 기존에 등록되어 있던 프로젝트 전체 목록 개수 백업
             List<Project> beforeList = projectService.getAllProjects();
             int beforeSize = beforeList != null ? beforeList.size() : 0;
 

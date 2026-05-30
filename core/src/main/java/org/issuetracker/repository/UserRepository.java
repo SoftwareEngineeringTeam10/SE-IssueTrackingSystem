@@ -10,7 +10,8 @@ import java.util.List;
 
 public class UserRepository {
 
-    private final File file = new File("users.json");
+    private final String filePath = System.getProperty("user.dir") + File.separator + "users.json";
+    private final File file = new File(filePath);
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<User> findAll() {

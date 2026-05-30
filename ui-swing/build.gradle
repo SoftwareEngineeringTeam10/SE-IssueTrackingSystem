@@ -1,12 +1,11 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 dependencies {
     implementation project(':core')
-
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-
     implementation 'org.jfree:jfreechart:1.5.4'
 }
 
@@ -15,6 +14,14 @@ repositories {
 }
 
 
+application {
+    mainClass = 'org.Main'
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+run {
+    workingDir = file("$rootDir/core")
 }

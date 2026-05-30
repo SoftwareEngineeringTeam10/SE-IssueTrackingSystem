@@ -47,7 +47,7 @@ public class ManageController {
                 }
 
                 JOptionPane.showMessageDialog(mainFrame, "프로젝트가 성공적으로 생성 및 저장되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
-                panel.getFieldProjectName().setText(""); // 입력창 초기화
+                panel.getFieldProjectName().setText("");
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -71,6 +71,21 @@ public class ManageController {
             }
 
             try {
+                if (this.accountManager != null && this.accountManager.getUsers() != null) {
+                    boolean isDuplicated = false;
+                    for (User existingUser : this.accountManager.getUsers()) {
+                        if (existingUser != null && userId.equalsIgnoreCase(existingUser.getId())) {
+                            isDuplicated = true;
+                            break;
+                        }
+                    }
+
+                    if (isDuplicated) {
+                        JOptionPane.showMessageDialog(mainFrame, "이미 존재하는 사용자 ID입니다. 다른 ID를 입력하세요.", "중복 오류", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+
                 String standardRoleStr = roleStr.toUpperCase().trim();
                 if (standardRoleStr.contains("DEV") || standardRoleStr.contains("DEVELOPER")) standardRoleStr = "DEV";
                 else if (standardRoleStr.contains("PL")) standardRoleStr = "PL";
@@ -95,6 +110,7 @@ public class ManageController {
                 panel.getFieldUserId().setText("");
                 panel.getFieldPassword().setText("");
             } catch (Exception ex) {
+                ex.printStackTrace();
                 JOptionPane.showMessageDialog(mainFrame, "계정 등록 중 오류가 발생했습니다.", "에러", JOptionPane.ERROR_MESSAGE);
             }
         });

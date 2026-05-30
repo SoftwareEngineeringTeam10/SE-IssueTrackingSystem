@@ -15,6 +15,8 @@ public class IssueListPanel extends JPanel {
     private JTextField fieldSearch;
     private JComboBox<String> comboStatusFilter;
     private JComboBox<String> comboPriorityFilter;
+    private JComboBox<String> comboReporterFilter;
+    private JComboBox<String> comboAssigneeFilter;
     private JButton btnSearch;
     private String currentProjectId = "";
 
@@ -37,12 +39,12 @@ public class IssueListPanel extends JPanel {
         topContainer.add(Box.createVerticalStrut(15));
 
         // 검색 바
-        JPanel searchBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        JPanel searchBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         searchBarPanel.setOpaque(false);
         searchBarPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         searchBarPanel.add(new JLabel("검색어:"));
-        fieldSearch = new JTextField(15);
+        fieldSearch = new JTextField(10);
         fieldSearch.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
         searchBarPanel.add(fieldSearch);
 
@@ -56,6 +58,16 @@ public class IssueListPanel extends JPanel {
         comboPriorityFilter.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
         searchBarPanel.add(comboPriorityFilter);
 
+        searchBarPanel.add(new JLabel("보고자:"));
+        comboReporterFilter = new JComboBox<>();
+        comboReporterFilter.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
+        searchBarPanel.add(comboReporterFilter);
+
+        searchBarPanel.add(new JLabel("담당자:"));
+        comboAssigneeFilter = new JComboBox<>();
+        comboAssigneeFilter.setFont(new Font("Malgun Gothic", Font.PLAIN, 12));
+        searchBarPanel.add(comboAssigneeFilter);
+
         btnSearch = new JButton("검색");
         btnSearch.setFont(new Font("Malgun Gothic", Font.BOLD, 12));
         btnSearch.setBackground(new Color(240, 240, 240));
@@ -66,7 +78,6 @@ public class IssueListPanel extends JPanel {
 
         add(topContainer, BorderLayout.NORTH);
 
-        // 테이블 설정
         String[] columnNames = {"번호", "이슈 제목", "우선순위", "상태", "보고자", "담당자"};
 
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -101,21 +112,54 @@ public class IssueListPanel extends JPanel {
         bottomButtonPanel.add(btnClose);
         add(bottomButtonPanel, BorderLayout.SOUTH);
 
-        // 데이터 로드
-        loadIssues();
 
+        updateUserFilters();
+        loadIssues();
+    }
+
+    public void updateUserFilters() {
+        try {
+            if (mainFrame == null || mainFrame.getController() == null || mainFrame.getController().getAccountManager() == null) {
+                comboReporterFilter.setModel(new DefaultComboBoxModel<>(new String[]{"전체"}));
+                comboAssigneeFilter.setModel(new DefaultComboBoxModel<>(new String[]{"전체"}));
+                return;
+            }
+
+            org.issuetracker.service.AccountManager accountManager = mainFrame.getController().getAccountManager();
+            java.util.List<User> allUsers = accountManager.getUsers();
+
+            DefaultComboBoxModel<String> reporterModel = new DefaultComboBoxModel<>();
+            DefaultComboBoxModel<String> assigneeModel = new DefaultComboBoxModel<>();
+
+            reporterModel.addElement("전체");
+            assigneeModel.addElement("전체");
+
+            if (allUsers != null) {
+                for (User user : allUsers) {
+                    String userId = user.getId();
+                    reporterModel.addElement(userId);
+                    assigneeModel.addElement(userId);
+                }
+            }
+
+            comboReporterFilter.setModel(reporterModel);
+            comboAssigneeFilter.setModel(assigneeModel);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            comboReporterFilter.setModel(new DefaultComboBoxModel<>(new String[]{"전체"}));
+            comboAssigneeFilter.setModel(new DefaultComboBoxModel<>(new String[]{"전체"}));
+        }
     }
 
     public void setCurrentProjectId(String currentProjectId) {
         this.currentProjectId = currentProjectId;
     }
 
-
-
     public void loadIssues() {
         try {
             if (tableModel != null) {
-                tableModel.setRowCount(0); // 기존 테이블 행 초기화
+                tableModel.setRowCount(0);
             }
 
             int projectIdInt = -1;
@@ -133,7 +177,7 @@ public class IssueListPanel extends JPanel {
                 }
             }
 
-            if (projectIdInt == -1) return; // 프로젝트 선택 안 됐으면 중단
+            if (projectIdInt == -1) return;
 
             String selectedStatus = null;
             if (comboStatusFilter != null && comboStatusFilter.getSelectedItem() != null) {
@@ -148,6 +192,22 @@ public class IssueListPanel extends JPanel {
                 String priority = (String) comboPriorityFilter.getSelectedItem();
                 if (!"전체".equals(priority) && !priority.trim().isEmpty()) {
                     selectedPriority = priority.trim();
+                }
+            }
+
+            String selectedReporter = null;
+            if (comboReporterFilter != null && comboReporterFilter.getSelectedItem() != null) {
+                String reporter = comboReporterFilter.getSelectedItem().toString().trim();
+                if (!"전체".equals(reporter) && !reporter.isEmpty()) {
+                    selectedReporter = reporter;
+                }
+            }
+
+            String selectedAssignee = null;
+            if (comboAssigneeFilter != null && comboAssigneeFilter.getSelectedItem() != null) {
+                String assignee = comboAssigneeFilter.getSelectedItem().toString().trim();
+                if (!"전체".equals(assignee) && !assignee.isEmpty()) {
+                    selectedAssignee = assignee;
                 }
             }
 
@@ -176,7 +236,18 @@ public class IssueListPanel extends JPanel {
                             }
                         }
 
-                        // 복합 필터(상태 + 키워드 + 우선순위)를 모두 통과한 순정 데이터만 테이블에 적재
+                        if (selectedReporter != null) {
+                            if (issue.reporter == null || !issue.reporter.equalsIgnoreCase(selectedReporter)) {
+                                continue;
+                            }
+                        }
+
+                        if (selectedAssignee != null) {
+                            if (issue.assignee == null || !issue.assignee.equalsIgnoreCase(selectedAssignee)) {
+                                continue;
+                            }
+                        }
+
                         Object[] row = {
                                 issue.id,
                                 issue.title,
@@ -208,5 +279,7 @@ public class IssueListPanel extends JPanel {
     public JTextField getFieldSearch() { return fieldSearch; }
     public JComboBox<String> getComboStatusFilter() { return comboStatusFilter; }
     public JComboBox<String> getComboPriorityFilter() { return comboPriorityFilter; }
+    public JComboBox<String> getComboReporterFilter() { return comboReporterFilter; }
+    public JComboBox<String> getComboAssigneeFilter() { return comboAssigneeFilter; }
     public JButton getBtnSearch() { return btnSearch; }
 }

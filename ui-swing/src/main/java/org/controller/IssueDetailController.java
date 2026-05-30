@@ -35,23 +35,22 @@ public class IssueDetailController {
         Issue currentIssue = panel.getIssue();
         Role currentRole = currentUser.getRole();
 
-        panel.getLblStatus().setText(currentIssue.getStatus().name());
         panel.getBtnRecommend().setVisible(false);
         panel.getBtnDevFixed().setVisible(false);
         panel.getBtnTesterVerify().setVisible(false);
         panel.getBtnReopen().setVisible(false);
         panel.getBtnPlClose().setVisible(false);
 
-        if (currentIssue.getStatus() == IssueStatus.NEW || currentIssue.getStatus() == IssueStatus.REOPENED) {
+        if (currentIssue.status == IssueStatus.NEW || currentIssue.status == IssueStatus.REOPENED) {
             if (currentRole == Role.PL) panel.getBtnRecommend().setVisible(true);
-        } else if (currentIssue.getStatus() == IssueStatus.ASSIGNED) {
+        } else if (currentIssue.status == IssueStatus.ASSIGNED) {
             if (currentRole == Role.DEV) panel.getBtnDevFixed().setVisible(true);
-        } else if (currentIssue.getStatus() == IssueStatus.FIXED) {
+        } else if (currentIssue.status == IssueStatus.FIXED) {
             if (currentRole == Role.TESTER) {
                 panel.getBtnTesterVerify().setVisible(true);
                 panel.getBtnReopen().setVisible(true);
             }
-        } else if (currentIssue.getStatus() == IssueStatus.RESOLVED) {
+        } else if (currentIssue.status == IssueStatus.RESOLVED) {
             if (currentRole == Role.PL) panel.getBtnPlClose().setVisible(true);
         }
 
@@ -87,7 +86,8 @@ public class IssueDetailController {
                     panel.getLblAssignee().setText(targetDeveloperId);
                     currentIssue.assignee = targetDeveloperId;
                     issueService.assignIssue(currentIssue.id, targetDeveloperId, currentUser);
-                    currentIssue.setStatus(IssueStatus.ASSIGNED);
+
+                    currentIssue.status = IssueStatus.ASSIGNED;
                     panel.getLblStatus().setText(IssueStatus.ASSIGNED.name());
                     panel.getBtnRecommend().setVisible(false);
                     panel.getAreaCommentList().append("\n[시스템]: 담당자가 [" + targetDeveloperId + "]로 배정되었습니다.");
@@ -105,8 +105,9 @@ public class IssueDetailController {
         panel.getBtnDevFixed().addActionListener(e -> {
             try {
                 issueService.changeStatus(currentIssue.id, IssueStatus.FIXED, currentUser);
-                currentIssue.setStatus(IssueStatus.FIXED);
-                panel.getLblStatus().setText(currentIssue.getStatus().name());
+
+                currentIssue.status = IssueStatus.FIXED;
+                panel.getLblStatus().setText(currentIssue.status.name());
                 panel.getBtnDevFixed().setVisible(false);
                 panel.getAreaCommentList().append("\n[시스템]: 조치 완료.");
                 JOptionPane.showMessageDialog(mainFrame, "FIXED 변경 완료.", "완료", JOptionPane.INFORMATION_MESSAGE);
@@ -115,15 +116,16 @@ public class IssueDetailController {
             }
         });
 
-        //  VERIFY 버튼
+        // VERIFY 버튼
         for (java.awt.event.ActionListener al : panel.getBtnTesterVerify().getActionListeners()) {
             panel.getBtnTesterVerify().removeActionListener(al);
         }
         panel.getBtnTesterVerify().addActionListener(e -> {
             try {
                 issueService.changeStatus(currentIssue.id, IssueStatus.RESOLVED, currentUser);
-                currentIssue.setStatus(IssueStatus.RESOLVED);
-                panel.getLblStatus().setText(currentIssue.getStatus().name());
+
+                currentIssue.status = IssueStatus.RESOLVED;
+                panel.getLblStatus().setText(currentIssue.status.name());
                 panel.getBtnTesterVerify().setVisible(false);
                 panel.getBtnReopen().setVisible(false);
                 JOptionPane.showMessageDialog(mainFrame, "검증 완료.", "완료", JOptionPane.INFORMATION_MESSAGE);
@@ -139,8 +141,9 @@ public class IssueDetailController {
         panel.getBtnReopen().addActionListener(e -> {
             try {
                 issueService.changeStatus(currentIssue.id, IssueStatus.REOPENED, currentUser);
-                currentIssue.setStatus(IssueStatus.REOPENED);
-                panel.getLblStatus().setText(currentIssue.getStatus().name());
+
+                currentIssue.status = IssueStatus.REOPENED;
+                panel.getLblStatus().setText(currentIssue.status.name());
                 panel.getBtnTesterVerify().setVisible(false);
                 panel.getBtnReopen().setVisible(false);
                 JOptionPane.showMessageDialog(mainFrame, "재오픈 완료.", "알림", JOptionPane.WARNING_MESSAGE);
@@ -156,8 +159,9 @@ public class IssueDetailController {
         panel.getBtnPlClose().addActionListener(e -> {
             try {
                 issueService.changeStatus(currentIssue.id, IssueStatus.CLOSED, currentUser);
-                currentIssue.setStatus(IssueStatus.CLOSED);
-                panel.getLblStatus().setText(currentIssue.getStatus().name());
+
+                currentIssue.status = IssueStatus.CLOSED;
+                panel.getLblStatus().setText(currentIssue.status.name());
                 panel.getBtnPlClose().setVisible(false);
                 JOptionPane.showMessageDialog(mainFrame, "종결 완료.", "완료", JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception ex) {

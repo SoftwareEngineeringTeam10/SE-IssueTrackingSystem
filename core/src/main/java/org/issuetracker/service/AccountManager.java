@@ -131,9 +131,4 @@ public class AccountManager {
         saveUsers();
     }
 
-
-    public void resetAll() {
-        users = new ArrayList<>();
-        saveUsers();
-    }
 }

@@ -1,11 +1,13 @@
 package org.issuetracker.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.issuetracker.model.*;
 
+import java.io.File;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,8 +19,21 @@ class StatisticsServiceTest {
     private User devUser;
     private final int TEST_PROJECT_ID = 111;
 
+    private String originalUserDir;
+    private String testUserDir;
+
     @BeforeEach
     void setUp() {
+        originalUserDir = System.getProperty("user.dir");
+        testUserDir = originalUserDir + File.separator + "test_sandbox";
+
+        File sandboxDir = new File(testUserDir);
+        if (!sandboxDir.exists()) {
+            sandboxDir.mkdirs();
+        }
+
+        System.setProperty("user.dir", testUserDir);
+
         statisticsService = new StatisticsService();
         issueService = new IssueService();
 
@@ -37,6 +52,13 @@ class StatisticsServiceTest {
         bug2.status = IssueStatus.NEW;
         bug2.priority = Priority.MAJOR;
         issueService.createIssue(TEST_PROJECT_ID, bug2, devUser);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (originalUserDir != null) {
+            System.setProperty("user.dir", originalUserDir);
+        }
     }
 
     @Nested

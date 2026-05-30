@@ -2,9 +2,12 @@ package org.controller;
 
 import org.view.IssueListPanel;
 import org.view.MainFrame;
+import org.view.IssueDetailPanel;
 import org.issuetracker.service.IssueService;
-import org.issuetracker.model.IssueStatus; // 💡 백엔드 순정 Enum 임포트
+import org.issuetracker.model.IssueStatus;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class IssueListController {
     private MainFrame mainFrame;
@@ -45,12 +48,28 @@ public class IssueListController {
             panel.loadIssues();
         });
 
+        if (panel.getComboReporterFilter() != null) {
+            for (java.awt.event.ActionListener al : panel.getComboReporterFilter().getActionListeners()) {
+                panel.getComboReporterFilter().removeActionListener(al);
+            }
+            panel.getComboReporterFilter().addActionListener(e -> {
+                panel.loadIssues();
+            });
+        }
+
+        if (panel.getComboAssigneeFilter() != null) {
+            for (java.awt.event.ActionListener al : panel.getComboAssigneeFilter().getActionListeners()) {
+                panel.getComboAssigneeFilter().removeActionListener(al);
+            }
+            panel.getComboAssigneeFilter().addActionListener(e -> {
+                panel.loadIssues();
+            });
+        }
+
         for (java.awt.event.ActionListener al : panel.getBtnResolve().getActionListeners()) {
             panel.getBtnResolve().removeActionListener(al);
         }
-        panel.getBtnResolve().addActionListener(e -> {
-            handleStatusTransition(panel, IssueStatus.FIXED);
-        });
+        btnResolveAction(panel);
 
         for (java.awt.event.ActionListener al : panel.getBtnClose().getActionListeners()) {
             panel.getBtnClose().removeActionListener(al);
@@ -58,8 +77,41 @@ public class IssueListController {
         panel.getBtnClose().addActionListener(e -> {
             handleStatusTransition(panel, IssueStatus.CLOSED);
         });
+
+        JTable issueTable = panel.getIssueTable();
+        issueTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                    int selectedRow = issueTable.getSelectedRow();
+                    if (selectedRow != -1) {
+                        int modelRow = issueTable.convertRowIndexToModel(selectedRow);
+                        Object idObj = panel.getTableModel().getValueAt(modelRow, 0);
+
+                        if (idObj != null) {
+                            int issueId = Integer.parseInt(idObj.toString());
+
+                            try {
+                                org.issuetracker.model.Issue selectedIssue = issueService.getIssueById(issueId);
+                                if (selectedIssue != null) {
+                                    IssueDetailPanel detailPanel = new IssueDetailPanel(mainFrame, selectedIssue);
+                                    mainFrame.changeCenterPanel(detailPanel);
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
+    private void btnResolveAction(IssueListPanel panel) {
+        panel.getBtnResolve().addActionListener(e -> {
+            handleStatusTransition(panel, IssueStatus.FIXED);
+        });
+    }
 
     private void handleStatusTransition(IssueListPanel panel, IssueStatus targetStatus) {
         int selectedRow = panel.getIssueTable().getSelectedRow();
