@@ -1,0 +1,191 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "model" {
+
+  class User {
+    - id : String
+    - password : String
+    - name : String
+    - role : Role
+    + getId() : String
+    + getName() : String
+    + getRole() : Role
+    + setId(id : String) : void
+    + setPassword(pw : String) : void
+    + setName(name : String) : void
+    + setRole(role : Role) : void
+  }
+
+  class Issue {
+    + id : int
+    + projectId : int
+    + title : String
+    + description : String
+    + reportedDate : String
+    + priority : Priority
+    + status : IssueStatus
+    + addComment(comment : Comment) : void
+  }
+
+  class Comment {
+    + authorId : String
+    + content : String
+    + date : String
+  }
+
+  class Project {
+    + id : int
+    + name : String
+    + description : String
+  }
+
+  class RecommendationResult {
+    - fixerId : String
+    - score : double
+    + getFixerId() : String
+    + getScore() : double
+    + getMatchedIssueIds() : List<Integer>
+  }
+
+  enum Role {
+    ADMIN
+    PL
+    DEV
+    TESTER
+  }
+
+  enum IssueStatus {
+    NEW
+    ASSIGNED
+    FIXED
+    REOPENED
+    RESOLVED
+    CLOSED
+  }
+
+  enum Priority {
+    BLOCKER
+    CRITICAL
+    MAJOR
+    MINOR
+    TRIVIAL
+  }
+}
+
+package "repository" {
+
+  class IssueRepository {
+    - filePath : String
+    - file : File
+    - mapper : ObjectMapper
+    + findAll() : List<Issue>
+    + saveAll(issues : List<Issue>) : void
+    + clear() : void
+  }
+
+  class ProjectRepository {
+    - filePath : String
+    - mapper : ObjectMapper
+    + findAll() : List<Project>
+    + saveAll(projects : List<Project>) : void
+  }
+}
+
+package "service" {
+
+  class IssueService {
+    + getAllIssues() : List<Issue>
+    + getIssuesByProject(projectId : int) : List<Issue>
+    + createIssue(projectId : int, newIssue : Issue, currentUser : User) : boolean
+    + getIssueById(id : int) : Issue
+    + addCommentToIssue(issueId : int, comment : Comment, currentUser : User) : boolean
+    + searchIssues(projectId : int, status : String, assignee : String, reporter : String, keyword : String) : List<Issue>
+    + assignIssue(issueId : int, assignee : String, currentUser : User) : boolean
+    + changeStatus(issueId : int, newStatus : IssueStatus, currentUser : User) : boolean
+    + getNextStates(currentStatus : IssueStatus) : List<IssueStatus>
+    + printIssueDetail(issueId : int, currentUser : User) : boolean
+    + getStatusTotals(projectId : int) : Map<IssueStatus, Integer>
+    + getAssigneeRecommendations(issueId : int) : List<RecommendationResult>
+    - isValidTransition(current : IssueStatus, next : IssueStatus) : boolean
+    - hasPermissionForStatus(status : IssueStatus, user : User) : boolean
+  }
+
+  class StatisticsService {
+    + getDailyStats(projectId : int) : Map<String, Integer>
+    + getMonthlyStats(projectId : int) : Map<String, Integer>
+    + getStatusStats(projectId : int) : Map<IssueStatus, Integer>
+    + getPriorityStats(projectId : int) : Map<Priority, Integer>
+    + printAllStats(currentUser : User, projectId : int) : void
+    - buildBar(count : int) : String
+  }
+
+  class AccountManager {
+    - currentUser : User
+    - FILE_PATH : String
+    + addUser(user : User) : void
+    + login(id : String, password : String) : boolean
+    + logout() : void
+    + getCurrentUser() : User
+    + getUsers() : List<User>
+    + resetAll() : void
+    - isDuplicateId(id : String) : boolean
+    - saveUsers() : void
+    - loadUsers() : void
+  }
+
+  class ProjectService {
+    + addProject(name : String, description : String, currentUser : User) : void
+    + getProjectById(id : int) : Project
+    + getAllProjects() : List<Project>
+    + printProjects() : void
+    + resetAll() : void
+  }
+
+  class PermissionManager {
+    + {static} canCreateIssue(user : User) : boolean
+    + {static} canAssignIssue(user : User) : boolean
+    + {static} canManageUsers(user : User) : boolean
+    + {static} canFixIssue(user : User) : boolean
+    + {static} canResolveIssue(user : User) : boolean
+    + {static} canCloseIssue(user : User) : boolean
+    + {static} canReopenIssue(user : User) : boolean
+    + {static} canViewIssue(user : User) : boolean
+  }
+
+  interface RecommendationService {
+    + recommend(targetIssue : Issue, historicalIssues : List<Issue>) : List<RecommendationResult>
+  }
+
+  class RecommendationServiceImpl {
+    - MIN_SIMILARITY : double
+    - TOP_N : int
+    + recommend(targetIssue : Issue, historicalIssues : List<Issue>) : List<RecommendationResult>
+    - tokenize(text : String) : List<String>
+    - calculateTfIdf(tokens : List<String>, idfMap : Map<String, Double>) : Map<String, Double>
+    - calculateCosineSimilarity(v1 : Map<String, Double>, v2 : Map<String, Double>) : double
+  }
+}
+
+IssueService --> IssueRepository
+IssueService --> PermissionManager
+IssueService --> RecommendationServiceImpl
+StatisticsService --> IssueRepository
+AccountManager --> User
+ProjectService --> ProjectRepository
+ProjectService --> PermissionManager
+IssueRepository --> Issue
+ProjectRepository --> Project
+
+Issue "1" *-- "0..*" Comment : +comments
+Issue "0..*" --> "1" User : reporter
+Issue "0..*" --> "0..1" User : assignee
+Issue "0..*" --> "0..1" User : fixer
+
+Issue --> IssueStatus
+Issue --> Priority
+User --> Role
+RecommendationServiceImpl ..|> RecommendationService
+RecommendationResult "0..*" --> "0..*" Issue : matchedIssues
+
+@enduml

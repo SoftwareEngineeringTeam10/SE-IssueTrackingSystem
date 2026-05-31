@@ -1,0 +1,40 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceGroupBorderThickness 1
+skinparam sequenceMessageAlign center
+
+actor "TESTER" as T
+participant "IssueService" as IS
+participant "PermissionManager" as PM
+participant "IssueRepository" as IR
+participant "Issue" as I
+
+title UC04 이슈 등록 - SD
+
+== 사전 조건: 사용자 로그인 완료 ==
+
+T -> IS : createIssue(projectId, newIssue, currentUser)
+
+IS -> PM : canCreateIssue(currentUser)
+PM --> IS : true
+
+alt 권한 없음
+  IS --> T : false\n("이슈 생성 권한이 없습니다")
+end
+
+IS -> IR : findAll()
+IR --> IS : List<Issue>
+
+IS -> I : id = nextId
+IS -> I : projectId = projectId
+IS -> I : reporter = currentUser.getId()
+IS -> I : reportedDate = LocalDateTime.now()
+
+IS -> IR : saveAll(issues)
+IR --> IS : void
+
+IS --> T : true\n("이슈가 생성되었습니다 (ID: " + nextId + ")")
+
+== 사후 조건: 이슈 저장 완료, status = NEW ==
+
+@enduml

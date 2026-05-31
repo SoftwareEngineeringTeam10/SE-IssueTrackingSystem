@@ -17,7 +17,7 @@ public class Main {
         manager.resetAll();         // users.json 초기화
         projectService.resetAll();  // projects.json 초기화
 
-        // 실행할 때마다 issues.json도 깨끗하게 포맷하여 옛날 찌꺼기 완벽 차단!
+        // 실행할 때마다 issues.json도 깨끗하게 포맷하여 옛날 찌꺼기 완벽 차단
         new org.issuetracker.repository.IssueRepository().clear();
 
         Scanner sc = new Scanner(System.in);
