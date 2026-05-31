@@ -1,0 +1,51 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceGroupBorderThickness 1
+skinparam sequenceMessageAlign center
+
+actor "DEV" as DEV
+participant "IssueService" as IS
+participant "PermissionManager" as PM
+participant "IssueRepository" as IR
+participant "Issue" as I
+
+title UC09 이슈 상태 변경
+
+== 사전 조건: 사용자 로그인 완료, 이슈 존재 ==
+
+DEV -> IS : changeStatus(issueId, FIXED, currentUser)
+
+IS -> IR : findAll()
+IR --> IS : List<Issue>
+
+loop issues
+  IS -> IS : issue.id == issueId?
+end
+
+IS -> IS : isValidTransition(ASSIGNED, FIXED)
+
+alt 유효하지 않은 상태 전환
+  IS --> DEV : false\n("유효하지 않은 상태 전환입니다")
+end
+
+IS -> PM : canFixIssue(currentUser)
+PM --> IS : true
+
+alt 권한 없음
+  IS --> DEV : false\n("상태 변경 권한이 없습니다")
+end
+
+IS -> I : status = FIXED
+IS -> I : fixer = currentUser.getId()
+
+IS -> I : addComment(\n  new Comment(currentUser.getId(),\n  "상태가 FIXED으로 변경되었습니다."))
+I --> IS : void
+
+IS -> IR : saveAll(issues)
+IR --> IS : void
+
+IS --> DEV : true\n("상태가 변경되었습니다")
+
+== 사후 조건: 상태 FIXED로 변경, 코멘트 자동 등록 ==
+
+@enduml
