@@ -9,7 +9,7 @@ public class IssueDetailPanel extends JPanel {
     private MainFrame mainFrame;
     private Issue issue;
 
-    private JLabel lblTitle, lblPriority, lblStatus, lblReporter, lblAssignee;
+    private JLabel lblTitle, lblPriority, lblStatus, lblReporter, lblAssignee, lblReportedDate, lblFixer;
     private JTextArea areaDescription, areaCommentList;
     private JTextField fieldCommentInput;
     private JComboBox<String> comboAssignee;
@@ -39,6 +39,8 @@ public class IssueDetailPanel extends JPanel {
         lblStatus = new JLabel();
         lblReporter = new JLabel();
         lblAssignee = new JLabel();
+        lblFixer = new JLabel();
+        lblReportedDate = new JLabel();
 
         areaDescription = new JTextArea(6, 30);
         areaCommentList = new JTextArea(8, 30);
@@ -106,9 +108,8 @@ public class IssueDetailPanel extends JPanel {
         lblStatus.setForeground(Color.RED);
         metaPanel.add(lblStatus, gbc);
 
-        // 보고자 및 담당자
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
-        metaPanel.add(createMetaLabel("보 고 자:"), gbc);
+        metaPanel.add(createMetaLabel("보고자:"), gbc);
 
         gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.5;
         lblReporter = new JLabel(issue != null ? issue.reporter : "");
@@ -116,6 +117,15 @@ public class IssueDetailPanel extends JPanel {
         metaPanel.add(lblReporter, gbc);
 
         gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
+        metaPanel.add(createMetaLabel("보고일:"), gbc);
+
+        gbc.gridx = 3; gbc.gridy = 2; gbc.weightx = 0.5;
+        lblReportedDate = new JLabel(issue != null && issue.reportedDate != null ? issue.reportedDate : "-");
+        lblReportedDate.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
+        metaPanel.add(lblReportedDate, gbc);
+
+        // ROW 3: 담당자 패널 및 조치완료자 정렬
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0;
         metaPanel.add(createMetaLabel("담당자:"), gbc);
 
         JPanel assigneeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
@@ -136,8 +146,16 @@ public class IssueDetailPanel extends JPanel {
         assigneeWrapper.add(btnDirectAssign);
         assigneeWrapper.add(btnRecommend);
 
-        gbc.gridx = 3; gbc.gridy = 2; gbc.weightx = 0.5;
+        gbc.gridx = 1; gbc.gridy = 3; gbc.weightx = 0.5;
         metaPanel.add(assigneeWrapper, gbc);
+
+        gbc.gridx = 2; gbc.gridy = 3; gbc.weightx = 0;
+        metaPanel.add(createMetaLabel("조치완료자:"), gbc);
+
+        gbc.gridx = 3; gbc.gridy = 3; gbc.weightx = 0.5;
+        lblFixer = new JLabel(issue != null && issue.fixer != null ? issue.fixer : "-");
+        lblFixer.setFont(new Font("Malgun Gothic", Font.PLAIN, 13));
+        metaPanel.add(lblFixer, gbc);
 
         centerContainer.add(metaPanel);
         centerContainer.add(Box.createVerticalStrut(15));
@@ -224,6 +242,8 @@ public class IssueDetailPanel extends JPanel {
             lblStatus.setText(issue.status != null ? issue.status.name() : "NEW");
             lblReporter.setText(issue.reporter != null ? issue.reporter : "");
             lblAssignee.setText(issue.assignee != null ? issue.assignee : "");
+            lblReportedDate.setText(issue.reportedDate != null ? issue.reportedDate : "-");
+            lblFixer.setText(issue.fixer != null ? issue.fixer : "-");
             areaDescription.setText(issue.description != null ? issue.description : "");
 
             if (issue.comments != null && !issue.comments.isEmpty()) {
@@ -238,7 +258,6 @@ public class IssueDetailPanel extends JPanel {
                 areaCommentList.setText("등록된 댓글이 없습니다.");
             }
         }
-
 
         revalidate();
         repaint();
@@ -264,8 +283,6 @@ public class IssueDetailPanel extends JPanel {
     public JTextArea getAreaCommentList() { return areaCommentList; }
     public JComboBox<String> getComboAssignee() { return comboAssignee; }
     public JButton getBtnDirectAssign() { return btnDirectAssign; }
-
-
 
     public void addAssigneeItem(String userId) {
         if (this.comboAssignee != null) {

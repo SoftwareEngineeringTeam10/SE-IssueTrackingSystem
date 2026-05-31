@@ -78,7 +78,7 @@ public class IssueListPanel extends JPanel {
 
         add(topContainer, BorderLayout.NORTH);
 
-        String[] columnNames = {"번호", "이슈 제목", "우선순위", "상태", "보고자", "담당자"};
+        String[] columnNames = {"번호", "이슈 제목", "우선순위", "상태", "보고자", "담당자", "보고일"};
 
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -254,7 +254,8 @@ public class IssueListPanel extends JPanel {
                                 issue.priority != null ? issue.priority.name() : "-",
                                 issue.status != null ? issue.status.name() : "NEW",
                                 issue.reporter != null ? issue.reporter : "-",
-                                issue.assignee != null ? issue.assignee : "-"
+                                issue.assignee != null ? issue.assignee : "-",
+                                issue.reportedDate != null ? issue.reportedDate : "-"
                         };
                         tableModel.addRow(row);
                     }

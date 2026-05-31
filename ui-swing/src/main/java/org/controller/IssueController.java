@@ -82,9 +82,9 @@ public class IssueController {
 
         if (currentRole == Role.ADMIN) {
             sideMenu.getBtnAdminManage().setVisible(true);
-            sideMenu.getBtnList().setVisible(false);
+            sideMenu.getBtnList().setVisible(true);
             sideMenu.getBtnCreate().setVisible(false);
-            sideMenu.getBtnStats().setVisible(false);
+            sideMenu.getBtnStats().setVisible(true);
         } else {
             sideMenu.getBtnAdminManage().setVisible(false);
             sideMenu.getBtnList().setVisible(true);
