@@ -1,0 +1,70 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class User {
+  id : String
+  name : String
+  role : Role
+}
+
+class Project {
+  name : String
+  description : String
+}
+
+class Issue {
+  id : int
+  title : String
+  description : String
+  status : IssueStatus
+  priority : Priority
+  reportedDate : String
+}
+
+class Comment {
+  content : String
+  date : String
+}
+
+class RecommendationResult {
+  score : double
+}
+
+enum Role {
+  ADMIN
+  PL
+  DEV
+  TESTER
+}
+
+enum IssueStatus {
+  NEW
+  ASSIGNED
+  FIXED
+  REOPENED
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  BLOCKER
+  CRITICAL
+  MAJOR
+  MINOR
+  TRIVIAL
+}
+
+User "1" -- "0..*" Issue : reports >
+User "1" -- "0..*" Issue : assigned to >
+User "1" -- "0..*" Issue : fixes >
+Project "1" -- "0..*" Issue : contains >
+Issue "1" -- "0..*" Comment : has >
+User "1" -- "0..*" Comment : writes >
+Issue "1" -- "0..*" RecommendationResult : generates >
+RecommendationResult "0..*" -- "1" User : recommends >
+RecommendationResult "0..*" -- "0..*" Issue : references >
+User -- Role
+Issue -- IssueStatus
+Issue -- Priority
+
+@enduml

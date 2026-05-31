@@ -1,7 +1,0 @@
-@startuml
-actor User
-
-User -> System : changeStatus(issueId, newStatus)
-System --> User : status changed
-
-@enduml

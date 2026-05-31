@@ -1,0 +1,20 @@
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceMessageAlign center
+
+actor "User" as U
+participant ":System" as S
+
+title UC09 이슈 상태 변경 - SSD
+
+U -> S : changeStatus(issueId, newStatus)
+
+alt 유효하지 않은 상태 전환
+  S --> U : errorCode (InvalidTransition)
+else 권한 없음
+  S --> U : errorCode (Unauthorized)
+else 이슈 없음
+  S --> U : errorCode (NotFound)
+else 성공
+  S --> U : updatedStatus
+@enduml
