@@ -1,0 +1,9 @@
+[ {
+  "id" : 1,
+  "name" : "ITS Main Project",
+  "description" : "메인 이슈 관리 프로젝트"
+}, {
+  "id" : 2,
+  "name" : "Mobile App",
+  "description" : "모바일 앱 프로젝트"
+} ]

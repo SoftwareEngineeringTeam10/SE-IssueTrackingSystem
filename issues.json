@@ -1,0 +1,137 @@
+[ {
+  "id" : 1,
+  "projectId" : 2,
+  "title" : "Login Error",
+  "description" : "로그인 버튼이 작동하지 않음",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.890045900",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "CRITICAL",
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "tester01",
+    "content" : "이슈 재현 확인했습니다.",
+    "date" : "2026-05-29T17:06:05.905593"
+  }, {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.925180400"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.929191100"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.932199900"
+  } ]
+}, {
+  "id" : 2,
+  "projectId" : 2,
+  "title" : "UI 정렬 깨짐",
+  "description" : "메인 화면 버튼 위치 이상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.937213",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 3,
+  "projectId" : 2,
+  "title" : "로그인 오류",
+  "description" : "로그인 버튼 간헐적 먹통",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.941919400",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "CRITICAL",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 4,
+  "projectId" : 2,
+  "title" : "UI 정렬 깨짐",
+  "description" : "사이드바 텍스트 겹침 현상",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.946236700",
+  "fixer" : null,
+  "assignee" : null,
+  "priority" : "MINOR",
+  "status" : "NEW",
+  "comments" : [ ]
+}, {
+  "id" : 5,
+  "projectId" : 2,
+  "title" : "로그인 에러 발생",
+  "description" : "로그인이 안 됩니다.",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.950247300",
+  "fixer" : "dev01",
+  "assignee" : "dev01",
+  "priority" : "CRITICAL",
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "dev01",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.959810300"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.964430800"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.968336200"
+  } ]
+}, {
+  "id" : 6,
+  "projectId" : 2,
+  "title" : "네이버 로그인 연동 실패",
+  "description" : "로그인 버튼이 안 눌려요.",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.973310",
+  "fixer" : "dev02",
+  "assignee" : "dev02",
+  "priority" : "CRITICAL",
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "dev02",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.981330800"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.986343800"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:05.990353900"
+  } ]
+}, {
+  "id" : 7,
+  "projectId" : 2,
+  "title" : "구글 로그인 오류",
+  "description" : "로그인 기능에 문제가 있습니다.",
+  "reporter" : "tester01",
+  "reportedDate" : "2026-05-29T17:06:05.994874300",
+  "fixer" : "dev03",
+  "assignee" : "dev03",
+  "priority" : "CRITICAL",
+  "status" : "CLOSED",
+  "comments" : [ {
+    "authorId" : "dev03",
+    "content" : "상태가 FIXED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:06.003395600"
+  }, {
+    "authorId" : "tester01",
+    "content" : "상태가 RESOLVED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:06.007406300"
+  }, {
+    "authorId" : "pl01",
+    "content" : "상태가 CLOSED으로 변경되었습니다.",
+    "date" : "2026-05-29T17:06:06.014930400"
+  } ]
+} ]
