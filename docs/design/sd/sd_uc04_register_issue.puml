@@ -1,47 +1,40 @@
-@startuml SD_UC04_RegisterIssue
-title SD: UC04 이슈 등록 (createIssue)
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceGroupBorderThickness 1
+skinparam sequenceMessageAlign center
 
-actor Tester as t
-participant ":IssueService" as svc
-participant ":PermissionManager" as perm
-participant ":AccountManager" as acc
-participant "newIssue:Issue" as iss
-participant ":IssueRepository" as repo
+actor "TESTER" as T
+participant "IssueService" as IS
+participant "PermissionManager" as PM
+participant "IssueRepository" as IR
+participant "Issue" as I
 
-t -> svc : createIssue(title, description, priority)
-activate svc
+title UC04 이슈 등록 - SD
 
-svc -> perm : canCreateIssue(currentUser)
-activate perm
-perm --> svc : true
-deactivate perm
+== 사전 조건: 사용자 로그인 완료 ==
 
-svc -> acc : getCurrentUser()
-activate acc
-acc --> svc : currentUser
-deactivate acc
+T -> IS : createIssue(projectId, newIssue, currentUser)
 
-create iss
-svc -> iss : <<create>>(title, description, priority)
-activate iss
-note right of iss
-  자동 설정:
-  - id (시스템 발급)
-  - reporter := currentUser.id
-  - reportedDate := now()
-  - status := NEW
-  - priority := MAJOR (미지정 시)
-  - comments := []
-end note
-iss --> svc : newIssue
-deactivate iss
+IS -> PM : canCreateIssue(currentUser)
+PM --> IS : true
 
-svc -> repo : saveAll()
-activate repo
-repo --> svc : ok
-deactivate repo
+alt 권한 없음
+  IS --> T : false\n("이슈 생성 권한이 없습니다")
+end
 
-svc --> t : issueId
-deactivate svc
+IS -> IR : findAll()
+IR --> IS : List<Issue>
+
+IS -> I : id = nextId
+IS -> I : projectId = projectId
+IS -> I : reporter = currentUser.getId()
+IS -> I : reportedDate = LocalDateTime.now()
+
+IS -> IR : saveAll(issues)
+IR --> IS : void
+
+IS --> T : true\n("이슈가 생성되었습니다 (ID: " + nextId + ")")
+
+== 사후 조건: 이슈 저장 완료, status = NEW ==
 
 @enduml

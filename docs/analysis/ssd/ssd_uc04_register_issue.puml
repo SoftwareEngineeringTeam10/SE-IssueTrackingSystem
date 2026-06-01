@@ -1,21 +1,18 @@
-@startuml SSD_UC04_RegisterIssue
-title SSD: UC04 이슈 등록
+@startuml
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceMessageAlign center
 
-actor Tester as t
-participant ":IssueTrackingSystem" as sys
+actor "User" as U
+participant ":System" as S
 
-t -> sys : selectProject(projectId)
-sys --> t : projectInfo
+title UC04 이슈 등록 - SSD
 
-t -> sys : createIssue(title, description, priority)
-note right of sys
-  시스템 내부 처리:
-  · issueId 생성
-  · reporter = currentUser
-  · reportedDate = now()
-  · status = NEW
-  · priority 미지정 시 MAJOR
-end note
-sys --> t : issueId
+U -> S : createIssue(projectId, title, description, priority)
+
+alt 권한 없음
+  S --> U : errorCode (Unauthorized)
+else 성공
+  S --> U : issueId
+end
 
 @enduml
