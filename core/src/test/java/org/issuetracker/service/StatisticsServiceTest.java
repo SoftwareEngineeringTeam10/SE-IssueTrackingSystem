@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("StatisticsService 통계 산출 파이프라인 단위 테스트")
+@DisplayName("StatisticsService 통계 산출 로직 단위 테스트")
 class StatisticsServiceTest {
 
     private StatisticsService statisticsService;
@@ -70,10 +70,10 @@ class StatisticsServiceTest {
         void testGetStatusStatsSuccess() {
             Map<IssueStatus, Integer> statusMap = statisticsService.getStatusStats(TEST_PROJECT_ID);
 
-            assertNotNull(statusMap, "산출된 상태 통계 Map 객체는 실재해야 합니다.");
+            assertNotNull(statusMap, "산출된 상태 통계 Map 객체는 존재해야 합니다.");
 
             int newCount = statusMap.getOrDefault(IssueStatus.NEW, 0);
-            assertTrue(newCount >= 2, "해당 프로젝트의 'NEW' 상태 이슈는 우리가 넣은 최소 2개 이상으로 카운트되어야 합니다.");
+            assertTrue(newCount >= 2, "해당 프로젝트의 'NEW' 상태 이슈는 우리가 넣은 최소 2개 이상이 되어야 합니다.");
 
             assertTrue(statusMap.containsKey(IssueStatus.CLOSED), "로직에 따라 데이터가 없는 CLOSED 상태도 Map에 키값으로 존재해야 합니다.");
         }
@@ -88,13 +88,13 @@ class StatisticsServiceTest {
         void testGetPriorityStatsSuccess() {
             Map<Priority, Integer> priorityMap = statisticsService.getPriorityStats(TEST_PROJECT_ID);
 
-            assertNotNull(priorityMap, "산출된 우선순위 통계 Map 객체는 실재해야 합니다.");
+            assertNotNull(priorityMap, "산출된 우선순위 통계 Map 객체는 존재해야 합니다.");
 
             int criticalCount = priorityMap.getOrDefault(Priority.CRITICAL, 0);
-            assertTrue(criticalCount >= 1, "CRITICAL 우선순위 이슈 카운트 파이프라인이 정상 작동해야 합니다.");
+            assertTrue(criticalCount >= 1, "CRITICAL 우선순위 이슈 카운트 기능이 정상 작동해야 합니다.");
 
             int majorCount = priorityMap.getOrDefault(Priority.MAJOR, 0);
-            assertTrue(majorCount >= 1, "MAJOR 우선순위 이슈 카운트 파이프라인이 정상 작동해야 합니다.");
+            assertTrue(majorCount >= 1, "MAJOR 우선순위 이슈 카운트 기능이 정상 작동해야 합니다.");
         }
     }
 }

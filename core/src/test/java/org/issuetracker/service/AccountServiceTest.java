@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("AccountManager 계정 관리 및 비즈니스 가드 단위 테스트")
+@DisplayName("AccountManager 계정 관리 및 가드 단위 테스트")
 class AccountManagerTest {
 
     private AccountManager accountManager;
@@ -67,7 +67,7 @@ class AccountManagerTest {
         }
 
         @Test
-        @DisplayName("예외 가드: 동일한 ID로 중복 가입 시도 시 시스템 차단 검증")
+        @DisplayName("예외 테스트: 동일한 ID로 중복 가입 시도 시 시스템 차단 검증")
         void testDuplicateIdGuard() {
             accountManager.addUser(newPlUser);
             int baseSize = accountManager.getUsers().size();
@@ -90,7 +90,7 @@ class AccountManagerTest {
     class RoleFilteringFilter {
 
         @Test
-        @DisplayName("특정 Role(PL)을 가진 유저들만 정확히 가려내어 리스트업하는지 검증")
+        @DisplayName("특정 Role(PL)을 가진 유저들만 정확히 가려내는지 검증")
         void testGetUsersByRolePipeline() {
             accountManager.addUser(newPlUser);
 
@@ -101,9 +101,9 @@ class AccountManagerTest {
 
             List<User> plList = accountManager.getUsersByRole(Role.PL);
 
-            assertNotNull(plList, "필터링 결과 리스트는 실재해야 합니다.");
+            assertNotNull(plList, "필터링 결과 리스트가 존재해야 합니다.");
             assertEquals(1, plList.size(), "PL 권한을 가진 유저는 정확히 1명만 뽑혀야 합니다.");
-            assertEquals("pl_test_999", plList.get(0).getId(), "필터링된 유저의 ID 스펙이 일치해야 합니다.");
+            assertEquals("pl_test_999", plList.get(0).getId(), "필터링된 유저의 ID와 일치해야 합니다.");
         }
     }
 }

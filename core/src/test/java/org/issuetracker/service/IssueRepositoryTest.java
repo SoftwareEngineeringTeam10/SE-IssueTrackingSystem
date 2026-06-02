@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("IssueRepository 파일 영속성 및 데이터 엑세스 단위 테스트")
+@DisplayName("IssueRepository 저장 및 조회 테스트")
 class IssueRepositoryTest {
 
     private IssueService issueService;
@@ -46,7 +46,7 @@ class IssueRepositoryTest {
     }
 
     @Test
-    @DisplayName("영속성 검증: 이슈 생성 시 데이터 파일 적재 및 프로젝트별 식별 조회")
+    @DisplayName("정상 테스트: 이슈 생성했을 때 JSON 데이터 파일에 잘 적재되고 조회되는지 확인")
     void testRepositorySaveAndFind() {
         User admin = new User();
         admin.setId("admin01");

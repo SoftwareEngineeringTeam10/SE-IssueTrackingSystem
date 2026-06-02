@@ -79,27 +79,27 @@ class ProjectServiceTest {
             for (Project p : afterList) {
                 if (newProjName.equals(p.name)) {
                     isFound = true;
-                    assertEquals(newProjDesc, p.description, "적재된 프로젝트의 설명문 스펙이 일치해야 합니다.");
+                    assertEquals(newProjDesc, p.description, "프로젝트의 설명문 내용과 일치해야 합니다.");
                     break;
                 }
             }
-            assertTrue(isFound, "영속 저장소에서 새로 생성한 프로젝트 이름이 정밀 조회되어야 합니다.");
+            assertTrue(isFound, "JSON에서 새로 생성한 프로젝트 이름이 정밀 조회되어야 합니다.");
         }
 
         @Test
-        @DisplayName("예외 가드: 일반 개발자(DEV) 계정의 불법 프로젝트 생성 차단 검증")
+        @DisplayName("예외 테스트: 일반 개발자(DEV) 계정의 불법 프로젝트 생성 차단 검증")
         void testProjectCreationPermissionGuard() {
             List<Project> beforeList = projectService.getAllProjects();
             int beforeSize = beforeList != null ? beforeList.size() : 0;
 
-            String illegalProjName = "DEV가 해킹 시도한 프로젝트 " + System.currentTimeMillis();
+            String illegalProjName = "DEV가 생성 시도한 프로젝트 " + System.currentTimeMillis();
 
             projectService.addProject(illegalProjName, "불법 생성 시도", devUser);
 
             List<Project> afterList = projectService.getAllProjects();
             int afterSize = afterList != null ? afterList.size() : 0;
 
-            assertEquals(beforeSize, afterSize, "권한이 없는 사용자의 프로젝트 생성 요청은 묵살되어 데이터가 오염되지 않아야 합니다.");
+            assertEquals(beforeSize, afterSize, "권한이 없는 사용자의 프로젝트 생성 요청은 거절되어 데이터가 오염되지 않아야 합니다.");
         }
     }
 }

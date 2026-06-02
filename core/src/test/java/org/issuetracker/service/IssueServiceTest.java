@@ -88,7 +88,7 @@ class IssueServiceTest {
         }
 
         @Test
-        @DisplayName("정상 흐름: PL1 배정 및 DEV1 수정 전이 패스 검증")
+        @DisplayName("정상 흐름: PL이 담당자 지정하고 개발자가 해결 상태로 바꾸는 과정 확인")
         void testValidStateTransitionPath() {
             boolean assignResult = issueService.assignIssue(issueId, "dev01", plUser);
             assertTrue(assignResult);
@@ -100,7 +100,7 @@ class IssueServiceTest {
         }
 
         @Test
-        @DisplayName("예외 가드: 단계를 건너뛰는 불법 상태 전이 차단 및 메모리 격리 검증")
+        @DisplayName("예외 테스트: 단계를 건너뛰고 바로 해결 상태로 변경할 때 차단되는지 확인")
         void testInvalidStateTransitionGuard() {
             boolean illegalResult = issueService.changeStatus(issueId, IssueStatus.FIXED, devUser);
             assertFalse(illegalResult);
@@ -110,7 +110,7 @@ class IssueServiceTest {
         }
 
         @Test
-        @DisplayName("권한 가드: 최고 관리자(admin01)의 업무 프로세스 변조 가드 차단 검증")
+        @DisplayName("권한 테스트: 권한이 없는 어드민 계정이 상태를 변경하려고 할 때 거부되는지 확인")
         void testStatusPermissionGuard() {
             issueService.assignIssue(issueId, "dev01", plUser);
             boolean adminIllegalFix = issueService.changeStatus(issueId, IssueStatus.FIXED, adminUser);
@@ -119,7 +119,7 @@ class IssueServiceTest {
     }
 
     @Nested
-    @DisplayName("복합 조건 검색(Multi-Filter Search) 파이프라인 검증")
+    @DisplayName("복합 조건 검색 기능 검증")
     class MultiFilterTesting {
 
         private final int targetProjectId = 888;
@@ -146,7 +146,7 @@ class IssueServiceTest {
         }
 
         @Test
-        @DisplayName("상태(Status) + 키워드(Keyword) 교집합 복합 필터링 검증")
+        @DisplayName("정상 테스트: 상태 조건과 검색 키워드가 모두 맞는 데이터만 필터링되는지 확인")
         void testStatusAndKeywordAndFilter() {
             List<Issue> searchResult = issueService.searchIssues(
                     targetProjectId,
