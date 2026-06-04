@@ -71,10 +71,10 @@ goto fail
 @rem Setup the command line
 
 set CLASSPATH=%APP_HOME%\lib\ui-javafx-1.0-SNAPSHOT.jar;%APP_HOME%\lib\core-1.0-SNAPSHOT.jar;%APP_HOME%\lib\javafx-fxml-21.0.5-win.jar;%APP_HOME%\lib\javafx-controls-21.0.5-win.jar;%APP_HOME%\lib\jackson-annotations-2.17.0.jar;%APP_HOME%\lib\jackson-core-2.17.0.jar;%APP_HOME%\lib\jackson-databind-2.17.0.jar;%APP_HOME%\lib\javafx-graphics-21.0.5-win.jar;%APP_HOME%\lib\byte-buddy-1.14.9.jar;%APP_HOME%\lib\javafx-base-21.0.5-win.jar
-
+set MODULE_PATH=%APP_HOME%\lib
 
 @rem Execute ui-javafx
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %UI_JAVAFX_OPTS%  -classpath "%CLASSPATH%" ui.javafx.app.MainApp %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %UI_JAVAFX_OPTS% --module-path "%MODULE_PATH%" --add-modules javafx.controls,javafx.fxml -classpath "%CLASSPATH%" ui.javafx.app.MainApp %*
 
 :end
 @rem End local scope for the variables with windows NT shell
