@@ -24,4 +24,6 @@ tasks.withType(JavaCompile) {
 
 run {
     workingDir = file("$rootDir/core")
+    systemProperty 'file.encoding', 'UTF-8'
+    systemProperty 'stdout.encoding', 'UTF-8'
 }
